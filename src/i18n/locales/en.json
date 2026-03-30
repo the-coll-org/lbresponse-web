@@ -1,0 +1,19 @@
+{
+  "app": {
+    "title": "LB Response",
+    "description": "Lebanon Crisis Response Platform"
+  },
+  "common": {
+    "home": "Home",
+    "about": "About",
+    "settings": "Settings",
+    "language": "Language",
+    "theme": "Theme",
+    "lightMode": "Light Mode",
+    "darkMode": "Dark Mode",
+    "health": "Health",
+    "loading": "Loading...",
+    "uptime": "Uptime",
+    "environment": "Environment"
+  }
+}

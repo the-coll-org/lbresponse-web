@@ -1,0 +1,107 @@
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 24px;
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-surface);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.toolbar-title {
+  font-weight: 600;
+  font-size: 18px;
+  color: var(--color-text);
+}
+
+.toolbar-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.toolbar-btn {
+  font-size: 14px;
+  padding: 6px 14px;
+  border-radius: 6px;
+  border: 1px solid var(--color-border);
+  background: var(--color-bg-secondary);
+  color: var(--color-text);
+  cursor: pointer;
+  transition:
+    background 0.2s,
+    border-color 0.2s;
+}
+
+.toolbar-btn:hover {
+  border-color: var(--color-primary);
+  background: var(--color-surface);
+}
+
+.content {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 48px 24px;
+}
+
+.content h1 {
+  color: var(--color-text);
+  margin-bottom: 8px;
+}
+
+.content p {
+  color: var(--color-text-secondary);
+}
+
+.status-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-top: 32px;
+}
+
+.card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 20px;
+}
+
+.card h2 {
+  font-size: 16px;
+  color: var(--color-text);
+  margin: 0 0 12px;
+}
+
+.card p {
+  margin: 4px 0;
+  font-size: 14px;
+}
+
+.status-ok {
+  color: #22c55e;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.error {
+  color: #ef4444;
+  font-size: 13px;
+}
+
+.loading {
+  color: var(--color-text-secondary);
+  font-style: italic;
+}
+
+.meta {
+  color: var(--color-text-secondary);
+  font-size: 13px;
+}
+
+@media (max-width: 640px) {
+  .status-cards {
+    grid-template-columns: 1fr;
+  }
+}
