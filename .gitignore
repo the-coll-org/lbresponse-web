@@ -29,3 +29,6 @@ dist-ssr
 coverage/
 playwright-report/
 test-results/
+
+# PWA
+dev-dist/

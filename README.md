@@ -10,7 +10,7 @@ Frontend for the **Lebanon Crisis Response Platform**. Built with **React**, **T
 
 ## What Does This Project Do?
 
-This is the web interface for the LB Response platform. It talks to the [lbresponse-api](https://github.com/the-coll-org/lbresponse-api) backend and displays crisis-response data. It supports **English and Arabic** (with right-to-left layout) and has a **light/dark theme** toggle.
+This is the web interface for the LB Response platform. It talks to the [lbresponse-api](https://github.com/the-coll-org/lbresponse-api) backend and displays crisis-response data. It supports **English and Arabic** (with right-to-left layout), has a **light/dark theme** toggle, and works **offline** as a Progressive Web App (PWA).
 
 ---
 
@@ -275,6 +275,35 @@ type: short description
 | `refactor` | Code change that isn't a fix or feat | `refactor: extract theme hook`       |
 | `test`     | Adding or fixing tests               | `test: add useTheme unit tests`      |
 | `chore`    | Tooling, deps, config                | `chore: upgrade vite to v8`          |
+
+---
+
+## Offline & Low Bandwidth Support (PWA)
+
+This app is a **Progressive Web App (PWA)**. It works on slow connections and can function offline after the first visit.
+
+**How it works:**
+
+| What                       | Strategy         | Details                                                                                  |
+| -------------------------- | ---------------- | ---------------------------------------------------------------------------------------- |
+| App shell (HTML/CSS/JS)    | **Precached**    | Cached on first visit. Loads instantly on return visits.                                 |
+| Images and fonts           | **Precached**    | All static assets are stored locally after first load.                                   |
+| API responses (`/api/*`)   | **NetworkFirst** | Tries the network first (5s timeout), then falls back to cache. Cached for up to 1 hour. |
+| Health checks (`/health*`) | **NetworkFirst** | Tries network (3s timeout), falls back to cache. Cached for up to 5 minutes.             |
+
+**What this means for users:**
+
+- **First visit**: everything is downloaded and cached
+- **Subsequent visits**: the app loads instantly from cache, even offline
+- **Slow connection**: if the API doesn't respond within 5 seconds, the last cached response is shown
+- **Fully offline**: the app shell loads, and the last known API data is displayed
+
+**For developers:**
+
+- The service worker is generated automatically by [vite-plugin-pwa](https://vite-pwa-org.netlify.app/) during `npm run build`
+- It auto-updates in the background — no user prompt needed
+- In dev mode (`npm run dev`), the service worker is not active
+- To test offline behavior, run `npm run build && npm run preview` and use Chrome DevTools > Application > Service Workers > "Offline" checkbox
 
 ---
 
