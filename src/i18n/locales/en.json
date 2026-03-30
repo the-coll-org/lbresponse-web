@@ -15,5 +15,28 @@
     "loading": "Loading...",
     "uptime": "Uptime",
     "environment": "Environment"
+  },
+  "responses": {
+    "title": "Responses",
+    "fetchError": "Failed to load responses. Make sure the backend is running.",
+    "noData": "No responses found.",
+    "columns": {
+      "title": "Title",
+      "location": "Location",
+      "status": "Status",
+      "priority": "Priority",
+      "date": "Date"
+    },
+    "status": {
+      "pending": "Pending",
+      "inProgress": "In Progress",
+      "resolved": "Resolved"
+    },
+    "priority": {
+      "low": "Low",
+      "medium": "Medium",
+      "high": "High",
+      "critical": "Critical"
+    }
   }
 }

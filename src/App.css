@@ -54,6 +54,16 @@
   color: var(--color-text-secondary);
 }
 
+.section {
+  margin-top: 40px;
+}
+
+.section h2 {
+  font-size: 18px;
+  color: var(--color-text);
+  margin: 0 0 4px;
+}
+
 .status-cards {
   display: grid;
   grid-template-columns: 1fr 1fr;
