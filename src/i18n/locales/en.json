@@ -4,39 +4,18 @@
     "description": "Lebanon Crisis Response Platform"
   },
   "common": {
-    "home": "Home",
-    "about": "About",
-    "settings": "Settings",
-    "language": "Language",
-    "theme": "Theme",
     "lightMode": "Light Mode",
     "darkMode": "Dark Mode",
-    "health": "Health",
     "loading": "Loading...",
-    "uptime": "Uptime",
-    "environment": "Environment"
+    "fetchError": "Failed to load data. Make sure the backend is running.",
+    "noData": "No data found."
   },
-  "responses": {
-    "title": "Responses",
-    "fetchError": "Failed to load responses. Make sure the backend is running.",
-    "noData": "No responses found.",
-    "columns": {
-      "title": "Title",
-      "location": "Location",
-      "status": "Status",
-      "priority": "Priority",
-      "date": "Date"
-    },
-    "status": {
-      "pending": "Pending",
-      "inProgress": "In Progress",
-      "resolved": "Resolved"
-    },
-    "priority": {
-      "low": "Low",
-      "medium": "Medium",
-      "high": "High",
-      "critical": "Critical"
-    }
+  "nav": {
+    "dashboard": "Dashboard"
+  },
+  "dashboard": {
+    "visuals": "Data Visuals",
+    "totalRows": "Total Rows",
+    "pages": "Pages"
   }
 }

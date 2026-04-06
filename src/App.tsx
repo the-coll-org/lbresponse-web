@@ -1,11 +1,42 @@
+import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from './hooks/useTheme';
-import ResponsesTable from './components/ResponsesTable';
+import Dashboard from './components/Dashboard';
+import DataTable from './components/DataTable';
 import './App.css';
+
+interface Visual {
+  key: string;
+  visual_name?: string;
+  page?: string;
+  row_count?: number;
+}
 
 function App() {
   const { t, i18n } = useTranslation();
   const { theme, toggleTheme } = useTheme();
+  const [visuals, setVisuals] = useState<Visual[]>([]);
+  const [selected, setSelected] = useState<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    fetch('/api/visuals')
+      .then((res) => {
+        if (!res.ok) throw new Error();
+        return res.json() as Promise<{ data: Visual[] }>;
+      })
+      .then((json) => {
+        if (!cancelled) setVisuals(json.data);
+      })
+      .catch(() => {
+        /* ignored */
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const toggleLanguage = () => {
     const next = i18n.language === 'ar' ? 'en' : 'ar';
@@ -26,14 +57,34 @@ function App() {
         </div>
       </header>
 
-      <main className="content">
-        <h1>{t('app.title')}</h1>
-        <p>{t('app.description')}</p>
+      <nav className="tab-nav">
+        <button
+          className={`tab-btn ${selected === null ? 'tab-active' : ''}`}
+          onClick={() => setSelected(null)}
+        >
+          {t('nav.dashboard')}
+        </button>
+        {visuals.map((v) => (
+          <button
+            key={v.key}
+            className={`tab-btn ${selected === v.key ? 'tab-active' : ''}`}
+            onClick={() => setSelected(v.key)}
+            title={v.visual_name}
+          >
+            {v.page ?? v.key}
+            {v.row_count != null && (
+              <span className="tab-count">{v.row_count}</span>
+            )}
+          </button>
+        ))}
+      </nav>
 
-        <section className="section">
-          <h2>{t('responses.title')}</h2>
-          <ResponsesTable />
-        </section>
+      <main className="content">
+        {selected === null ? (
+          <Dashboard />
+        ) : (
+          <DataTable endpoint={`/api/visuals/${selected}`} />
+        )}
       </main>
     </>
   );

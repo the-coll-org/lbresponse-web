@@ -4,39 +4,18 @@
     "description": "منصة الاستجابة للأزمات اللبنانية"
   },
   "common": {
-    "home": "الرئيسية",
-    "about": "حول",
-    "settings": "الإعدادات",
-    "language": "اللغة",
-    "theme": "السمة",
     "lightMode": "الوضع الفاتح",
     "darkMode": "الوضع الداكن",
-    "health": "الحالة",
     "loading": "جاري التحميل...",
-    "uptime": "وقت التشغيل",
-    "environment": "البيئة"
+    "fetchError": "فشل تحميل البيانات. تأكد من تشغيل الخادم.",
+    "noData": "لا توجد بيانات."
   },
-  "responses": {
-    "title": "الاستجابات",
-    "fetchError": "فشل تحميل الاستجابات. تأكد من تشغيل الخادم.",
-    "noData": "لا توجد استجابات.",
-    "columns": {
-      "title": "العنوان",
-      "location": "الموقع",
-      "status": "الحالة",
-      "priority": "الأولوية",
-      "date": "التاريخ"
-    },
-    "status": {
-      "pending": "قيد الانتظار",
-      "inProgress": "قيد التنفيذ",
-      "resolved": "تم الحل"
-    },
-    "priority": {
-      "low": "منخفضة",
-      "medium": "متوسطة",
-      "high": "عالية",
-      "critical": "حرجة"
-    }
+  "nav": {
+    "dashboard": "لوحة المعلومات"
+  },
+  "dashboard": {
+    "visuals": "البيانات المرئية",
+    "totalRows": "إجمالي الصفوف",
+    "pages": "الصفحات"
   }
 }
