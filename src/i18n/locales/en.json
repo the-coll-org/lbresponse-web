@@ -11,32 +11,48 @@
     "theme": "Theme",
     "lightMode": "Light Mode",
     "darkMode": "Dark Mode",
-    "health": "Health",
     "loading": "Loading...",
-    "uptime": "Uptime",
-    "environment": "Environment"
+    "fetchError": "Failed to load data. Make sure the backend is running.",
+    "noData": "No data found."
   },
-  "responses": {
-    "title": "Responses",
-    "fetchError": "Failed to load responses. Make sure the backend is running.",
-    "noData": "No responses found.",
-    "columns": {
-      "title": "Title",
-      "location": "Location",
-      "status": "Status",
-      "priority": "Priority",
-      "date": "Date"
-    },
-    "status": {
-      "pending": "Pending",
-      "inProgress": "In Progress",
-      "resolved": "Resolved"
-    },
-    "priority": {
-      "low": "Low",
-      "medium": "Medium",
-      "high": "High",
-      "critical": "Critical"
-    }
+  "nav": {
+    "dashboard": "Dashboard",
+    "providers": "Providers",
+    "services": "Services",
+    "locations": "Locations",
+    "shelters": "Shelters",
+    "availability": "Availability",
+    "needs": "Needs",
+    "matches": "Aid Matches"
+  },
+  "providers": {
+    "name": "Name",
+    "type": "Type",
+    "contact": "Contact",
+    "phone": "Phone",
+    "active": "Active"
+  },
+  "services": {
+    "name": "Service",
+    "provider": "Provider",
+    "sector": "Sector",
+    "aidType": "Aid Type",
+    "status": "Status"
+  },
+  "locations": {
+    "governorate": "Governorate",
+    "city": "City",
+    "district": "District",
+    "locality": "Locality",
+    "accessibility": "Accessibility"
+  },
+  "shelters": {
+    "name": "Name",
+    "type": "Type",
+    "governorate": "Governorate",
+    "city": "City",
+    "capacity": "Capacity",
+    "population": "Population",
+    "status": "Status"
   }
 }

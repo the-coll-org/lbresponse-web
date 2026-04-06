@@ -11,32 +11,48 @@
     "theme": "السمة",
     "lightMode": "الوضع الفاتح",
     "darkMode": "الوضع الداكن",
-    "health": "الحالة",
     "loading": "جاري التحميل...",
-    "uptime": "وقت التشغيل",
-    "environment": "البيئة"
+    "fetchError": "فشل تحميل البيانات. تأكد من تشغيل الخادم.",
+    "noData": "لا توجد بيانات."
   },
-  "responses": {
-    "title": "الاستجابات",
-    "fetchError": "فشل تحميل الاستجابات. تأكد من تشغيل الخادم.",
-    "noData": "لا توجد استجابات.",
-    "columns": {
-      "title": "العنوان",
-      "location": "الموقع",
-      "status": "الحالة",
-      "priority": "الأولوية",
-      "date": "التاريخ"
-    },
-    "status": {
-      "pending": "قيد الانتظار",
-      "inProgress": "قيد التنفيذ",
-      "resolved": "تم الحل"
-    },
-    "priority": {
-      "low": "منخفضة",
-      "medium": "متوسطة",
-      "high": "عالية",
-      "critical": "حرجة"
-    }
+  "nav": {
+    "dashboard": "لوحة المعلومات",
+    "providers": "مقدمو الخدمات",
+    "services": "الخدمات",
+    "locations": "المواقع",
+    "shelters": "الملاجئ",
+    "availability": "التوفر",
+    "needs": "الاحتياجات",
+    "matches": "مطابقة المساعدات"
+  },
+  "providers": {
+    "name": "الاسم",
+    "type": "النوع",
+    "contact": "جهة الاتصال",
+    "phone": "الهاتف",
+    "active": "نشط"
+  },
+  "services": {
+    "name": "الخدمة",
+    "provider": "مقدم الخدمة",
+    "sector": "القطاع",
+    "aidType": "نوع المساعدة",
+    "status": "الحالة"
+  },
+  "locations": {
+    "governorate": "المحافظة",
+    "city": "المدينة",
+    "district": "القضاء",
+    "locality": "المنطقة",
+    "accessibility": "إمكانية الوصول"
+  },
+  "shelters": {
+    "name": "الاسم",
+    "type": "النوع",
+    "governorate": "المحافظة",
+    "city": "المدينة",
+    "capacity": "السعة",
+    "population": "عدد السكان",
+    "status": "الحالة"
   }
 }
