@@ -4,28 +4,38 @@ import './ResponsesTable.css';
 
 interface DataTableProps {
   endpoint: string;
-  columns: { key: string; label: string; format?: (v: unknown) => string }[];
 }
 
 interface ApiResult {
   data: Record<string, unknown>[];
   total: number;
+  metadata?: Record<string, unknown>;
 }
 
-function DataTable({ endpoint, columns }: DataTableProps) {
+function DataTable({ endpoint }: DataTableProps) {
   const { t } = useTranslation();
   const [rows, setRows] = useState<Record<string, unknown>[]>([]);
+  const [columns, setColumns] = useState<string[]>([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const fetchData = useCallback(async () => {
+    setLoading(true);
     try {
       const res = await fetch(endpoint);
       if (!res.ok) throw new Error(`HTTP ${res.status.toString()}`);
       const json = (await res.json()) as ApiResult;
-      setRows(json.data);
-      setTotal(json.total);
+      const data = json.data ?? [];
+      setRows(data);
+      setTotal(json.total ?? data.length);
+
+      // Auto-detect columns from first row, excluding internal fields
+      if (data.length > 0) {
+        const keys = Object.keys(data[0]).filter((k) => !k.startsWith('_'));
+        setColumns(keys);
+      }
+
       setError(null);
     } catch {
       setError(t('common.fetchError'));
@@ -57,6 +67,14 @@ function DataTable({ endpoint, columns }: DataTableProps) {
     return <div className="table-empty">{t('common.noData')}</div>;
   }
 
+  const formatCell = (val: unknown): string => {
+    if (val == null) return '—';
+    if (typeof val === 'string') return val;
+    if (typeof val === 'number') return val.toLocaleString();
+    if (typeof val === 'boolean') return val ? 'Yes' : 'No';
+    return JSON.stringify(val);
+  };
+
   return (
     <div className="table-wrapper">
       <div className="table-meta">{total} records</div>
@@ -64,24 +82,16 @@ function DataTable({ endpoint, columns }: DataTableProps) {
         <thead>
           <tr>
             {columns.map((col) => (
-              <th key={col.key}>{col.label}</th>
+              <th key={col}>{col}</th>
             ))}
           </tr>
         </thead>
         <tbody>
           {rows.map((row, idx) => (
             <tr key={idx}>
-              {columns.map((col) => {
-                const val = row[col.key];
-                const display = col.format
-                  ? col.format(val)
-                  : val != null
-                    ? typeof val === 'string'
-                      ? val
-                      : JSON.stringify(val)
-                    : '—';
-                return <td key={col.key}>{display}</td>;
-              })}
+              {columns.map((col) => (
+                <td key={col}>{formatCell(row[col])}</td>
+              ))}
             </tr>
           ))}
         </tbody>

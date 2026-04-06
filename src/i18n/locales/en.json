@@ -4,11 +4,6 @@
     "description": "Lebanon Crisis Response Platform"
   },
   "common": {
-    "home": "Home",
-    "about": "About",
-    "settings": "Settings",
-    "language": "Language",
-    "theme": "Theme",
     "lightMode": "Light Mode",
     "darkMode": "Dark Mode",
     "loading": "Loading...",
@@ -16,43 +11,11 @@
     "noData": "No data found."
   },
   "nav": {
-    "dashboard": "Dashboard",
-    "providers": "Providers",
-    "services": "Services",
-    "locations": "Locations",
-    "shelters": "Shelters",
-    "availability": "Availability",
-    "needs": "Needs",
-    "matches": "Aid Matches"
+    "dashboard": "Dashboard"
   },
-  "providers": {
-    "name": "Name",
-    "type": "Type",
-    "contact": "Contact",
-    "phone": "Phone",
-    "active": "Active"
-  },
-  "services": {
-    "name": "Service",
-    "provider": "Provider",
-    "sector": "Sector",
-    "aidType": "Aid Type",
-    "status": "Status"
-  },
-  "locations": {
-    "governorate": "Governorate",
-    "city": "City",
-    "district": "District",
-    "locality": "Locality",
-    "accessibility": "Accessibility"
-  },
-  "shelters": {
-    "name": "Name",
-    "type": "Type",
-    "governorate": "Governorate",
-    "city": "City",
-    "capacity": "Capacity",
-    "population": "Population",
-    "status": "Status"
+  "dashboard": {
+    "visuals": "Data Visuals",
+    "totalRows": "Total Rows",
+    "pages": "Pages"
   }
 }

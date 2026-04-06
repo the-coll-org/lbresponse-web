@@ -4,11 +4,6 @@
     "description": "منصة الاستجابة للأزمات اللبنانية"
   },
   "common": {
-    "home": "الرئيسية",
-    "about": "حول",
-    "settings": "الإعدادات",
-    "language": "اللغة",
-    "theme": "السمة",
     "lightMode": "الوضع الفاتح",
     "darkMode": "الوضع الداكن",
     "loading": "جاري التحميل...",
@@ -16,43 +11,11 @@
     "noData": "لا توجد بيانات."
   },
   "nav": {
-    "dashboard": "لوحة المعلومات",
-    "providers": "مقدمو الخدمات",
-    "services": "الخدمات",
-    "locations": "المواقع",
-    "shelters": "الملاجئ",
-    "availability": "التوفر",
-    "needs": "الاحتياجات",
-    "matches": "مطابقة المساعدات"
+    "dashboard": "لوحة المعلومات"
   },
-  "providers": {
-    "name": "الاسم",
-    "type": "النوع",
-    "contact": "جهة الاتصال",
-    "phone": "الهاتف",
-    "active": "نشط"
-  },
-  "services": {
-    "name": "الخدمة",
-    "provider": "مقدم الخدمة",
-    "sector": "القطاع",
-    "aidType": "نوع المساعدة",
-    "status": "الحالة"
-  },
-  "locations": {
-    "governorate": "المحافظة",
-    "city": "المدينة",
-    "district": "القضاء",
-    "locality": "المنطقة",
-    "accessibility": "إمكانية الوصول"
-  },
-  "shelters": {
-    "name": "الاسم",
-    "type": "النوع",
-    "governorate": "المحافظة",
-    "city": "المدينة",
-    "capacity": "السعة",
-    "population": "عدد السكان",
-    "status": "الحالة"
+  "dashboard": {
+    "visuals": "البيانات المرئية",
+    "totalRows": "إجمالي الصفوف",
+    "pages": "الصفحات"
   }
 }
