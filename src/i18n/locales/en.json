@@ -17,5 +17,62 @@
     "visuals": "Data Visuals",
     "totalRows": "Total Rows",
     "pages": "Pages"
+  },
+  "showcase": {
+    "button": {
+      "title": "Button Component Showcase",
+      "filled": "Filled buttons",
+      "tonal": "Tonal buttons",
+      "text": "Text buttons",
+      "icon": "Icon buttons",
+      "label": "Button",
+      "ariaFavorite": "Favorite"
+    },
+    "textarea": {
+      "title": "Text Area Component Showcase",
+      "placeholder": "Placeholder",
+      "value": "Value",
+      "error": "Error",
+      "disabled": "Disabled",
+      "placeholderText": "Type your message here.",
+      "valueText": "Value",
+      "disabledText": "Disabled"
+    },
+    "alert": {
+      "title": "Alert Component Showcase",
+      "neutral": "Neutral",
+      "error": "Error",
+      "withAction": "With action",
+      "headsUp": "Heads up",
+      "neutralBody": "This response may take longer than expected.",
+      "requestFailed": "Request failed",
+      "errorBody": "Please check your connection and try again.",
+      "retry": "Retry"
+    },
+    "textfield": {
+      "title": "Text Field Component Showcase",
+      "regularSize": "Regular size (md)",
+      "largeSize": "Large size (lg)",
+      "placeholder": "Placeholder",
+      "value": "Value",
+      "error": "Error",
+      "disabled": "Disabled",
+      "withLeftIcon": "With left icon",
+      "withRightIcon": "With right icon",
+      "withBothIcons": "With both icons",
+      "errorWithIcon": "Error with icon",
+      "valuePlaceholder": "Value",
+      "placeholderText": "Placeholder",
+      "search": "Search"
+    },
+    "badge": {
+      "title": "Badge Component Showcase",
+      "variants": "Variants",
+      "withIcons": "With icons",
+      "primary": "Primary",
+      "secondary": "Secondary",
+      "outline": "Outline",
+      "destructive": "Destructive"
+    }
   }
 }
