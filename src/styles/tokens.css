@@ -133,6 +133,10 @@
   /* Static component-level sizes — not overridden by the desktop typescale */
   --text-button: 14px;
   --text-button--line-height: 18px;
+
+  /* Shadows — source: shadow-xs, shadow-2xs (design specs) */
+  --shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-2xs: 0 1px 0 0 rgba(0, 0, 0, 0.05);
 }
 
 /*
@@ -260,6 +264,18 @@
   --components-alert-error-icon: #ed5158; /* solid-red-500   */
   --components-alert-neutral-text: #2b272b; /* solid-black-600 */
   --components-alert-neutral-icon: #818283; /* solid-black-400 */
+
+  /* ── Focus rings ───────────────────────────────────────────────────────── */
+  --focus-ring: #d4d4d4;
+  --focus-ring-error: #fca5a5;
+
+  /* ── Body font — defaults to Arabic; overridden per language ─────────── */
+  --font-body: 'Dubai', sans-serif;
+}
+
+/* Switch body font to English when lang="en" is set on <html> */
+[lang='en'] {
+  --font-body: 'Roboto', sans-serif;
 }
 
 /* ============================================================================
@@ -314,4 +330,8 @@
   --color-alert-error-icon: var(--components-alert-error-icon);
   --color-alert-neutral-text: var(--components-alert-neutral-text);
   --color-alert-neutral-icon: var(--components-alert-neutral-icon);
+
+  /* Focus rings */
+  --shadow-focus-ring: 0 0 0 3px var(--focus-ring);
+  --shadow-focus-ring-error: 0 0 0 3px var(--focus-ring-error);
 }
