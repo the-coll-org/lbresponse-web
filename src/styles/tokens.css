@@ -409,3 +409,32 @@
   /* ── Border radius ────────────────────────────────────────────────────── */
   --radius: var(--radius-md); /* 8px — matches button/textfield/alert */
 }
+
+/* ─── Toast animations ────────────────────────────────────────────────────── */
+
+@keyframes toast-enter {
+  from {
+    transform: translateY(-110%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes toast-exit {
+  from {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateY(-110%);
+    opacity: 0;
+  }
+}
+
+@theme {
+  --animate-toast-enter: toast-enter 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  --animate-toast-exit: toast-exit 0.28s ease-in forwards;
+}

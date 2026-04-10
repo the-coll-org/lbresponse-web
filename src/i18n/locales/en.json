@@ -47,7 +47,11 @@
       "neutralBody": "This response may take longer than expected.",
       "requestFailed": "Request failed",
       "errorBody": "Please check your connection and try again.",
-      "retry": "Retry"
+      "retry": "Retry",
+      "toastSection": "Toast notifications",
+      "showNeutral": "Show neutral toast",
+      "showError": "Show error toast",
+      "showWithAction": "Show toast with action"
     },
     "textfield": {
       "title": "Text Field Component Showcase",

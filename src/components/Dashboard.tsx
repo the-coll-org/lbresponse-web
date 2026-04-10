@@ -5,6 +5,7 @@ import { Badge } from './ui/Badge';
 import { Button } from './ui/Button';
 import { TextArea } from './ui/TextArea';
 import { TextField } from './ui/TextField';
+import { useToast } from '../hooks/useToast';
 
 interface DashboardData {
   visuals: number;
@@ -275,6 +276,7 @@ function TextAreaShowcase() {
 
 function AlertShowcase() {
   const { t } = useTranslation();
+  const { addToast } = useToast();
   return (
     <section className="flex flex-col gap-32 p-32">
       <h2 className="text-xl font-weight-semibold text-text-black">
@@ -331,6 +333,49 @@ function AlertShowcase() {
           >
             {t('showcase.alert.errorBody')}
           </Alert>
+        </div>
+      </div>
+
+      <div className="flex flex-col gap-16">
+        <p className="text-sm font-weight-medium text-text-black">
+          {t('showcase.alert.toastSection')}
+        </p>
+        <div className="flex flex-wrap gap-12">
+          <Button
+            variant="tonal"
+            onClick={() =>
+              addToast({
+                heading: t('showcase.alert.headsUp'),
+                body: t('showcase.alert.neutralBody'),
+              })
+            }
+          >
+            {t('showcase.alert.showNeutral')}
+          </Button>
+          <Button
+            variant="tonal"
+            onClick={() =>
+              addToast({
+                variant: 'error',
+                heading: t('showcase.alert.requestFailed'),
+                body: t('showcase.alert.errorBody'),
+              })
+            }
+          >
+            {t('showcase.alert.showError')}
+          </Button>
+          <Button
+            variant="tonal"
+            onClick={() =>
+              addToast({
+                heading: t('showcase.alert.headsUp'),
+                body: t('showcase.alert.neutralBody'),
+                duration: 8000,
+              })
+            }
+          >
+            {t('showcase.alert.showWithAction')}
+          </Button>
         </div>
       </div>
     </section>

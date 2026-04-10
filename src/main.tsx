@@ -4,12 +4,17 @@ import './i18n';
 import './styles/themes.css';
 import './index.css';
 import { ThemeProvider } from './context/ThemeContext.tsx';
+import { ToastProvider } from './context/ToastContext.tsx';
+import { ToastContainer } from './components/ui/ToastContainer.tsx';
 import App from './App.tsx';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <ThemeProvider>
-      <App />
+      <ToastProvider>
+        <App />
+        <ToastContainer />
+      </ToastProvider>
     </ThemeProvider>
   </StrictMode>
 );
