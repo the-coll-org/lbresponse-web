@@ -30,6 +30,52 @@ function StarIcon() {
   );
 }
 
+// ─── Alert showcase ─────────────────────────────────────────────────────────
+
+function AlertShowcase() {
+  const [alert, setAlert] = useState<'success' | 'error' | null>(null);
+
+  return (
+    <section className="flex flex-col gap-32 p-32">
+      <h2 className="text-xl font-weight-semibold text-text-black">
+        Alert Showcase
+      </h2>
+
+      <div className="flex flex-col gap-16">
+        <p className="text-sm font-weight-medium text-text-black">
+          Click a button to show the corresponding alert
+        </p>
+        <div className="flex flex-wrap gap-12">
+          <Button variant="filled" onClick={() => setAlert('success')}>
+            Show Success
+          </Button>
+          <Button variant="tonal" onClick={() => setAlert('error')}>
+            Show Error
+          </Button>
+          {alert && (
+            <Button variant="text" onClick={() => setAlert(null)}>
+              Dismiss
+            </Button>
+          )}
+        </div>
+      </div>
+
+      {alert === 'success' && (
+        <Alert heading="Success!">
+          Your response was recorded successfully and is now being processed.
+        </Alert>
+      )}
+
+      {alert === 'error' && (
+        <Alert variant="error" heading="Request Failed">
+          We couldn't complete this action. Please check your connection and try
+          again.
+        </Alert>
+      )}
+    </section>
+  );
+}
+
 // ─── Button showcase section ──────────────────────────────────────────────────
 
 function ButtonShowcase() {
@@ -410,83 +456,6 @@ function TextAreaShowcase() {
 
 // ─── Alert showcase ──────────────────────────────────────────────────────────
 
-function AlertShowcase() {
-  return (
-    <section className="flex flex-col gap-32 p-32">
-      <h2 className="text-xl font-weight-semibold text-text-black">
-        Alert Component Showcase
-      </h2>
-
-      {/* Neutral — EN & AR */}
-      <div className="flex flex-col gap-16">
-        <p className="text-sm font-weight-medium text-text-black">Neutral</p>
-        <div className="flex flex-col gap-12">
-          <Alert heading="Heads up" style={{ width: '400px' }}>
-            This response may take longer than expected.
-          </Alert>
-          <Alert heading="تنبيه" dir="rtl" style={{ width: '400px' }}>
-            قد يستغرق هذا الرد وقتاً أطول من المتوقع.
-          </Alert>
-        </div>
-      </div>
-
-      {/* Error — EN & AR */}
-      <div className="flex flex-col gap-16">
-        <p className="text-sm font-weight-medium text-text-black">Error</p>
-        <div className="flex flex-col gap-12">
-          <Alert
-            variant="error"
-            heading="Request failed"
-            style={{ width: '400px' }}
-          >
-            Please check your connection and try again.
-          </Alert>
-          <Alert
-            variant="error"
-            heading="فشل الطلب"
-            dir="rtl"
-            style={{ width: '400px' }}
-          >
-            يرجى التحقق من الاتصال والمحاولة مرة أخرى.
-          </Alert>
-        </div>
-      </div>
-
-      {/* With action button — matches Figma "Show Button=true" */}
-      <div className="flex flex-col gap-16">
-        <p className="text-sm font-weight-medium text-text-black">
-          With action
-        </p>
-        <div className="flex flex-col gap-12">
-          <Alert
-            heading="Heads up"
-            action={
-              <Button variant="tonal" size="sm">
-                Retry
-              </Button>
-            }
-            style={{ width: '400px' }}
-          >
-            This response may take longer than expected.
-          </Alert>
-          <Alert
-            variant="error"
-            heading="Request failed"
-            action={
-              <Button variant="tonal" size="sm">
-                Retry
-              </Button>
-            }
-            style={{ width: '400px' }}
-          >
-            Please check your connection and try again.
-          </Alert>
-        </div>
-      </div>
-    </section>
-  );
-}
-
 // ─── Shared icon for TextField examples ─────────────────────────────────────
 
 function SearchIcon() {
@@ -809,8 +778,9 @@ function Dashboard() {
 
   return (
     <div>
-      <ButtonShowcase />
       <AlertShowcase />
+      <ButtonShowcase />
+      <TextAreaShowcase />
       <TextAreaShowcase />
       <TextFieldShowcase />
 
