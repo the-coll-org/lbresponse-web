@@ -199,6 +199,7 @@
    ============================================================================ */
 
 @theme {
+  --spacing-2: 2px;
   --spacing-4: 4px;
   --spacing-8: 8px;
   --spacing-12: 12px;
@@ -334,4 +335,61 @@
   /* Focus rings */
   --shadow-focus-ring: 0 0 0 3px var(--focus-ring);
   --shadow-focus-ring-error: 0 0 0 3px var(--focus-ring-error);
+}
+
+/* ============================================================================
+   shadcn/ui COMPATIBILITY LAYER
+   Maps shadcn/ui's expected CSS variable names to this project's semantic tokens.
+   Required only if shadcn/ui components are installed.
+   See: https://ui.shadcn.com/docs/theming
+   ============================================================================ */
+
+:root {
+  /* ── Base ──────────────────────────────────────────────────────────────── */
+  --background: var(--surface-primary); /* page / card background          */
+  --foreground: var(--text-black); /* default text color              */
+
+  /* ── Card / Popover ───────────────────────────────────────────────────── */
+  --card: var(--surface-primary);
+  --card-foreground: var(--text-black);
+  --popover: var(--surface-primary);
+  --popover-foreground: var(--text-black);
+
+  /* ── Primary action ───────────────────────────────────────────────────── */
+  --primary: var(--components-button-filled-bg); /* #2e4369 solid-primary-700 */
+  --primary-foreground: var(
+    --components-button-filled-text
+  ); /* #fcfbfa solid-white-400   */
+
+  /* ── Secondary / tonal ────────────────────────────────────────────────── */
+  --secondary: var(
+    --components-button-tonal-bg
+  ); /* #d9e9ff solid-primary-300 */
+  --secondary-foreground: var(
+    --components-button-tonal-text
+  ); /* #2b272b solid-black-600   */
+
+  /* ── Muted surfaces ───────────────────────────────────────────────────── */
+  --muted: var(--components-button-icon-bg); /* #f5f2f0 solid-white-600 */
+  --muted-foreground: var(
+    --components-text-default-text
+  ); /* #818283 solid-black-400 */
+
+  /* ── Accent (same as tonal) ───────────────────────────────────────────── */
+  --accent: var(--components-button-tonal-bg);
+  --accent-foreground: var(--components-button-tonal-text);
+
+  /* ── Destructive ──────────────────────────────────────────────────────── */
+  --destructive: var(
+    --components-alert-error-text
+  ); /* #ed5158 solid-red-500   */
+  --destructive-foreground: #fcfbfa; /* solid-white-400         */
+
+  /* ── Border / Input ───────────────────────────────────────────────────── */
+  --border: var(--components-text-default-stroke); /* #c5c6c8 solid-black-300 */
+  --input: var(--components-text-default-stroke);
+  --ring: var(--focus-ring); /* #d4d4d4                 */
+
+  /* ── Border radius ────────────────────────────────────────────────────── */
+  --radius: var(--radius-md); /* 8px — matches button/textfield/alert */
 }
