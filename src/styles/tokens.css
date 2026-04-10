@@ -222,51 +222,59 @@
 
 :root {
   /* ── Surface ───────────────────────────────────────────────────────────── */
-  --surface-primary: #fcfbfa; /* solid-white-400 */
+  --surface-primary: var(--color-solid-white-400);
 
   /* ── Text ──────────────────────────────────────────────────────────────── */
-  --text-black: #2b272b; /* solid-black-600 */
+  --text-black: var(--color-solid-black-600);
 
   /* ── Icon ──────────────────────────────────────────────────────────────── */
-  --icon-black: #2b272b; /* solid-black-600 */
+  --icon-black: var(--color-solid-black-600);
 
   /* ── Button — filled ───────────────────────────────────────────────────── */
-  --components-button-filled-bg: #2e4369; /* solid-primary-700 */
-  --components-button-filled-text: #fcfbfa; /* solid-white-400   */
-  --components-button-filled-icon: #fcfbfa; /* solid-white-400   */
+  --components-button-filled-bg: var(--color-solid-primary-700);
+  --components-button-filled-text: var(--color-solid-white-400);
+  --components-button-filled-icon: var(--color-solid-white-400);
 
   /* ── Button — tonal ────────────────────────────────────────────────────── */
-  --components-button-tonal-bg: #d9e9ff; /* solid-primary-300 */
-  --components-button-tonal-text: #2b272b; /* solid-black-600   */
-  --components-button-tonal-icon: #2b272b; /* solid-black-600   */
+  --components-button-tonal-bg: var(--color-solid-primary-300);
+  --components-button-tonal-text: var(--color-solid-black-600);
+  --components-button-tonal-icon: var(--color-solid-black-600);
 
   /* ── Button — text ─────────────────────────────────────────────────────── */
-  --components-button-text-text: #2b272b; /* solid-black-600 */
-  --components-button-text-icon: #2b272b; /* solid-black-600 */
+  --components-button-text-text: var(--color-solid-black-600);
+  --components-button-text-icon: var(--color-solid-black-600);
 
   /* ── Button — icon ─────────────────────────────────────────────────────── */
-  --components-button-icon-bg: #f5f2f0; /* solid-white-600 */
-  --components-button-icon-icon: #2b272b; /* solid-black-600 */
+  --components-button-icon-bg: var(--color-solid-white-600);
+  --components-button-icon-icon: var(--color-solid-black-600);
 
   /* ── Text field ────────────────────────────────────────────────────────── */
-  --components-text-bg: #fcfbfa; /* solid-white-400 */
-  --components-text-default-text: #818283; /* solid-black-400 */
-  --components-text-default-stroke: #c5c6c8; /* solid-black-300 */
-  --components-text-value: #2b272b; /* solid-black-600 */
-  --components-text-value-stroke: #c5c6c8; /* solid-black-300 */
-  --components-text-focus-stroke: #818283; /* solid-black-400 */
-  --components-text-error-stroke: #ed5158; /* solid-red-500   */
-  --components-text-icon: #c5c6c8; /* solid-black-300 */
+  --components-text-bg: var(--color-solid-white-400);
+  --components-text-default-text: var(--color-solid-black-400);
+  --components-text-default-stroke: var(--color-solid-black-300);
+  --components-text-value: var(--color-solid-black-600);
+  --components-text-value-stroke: var(--color-solid-black-300);
+  --components-text-focus-stroke: var(--color-solid-black-400);
+  --components-text-error-stroke: var(--color-solid-red-500);
+  --components-text-icon: var(--color-solid-black-300);
 
   /* ── Alert ─────────────────────────────────────────────────────────────── */
-  --components-alert-bg: #fcfbfa; /* solid-white-400 */
-  --components-alert-stroke: #c5c6c8; /* solid-black-300 */
-  --components-alert-error-text: #ed5158; /* solid-red-500   */
-  --components-alert-error-icon: #ed5158; /* solid-red-500   */
-  --components-alert-neutral-text: #2b272b; /* solid-black-600 */
-  --components-alert-neutral-icon: #818283; /* solid-black-400 */
+  --components-alert-bg: var(--color-solid-white-400);
+  --components-alert-stroke: var(--color-solid-black-300);
+  --components-alert-error-text: var(--color-solid-red-500);
+  --components-alert-error-icon: var(--color-solid-red-500);
+  --components-alert-neutral-text: var(--color-solid-black-600);
+  --components-alert-neutral-icon: var(--color-solid-black-400);
 
-  /* ── Focus rings ───────────────────────────────────────────────────────── */
+  /* ── Badges ─────────────────────────────────────────────────────────────── */
+  --components-badges-primary: var(--color-solid-black-600);
+  --components-badges-secondary: var(--color-solid-white-400);
+  --components-badges-destructive: var(--color-solid-red-500);
+  --components-badges-text: var(--color-solid-white-700);
+  --components-badges-text-dark: var(--color-solid-black-600);
+  --components-badges-outline-stroke: var(--color-solid-black-600);
+
+  /* ── Focus rings (not in the solid palette) ────────────────────────────── */
   --focus-ring: #d4d4d4;
   --focus-ring-error: #fca5a5;
 
@@ -332,6 +340,14 @@
   --color-alert-neutral-text: var(--components-alert-neutral-text);
   --color-alert-neutral-icon: var(--components-alert-neutral-icon);
 
+  /* Badge */
+  --color-badge-primary: var(--components-badges-primary);
+  --color-badge-secondary: var(--components-badges-secondary);
+  --color-badge-destructive: var(--components-badges-destructive);
+  --color-badge-text: var(--components-badges-text);
+  --color-badge-text-dark: var(--components-badges-text-dark);
+  --color-badge-outline-stroke: var(--components-badges-outline-stroke);
+
   /* Focus rings */
   --shadow-focus-ring: 0 0 0 3px var(--focus-ring);
   --shadow-focus-ring-error: 0 0 0 3px var(--focus-ring-error);
@@ -392,4 +408,33 @@
 
   /* ── Border radius ────────────────────────────────────────────────────── */
   --radius: var(--radius-md); /* 8px — matches button/textfield/alert */
+}
+
+/* ─── Toast animations ────────────────────────────────────────────────────── */
+
+@keyframes toast-enter {
+  from {
+    transform: translateY(-110%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes toast-exit {
+  from {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateY(-110%);
+    opacity: 0;
+  }
+}
+
+@theme {
+  --animate-toast-enter: toast-enter 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  --animate-toast-exit: toast-exit 0.28s ease-in forwards;
 }

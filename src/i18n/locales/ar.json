@@ -17,5 +17,66 @@
     "visuals": "البيانات المرئية",
     "totalRows": "إجمالي الصفوف",
     "pages": "الصفحات"
+  },
+  "showcase": {
+    "button": {
+      "title": "عرض مكون الزر",
+      "filled": "أزرار مملوءة",
+      "tonal": "أزرار ملونة",
+      "text": "أزرار نصية",
+      "icon": "أزرار أيقونية",
+      "label": "زر",
+      "ariaFavorite": "مفضلة"
+    },
+    "textarea": {
+      "title": "عرض مكون منطقة النص",
+      "placeholder": "عنصر نائب",
+      "value": "قيمة",
+      "error": "خطأ",
+      "disabled": "معطل",
+      "placeholderText": "اكتب رسالتك هنا",
+      "valueText": "القيمة",
+      "disabledText": "معطل"
+    },
+    "alert": {
+      "title": "عرض مكون التنبيه",
+      "neutral": "محايد",
+      "error": "خطأ",
+      "withAction": "مع إجراء",
+      "headsUp": "تنبيه",
+      "neutralBody": "قد يستغرق هذا الرد وقتاً أطول من المتوقع.",
+      "requestFailed": "فشل الطلب",
+      "errorBody": "يرجى التحقق من الاتصال والمحاولة مرة أخرى.",
+      "retry": "إعادة المحاولة",
+      "toastSection": "إشعارات التوست",
+      "showNeutral": "عرض إشعار محايد",
+      "showError": "عرض إشعار خطأ",
+      "showWithAction": "عرض إشعار مع إجراء"
+    },
+    "textfield": {
+      "title": "عرض مكون حقل النص",
+      "regularSize": "الحجم العادي (md)",
+      "largeSize": "الحجم الكبير (lg)",
+      "placeholder": "عنصر نائب",
+      "value": "قيمة",
+      "error": "خطأ",
+      "disabled": "معطل",
+      "withLeftIcon": "مع أيقونة يسار",
+      "withRightIcon": "مع أيقونة يمين",
+      "withBothIcons": "مع كلتا الأيقونتين",
+      "errorWithIcon": "خطأ مع أيقونة",
+      "valuePlaceholder": "القيمة",
+      "placeholderText": "عنصر نائب",
+      "search": "بحث"
+    },
+    "badge": {
+      "title": "عرض مكون الشارة",
+      "variants": "الأنواع",
+      "withIcons": "مع أيقونات",
+      "primary": "أساسي",
+      "secondary": "ثانوي",
+      "outline": "مخطط",
+      "destructive": "تحذيري"
+    }
   }
 }
