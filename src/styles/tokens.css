@@ -1,0 +1,337 @@
+/*
+ * Design Tokens — Tailwind v4 CSS Configuration
+ *
+ * This file is the Tailwind v4 equivalent of tailwind.config.ts.
+ * No tailwind.config.ts is needed — Tailwind v4 reads theme tokens from CSS.
+ *
+ * Three-layer architecture:
+ *
+ *   LAYER 1 — @theme (static solid palette, typography, spacing, radius)
+ *     Registers immutable design primitives as Tailwind utilities.
+ *     e.g. bg-solid-primary-700, text-2xs, rounded-lg, m-24
+ *
+ *   LAYER 2 — :root (semantic CSS variables)
+ *     Declares resolved semantic aliases as plain CSS custom properties.
+ *     These can be overridden per-theme (dark mode, language direction, etc.).
+ *
+ *   LAYER 3 — @theme inline (semantic Tailwind utilities)
+ *     Wraps Layer 2 variables as Tailwind utilities so they respond to
+ *     theme overrides at runtime — unlike regular @theme which is static.
+ *     e.g. bg-surface-primary, bg-button-filled-bg, border-textfield-default-stroke
+ *
+ * Import this file in src/index.css after @import "tailwindcss".
+ */
+
+/* ============================================================================
+   LAYER 1 — SOLID COLOR PALETTE
+   Generates: bg-solid-primary-700, text-solid-red-500, border-solid-black-300, …
+   ============================================================================ */
+
+@theme {
+  /* Primary */
+  --color-solid-primary-300: #d9e9ff;
+  --color-solid-primary-400: #b0ccf4;
+  --color-solid-primary-500: #5189ed;
+  --color-solid-primary-600: #375da1;
+  --color-solid-primary-700: #2e4369;
+
+  /* Green */
+  --color-solid-green-400: #77aa7b;
+  --color-solid-green-500: #54b661;
+  --color-solid-green-600: #37a145;
+  --color-solid-green-700: #2b5e33;
+
+  /* Red */
+  --color-solid-red-400: #e39684;
+  --color-solid-red-500: #ed5158;
+  --color-solid-red-600: #a1373c;
+  --color-solid-red-700: #a61e24;
+
+  /* Black */
+  --color-solid-black-300: #c5c6c8;
+  --color-solid-black-400: #818283;
+  --color-solid-black-500: #4f5052;
+  --color-solid-black-600: #2b272b;
+  --color-solid-black-700: #0d0e10;
+
+  /* White */
+  --color-solid-white-400: #fcfbfa;
+  --color-solid-white-500: #f9f7f5;
+  --color-solid-white-600: #f5f2f0;
+  --color-solid-white-700: #f2eeeb;
+
+  /* Orange */
+  --color-solid-orange-50: #fff7ed;
+  --color-solid-orange-100: #ffedd5;
+  --color-solid-orange-200: #fed7aa;
+  --color-solid-orange-300: #fdba74;
+  --color-solid-orange-400: #fb923c;
+  --color-solid-orange-500: #f97316;
+  --color-solid-orange-600: #ea580c;
+  --color-solid-orange-700: #c2410c;
+}
+
+/* ============================================================================
+   LAYER 1 — FONT FAMILIES
+   Generates: font-arabic, font-english
+   source: --family-family (Arabic: "Dubai" | English: "Roboto")
+   ============================================================================ */
+
+@theme {
+  --font-arabic: 'Dubai', sans-serif;
+  --font-english: 'Roboto', sans-serif;
+}
+
+/* ============================================================================
+   LAYER 1 — FONT WEIGHTS
+   Generates: font-weight-regular, font-weight-medium, font-weight-semibold, font-weight-bold
+   source: --weight-regular | --weight-medium | --weight-semibold | --weight-bold
+   ============================================================================ */
+
+@theme {
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+}
+
+/* ============================================================================
+   LAYER 1 — TYPOGRAPHY (mobile-first scale)
+   Font size utilities: text-2xs … text-4xl
+   Line height is paired via the --{step}--line-height convention (Tailwind v4).
+   source: --size-* and --lineheight-* (mobile variant)
+   ============================================================================ */
+
+@theme {
+  --text-2xs: 12px;
+  --text-2xs--line-height: 14px;
+
+  --text-xs: 14px;
+  --text-xs--line-height: 18px;
+
+  --text-sm: 16px;
+  --text-sm--line-height: 20px;
+
+  --text-md: 18px;
+  --text-md--line-height: 28px;
+
+  --text-lg: 20px;
+  --text-lg--line-height: 28px;
+
+  --text-xl: 22px;
+  --text-xl--line-height: 32px;
+
+  --text-2xl: 24px;
+  --text-2xl--line-height: 34px;
+
+  --text-3xl: 32px;
+  --text-3xl--line-height: 40px;
+
+  --text-4xl: 40px;
+  --text-4xl--line-height: 48px;
+
+  /* Static component-level sizes — not overridden by the desktop typescale */
+  --text-button: 14px;
+  --text-button--line-height: 18px;
+
+  /* Shadows — source: shadow-xs, shadow-2xs (design specs) */
+  --shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-2xs: 0 1px 0 0 rgba(0, 0, 0, 0.05);
+}
+
+/*
+ * Desktop typescale override — applied at 768px (md breakpoint).
+ * Overrides the @theme CSS variables on :root where values differ.
+ * source: --size-* and --lineheight-* (desktop variant)
+ */
+@media (min-width: 768px) {
+  :root {
+    --text-2xs: 14px;
+    --text-2xs--line-height: 18px;
+
+    --text-xs: 16px;
+    --text-xs--line-height: 20px;
+
+    --text-sm: 18px;
+    /* --text-sm--line-height: 20px — same as mobile, no override needed */
+
+    --text-md: 20px;
+    /* --text-md--line-height: 28px — same as mobile */
+
+    --text-lg: 22px;
+    /* --text-lg--line-height: 28px — same as mobile */
+
+    --text-xl: 24px;
+    /* --text-xl--line-height: 32px — same as mobile */
+
+    --text-2xl: 32px;
+    /* --text-2xl--line-height: 34px — same as mobile */
+
+    --text-3xl: 40px;
+    /* --text-3xl--line-height: 40px — same as mobile */
+
+    --text-4xl: 48px;
+    /* --text-4xl--line-height: 48px — same as mobile */
+  }
+}
+
+/* ============================================================================
+   LAYER 1 — BORDER RADIUS
+   Generates: rounded-sm, rounded-md, rounded-lg, rounded-xl, rounded-2xl, rounded-full
+   source: --radius-*
+   ============================================================================ */
+
+@theme {
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+  --radius-2xl: 32px;
+  --radius-full: 1000px;
+}
+
+/* ============================================================================
+   LAYER 1 — SPACING
+   Generates: m-4, p-8, gap-12, w-24, …
+   Keys match their pixel values (e.g. --spacing-24 = 24px → m-24 = 24px).
+   Note: These override Tailwind's default multiplier-based spacing for these steps.
+   source: --spacing-*
+   ============================================================================ */
+
+@theme {
+  --spacing-4: 4px;
+  --spacing-8: 8px;
+  --spacing-12: 12px;
+  --spacing-16: 16px;
+  --spacing-20: 20px;
+  --spacing-22: 22px;
+  --spacing-24: 24px;
+  --spacing-32: 32px;
+  --spacing-40: 40px;
+  --spacing-48: 48px;
+  --spacing-64: 64px;
+}
+
+/* ============================================================================
+   LAYER 2 — SEMANTIC CSS VARIABLES
+   Plain CSS custom properties resolved to their solid palette values.
+   Declared on :root so they can be overridden in dark mode, RTL themes, etc.
+   source: --surface-*, --text-*, --icon-*, --components-*
+   ============================================================================ */
+
+:root {
+  /* ── Surface ───────────────────────────────────────────────────────────── */
+  --surface-primary: #fcfbfa; /* solid-white-400 */
+
+  /* ── Text ──────────────────────────────────────────────────────────────── */
+  --text-black: #2b272b; /* solid-black-600 */
+
+  /* ── Icon ──────────────────────────────────────────────────────────────── */
+  --icon-black: #2b272b; /* solid-black-600 */
+
+  /* ── Button — filled ───────────────────────────────────────────────────── */
+  --components-button-filled-bg: #2e4369; /* solid-primary-700 */
+  --components-button-filled-text: #fcfbfa; /* solid-white-400   */
+  --components-button-filled-icon: #fcfbfa; /* solid-white-400   */
+
+  /* ── Button — tonal ────────────────────────────────────────────────────── */
+  --components-button-tonal-bg: #d9e9ff; /* solid-primary-300 */
+  --components-button-tonal-text: #2b272b; /* solid-black-600   */
+  --components-button-tonal-icon: #2b272b; /* solid-black-600   */
+
+  /* ── Button — text ─────────────────────────────────────────────────────── */
+  --components-button-text-text: #2b272b; /* solid-black-600 */
+  --components-button-text-icon: #2b272b; /* solid-black-600 */
+
+  /* ── Button — icon ─────────────────────────────────────────────────────── */
+  --components-button-icon-bg: #f5f2f0; /* solid-white-600 */
+  --components-button-icon-icon: #2b272b; /* solid-black-600 */
+
+  /* ── Text field ────────────────────────────────────────────────────────── */
+  --components-text-bg: #fcfbfa; /* solid-white-400 */
+  --components-text-default-text: #818283; /* solid-black-400 */
+  --components-text-default-stroke: #c5c6c8; /* solid-black-300 */
+  --components-text-value: #2b272b; /* solid-black-600 */
+  --components-text-value-stroke: #c5c6c8; /* solid-black-300 */
+  --components-text-focus-stroke: #818283; /* solid-black-400 */
+  --components-text-error-stroke: #ed5158; /* solid-red-500   */
+  --components-text-icon: #c5c6c8; /* solid-black-300 */
+
+  /* ── Alert ─────────────────────────────────────────────────────────────── */
+  --components-alert-bg: #fcfbfa; /* solid-white-400 */
+  --components-alert-stroke: #c5c6c8; /* solid-black-300 */
+  --components-alert-error-text: #ed5158; /* solid-red-500   */
+  --components-alert-error-icon: #ed5158; /* solid-red-500   */
+  --components-alert-neutral-text: #2b272b; /* solid-black-600 */
+  --components-alert-neutral-icon: #818283; /* solid-black-400 */
+
+  /* ── Focus rings ───────────────────────────────────────────────────────── */
+  --focus-ring: #d4d4d4;
+  --focus-ring-error: #fca5a5;
+
+  /* ── Body font — defaults to Arabic; overridden per language ─────────── */
+  --font-body: 'Dubai', sans-serif;
+}
+
+/* Switch body font to English when lang="en" is set on <html> */
+[lang='en'] {
+  --font-body: 'Roboto', sans-serif;
+}
+
+/* ============================================================================
+   LAYER 3 — SEMANTIC TAILWIND UTILITIES (@theme inline)
+   @theme inline wraps Layer 2 CSS variables as Tailwind utilities.
+   Using `inline` ensures utilities contain var(--…) directly, so overrides
+   in dark mode / theme selectors cascade through at runtime.
+   ============================================================================ */
+
+@theme inline {
+  /* Surface */
+  --color-surface-primary: var(--surface-primary);
+
+  /* Text */
+  --color-text-black: var(--text-black);
+
+  /* Icon */
+  --color-icon-black: var(--icon-black);
+
+  /* Button — filled */
+  --color-button-filled-bg: var(--components-button-filled-bg);
+  --color-button-filled-text: var(--components-button-filled-text);
+  --color-button-filled-icon: var(--components-button-filled-icon);
+
+  /* Button — tonal */
+  --color-button-tonal-bg: var(--components-button-tonal-bg);
+  --color-button-tonal-text: var(--components-button-tonal-text);
+  --color-button-tonal-icon: var(--components-button-tonal-icon);
+
+  /* Button — text */
+  --color-button-text-text: var(--components-button-text-text);
+  --color-button-text-icon: var(--components-button-text-icon);
+
+  /* Button — icon */
+  --color-button-icon-bg: var(--components-button-icon-bg);
+  --color-button-icon-icon: var(--components-button-icon-icon);
+
+  /* Text field */
+  --color-textfield-bg: var(--components-text-bg);
+  --color-textfield-default-text: var(--components-text-default-text);
+  --color-textfield-default-stroke: var(--components-text-default-stroke);
+  --color-textfield-value: var(--components-text-value);
+  --color-textfield-value-stroke: var(--components-text-value-stroke);
+  --color-textfield-focus-stroke: var(--components-text-focus-stroke);
+  --color-textfield-error-stroke: var(--components-text-error-stroke);
+  --color-textfield-icon: var(--components-text-icon);
+
+  /* Alert */
+  --color-alert-bg: var(--components-alert-bg);
+  --color-alert-stroke: var(--components-alert-stroke);
+  --color-alert-error-text: var(--components-alert-error-text);
+  --color-alert-error-icon: var(--components-alert-error-icon);
+  --color-alert-neutral-text: var(--components-alert-neutral-text);
+  --color-alert-neutral-icon: var(--components-alert-neutral-icon);
+
+  /* Focus rings */
+  --shadow-focus-ring: 0 0 0 3px var(--focus-ring);
+  --shadow-focus-ring-error: 0 0 0 3px var(--focus-ring-error);
+}
