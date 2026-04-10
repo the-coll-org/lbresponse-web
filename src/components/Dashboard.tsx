@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Alert } from './ui/Alert';
+import { Badge } from './ui/Badge';
 import { Button } from './ui/Button';
 import { TextArea } from './ui/TextArea';
 import { TextField } from './ui/TextField';
@@ -790,6 +791,101 @@ function TextFieldShowcase() {
   );
 }
 
+// ─── Badge showcase section ──────────────────────────────────────────────────
+
+function BadgeShowcase() {
+  return (
+    <section className="flex flex-col gap-32 p-32">
+      <h2 className="text-xl font-weight-semibold text-text-black">
+        Badge Component Showcase
+      </h2>
+
+      {/* ── Variants ─────────────────────────────────────────────────────── */}
+      <div className="flex flex-col gap-12">
+        <p className="text-sm font-weight-medium text-text-black">Variants</p>
+        <div className="flex flex-wrap items-center gap-12">
+          <Badge variant="primary">Primary</Badge>
+          <Badge variant="secondary">Secondary</Badge>
+          <Badge variant="outline">Outline</Badge>
+          <Badge variant="destructive">Destructive</Badge>
+        </div>
+      </div>
+
+      {/* ── With icons ───────────────────────────────────────────────────── */}
+      <div className="flex flex-col gap-12">
+        <p className="text-sm font-weight-medium text-text-black">With icons</p>
+        <div className="flex flex-wrap items-center gap-12">
+          <Badge
+            variant="primary"
+            leftIcon={<StarIcon />}
+            rightIcon={<StarIcon />}
+          >
+            Primary
+          </Badge>
+          <Badge
+            variant="secondary"
+            leftIcon={<StarIcon />}
+            rightIcon={<StarIcon />}
+          >
+            Secondary
+          </Badge>
+          <Badge
+            variant="outline"
+            leftIcon={<StarIcon />}
+            rightIcon={<StarIcon />}
+          >
+            Outline
+          </Badge>
+          <Badge
+            variant="destructive"
+            leftIcon={<StarIcon />}
+            rightIcon={<StarIcon />}
+          >
+            Destructive
+          </Badge>
+        </div>
+      </div>
+
+      {/* ── RTL (Arabic) ─────────────────────────────────────────────────── */}
+      <div className="flex flex-col gap-12">
+        <p className="text-sm font-weight-medium text-text-black">
+          RTL (Arabic)
+        </p>
+        <div className="flex flex-wrap items-center gap-12" dir="rtl">
+          <Badge
+            variant="primary"
+            leftIcon={<StarIcon />}
+            rightIcon={<StarIcon />}
+          >
+            أساسي
+          </Badge>
+          <Badge
+            variant="secondary"
+            leftIcon={<StarIcon />}
+            rightIcon={<StarIcon />}
+          >
+            ثانوي
+          </Badge>
+          <Badge
+            variant="outline"
+            leftIcon={<StarIcon />}
+            rightIcon={<StarIcon />}
+          >
+            مخطط
+          </Badge>
+          <Badge
+            variant="destructive"
+            leftIcon={<StarIcon />}
+            rightIcon={<StarIcon />}
+          >
+            تحذيري
+          </Badge>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 // ─── Dashboard ────────────────────────────────────────────────────────────────
 
 function Dashboard() {
@@ -813,6 +909,7 @@ function Dashboard() {
       <AlertShowcase />
       <TextAreaShowcase />
       <TextFieldShowcase />
+      <BadgeShowcase />
 
       {error && <div className="table-error">{t('common.fetchError')}</div>}
 
