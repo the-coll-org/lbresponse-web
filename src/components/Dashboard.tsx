@@ -1,8 +1,11 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Alert } from './ui/Alert';
+import { BottomSheet } from './ui/BottomSheet';
 import { Badge } from './ui/Badge';
 import { Button } from './ui/Button';
+import { ServiceCard } from './ui/ServiceCard';
+import { Tag } from './ui/Tag';
 import { TextArea } from './ui/TextArea';
 import { TextField } from './ui/TextField';
 import { useToast } from '../hooks/useToast';
@@ -403,6 +406,79 @@ function SearchIcon() {
   );
 }
 
+function SparkleIcon() {
+  return (
+    <svg
+      width="18"
+      height="18"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9L12 3z" />
+    </svg>
+  );
+}
+
+function PinIcon() {
+  return (
+    <svg
+      width="18"
+      height="18"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M12 17v4" />
+      <path d="M8 3h8l-1 5 3 3v2H6v-2l3-3-1-5z" />
+    </svg>
+  );
+}
+
+function ShieldIcon() {
+  return (
+    <svg
+      width="18"
+      height="18"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M12 3l7 3v6c0 5-3.5 8.5-7 9-3.5-.5-7-4-7-9V6l7-3z" />
+    </svg>
+  );
+}
+
+function PhoneIcon() {
+  return (
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.12.9.33 1.78.63 2.62a2 2 0 0 1-.45 2.11L8 9.91a16 16 0 0 0 6 6l1.46-1.29a2 2 0 0 1 2.11-.45c.84.3 1.72.51 2.62.63A2 2 0 0 1 22 16.92z" />
+    </svg>
+  );
+}
+
 // ─── TextField showcase ───────────────────────────────────────────────────────
 
 function TextFieldShowcase() {
@@ -641,6 +717,116 @@ function BadgeShowcase() {
   );
 }
 
+function TagShowcase() {
+  const { t } = useTranslation();
+
+  return (
+    <section className="flex flex-col gap-32 p-32">
+      <h2 className="text-xl font-weight-semibold text-text-black">
+        {t('showcase.tag.title')}
+      </h2>
+
+      <div className="flex flex-col gap-12">
+        <p className="text-sm font-weight-medium text-text-black">
+          {t('showcase.tag.default')}
+        </p>
+        <div className="flex flex-wrap items-center gap-12">
+          <Tag leadingIcon={<SparkleIcon />}>{t('showcase.tag.arabic')}</Tag>
+          <Tag>{t('showcase.tag.english')}</Tag>
+        </div>
+      </div>
+
+      <div className="flex flex-col gap-12">
+        <p className="text-sm font-weight-medium text-text-black">
+          {t('showcase.tag.withClear')}
+        </p>
+        <div className="flex flex-wrap items-center gap-12">
+          <Tag leadingIcon={<SparkleIcon />} onClear={() => undefined}>
+            {t('showcase.tag.arabic')}
+          </Tag>
+          <Tag
+            leadingIcon={<SparkleIcon />}
+            trailingIcon={<SparkleIcon />}
+            onClear={() => undefined}
+          >
+            {t('showcase.tag.english')}
+          </Tag>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function ServiceCardShowcase() {
+  const { t } = useTranslation();
+
+  return (
+    <section className="flex flex-col gap-32 p-32">
+      <h2 className="text-xl font-weight-semibold text-text-black">
+        {t('showcase.serviceCard.title')}
+      </h2>
+
+      <div className="flex flex-col gap-12">
+        <p className="text-sm font-weight-medium text-text-black">
+          {t('showcase.serviceCard.default')}
+        </p>
+        <ServiceCard
+          title={t('showcase.serviceCard.name')}
+          category={t('showcase.serviceCard.category')}
+          description={t('showcase.serviceCard.description')}
+          locations={t('showcase.serviceCard.locations')}
+          actionLabel={t('showcase.serviceCard.callToAction')}
+          actionIcon={<PhoneIcon />}
+          primaryAction={{
+            ariaLabel: t('showcase.serviceCard.pinAction'),
+            icon: <PinIcon />,
+          }}
+          secondaryAction={{
+            ariaLabel: t('showcase.serviceCard.verifyAction'),
+            icon: <ShieldIcon />,
+            variant: 'outline',
+          }}
+        />
+      </div>
+    </section>
+  );
+}
+
+function BottomSheetShowcase() {
+  const { t } = useTranslation();
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <section className="flex flex-col gap-32 p-32">
+      <h2 className="text-xl font-weight-semibold text-text-black">
+        {t('showcase.bottomSheet.title')}
+      </h2>
+
+      <div className="flex flex-col gap-12">
+        <p className="text-sm font-weight-medium text-text-black">
+          {t('showcase.bottomSheet.default')}
+        </p>
+        <Button variant="filled" onClick={() => setIsOpen(true)}>
+          {t('showcase.bottomSheet.open')}
+        </Button>
+      </div>
+
+      <BottomSheet
+        open={isOpen}
+        title={t('showcase.bottomSheet.sheetTitle')}
+        description={t('showcase.bottomSheet.sheetDescription')}
+        secondaryActionLabel={t('showcase.bottomSheet.secondaryAction')}
+        primaryActionLabel={t('showcase.bottomSheet.primaryAction')}
+        primaryDisabled
+        onOpenChange={setIsOpen}
+        onSecondaryAction={() => setIsOpen(false)}
+      >
+        <div className="h-full w-full bg-transparent" />
+      </BottomSheet>
+    </section>
+  );
+}
+
 // ─── Dashboard ────────────────────────────────────────────────────────────────
 
 function Dashboard() {
@@ -665,6 +851,9 @@ function Dashboard() {
       <TextAreaShowcase />
       <TextFieldShowcase />
       <BadgeShowcase />
+      <TagShowcase />
+      <ServiceCardShowcase />
+      <BottomSheetShowcase />
 
       {error && <div className="table-error">{t('common.fetchError')}</div>}
 

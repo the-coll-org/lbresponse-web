@@ -77,6 +77,33 @@
       "secondary": "ثانوي",
       "outline": "مخطط",
       "destructive": "تحذيري"
+    },
+    "tag": {
+      "title": "عرض مكون الوسم",
+      "default": "أوسمة افتراضية",
+      "withClear": "مع إجراء المسح",
+      "arabic": "ملصق",
+      "english": "تسمية"
+    },
+    "serviceCard": {
+      "title": "عرض مكون بطاقة الخدمة",
+      "default": "بطاقة الخدمة الافتراضية",
+      "name": "وزارة الصحة",
+      "category": "حكومي",
+      "description": "الخدمات الصحية والاستشارات الطبية",
+      "locations": "بيروت، طرابلس، صيدا",
+      "callToAction": "اتصل 1900",
+      "pinAction": "تثبيت الخدمة",
+      "verifyAction": "التحقق من الخدمة"
+    },
+    "bottomSheet": {
+      "title": "عرض مكون اللوحة السفلية",
+      "default": "اللوحة السفلية الافتراضية",
+      "open": "افتح اللوحة السفلية",
+      "sheetTitle": "القيمة",
+      "sheetDescription": "السطر 2",
+      "secondaryAction": "ملصق",
+      "primaryAction": "ملصق"
     }
   }
 }

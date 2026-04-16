@@ -77,6 +77,33 @@
       "secondary": "Secondary",
       "outline": "Outline",
       "destructive": "Destructive"
+    },
+    "tag": {
+      "title": "Tag Component Showcase",
+      "default": "Default tags",
+      "withClear": "With clear action",
+      "arabic": "ملصق",
+      "english": "Label"
+    },
+    "serviceCard": {
+      "title": "Service Card Showcase",
+      "default": "Default service card",
+      "name": "Ministry of Health",
+      "category": "Government",
+      "description": "Health services and medical consultations",
+      "locations": "Beirut, Tripoli, Sidon",
+      "callToAction": "Call 1900",
+      "pinAction": "Pin service",
+      "verifyAction": "Verify service"
+    },
+    "bottomSheet": {
+      "title": "Bottom Sheet Showcase",
+      "default": "Default bottom sheet",
+      "open": "Open bottom sheet",
+      "sheetTitle": "Value",
+      "sheetDescription": "Line 2",
+      "secondaryAction": "Label",
+      "primaryAction": "Label"
     }
   }
 }
