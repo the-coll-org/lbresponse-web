@@ -6,12 +6,75 @@
   "common": {
     "lightMode": "Light Mode",
     "darkMode": "Dark Mode",
+    "toggleLanguage": "Toggle language",
+    "toggleTheme": "Toggle theme",
     "loading": "Loading...",
     "fetchError": "Failed to load data. Make sure the backend is running.",
     "noData": "No data found."
   },
   "nav": {
     "dashboard": "Dashboard"
+  },
+  "helpCenter": {
+    "title": "Help Center",
+    "subtitle": "Hello, how can we help you today?",
+    "emergencyTitle": "Emergency Hotlines",
+    "openFilters": "Open filters",
+    "searchPlaceholder": "Search for an organization or area...",
+    "resultsCountStatic": "20 / 30 organizations",
+    "resultsCount_one": "{{visible}} / {{total}} organization",
+    "resultsCount_other": "{{visible}} / {{total}} organizations",
+    "loadMoreStatic": "Show more (10 remaining)",
+    "loadMore_one": "Show more ({{count}} remaining)",
+    "loadMore_other": "Show more ({{count}} remaining)",
+    "backToTop": "Back to top",
+    "pinAction": "Pin organization",
+    "verifyAction": "Verify organization",
+    "filtersTitle": "Filters",
+    "filtersDescription": "Choose filters to narrow the organizations list.",
+    "filtersCancel": "Cancel",
+    "filtersApply": "Apply",
+    "filtersPlaceholder": "Filter controls will be added here next.",
+    "hotlines": {
+      "marineRescue": "Marine rescue",
+      "medicalAid": "Medical aid",
+      "civilDefense": "Civil defense",
+      "ambulance": "Ambulance"
+    },
+    "categories": {
+      "government": "Government",
+      "private": "Private",
+      "nonProfit": "Non-profit"
+    },
+    "descriptions": {
+      "healthServices": "Health services and medical consultations",
+      "screening": "Comprehensive medical screening and vaccination services",
+      "support": "Health support and care for people in need",
+      "primaryCare": "Primary care and outpatient support",
+      "fieldResponse": "Field response and urgent family support"
+    },
+    "locations": {
+      "beirutTripoliSidon": "Beirut, Tripoli, Sidon",
+      "sidon": "Sidon",
+      "beirut": "Beirut",
+      "tripoli": "Tripoli",
+      "beirutTripoli": "Beirut, Tripoli"
+    },
+    "actions": {
+      "call1900": "Call 1900",
+      "whatsapp1900": "WhatsApp 1900",
+      "call1234800": "Call 1234-800",
+      "call4567700": "Call 4567-700",
+      "call8002222": "Call 800-2222",
+      "whatsapp2200": "WhatsApp 2200"
+    },
+    "items": {
+      "ministryHealth": "Ministry of Health",
+      "screeningCenter": "Comprehensive Screening Center",
+      "hopeAssociation": "Hope Association",
+      "carePoint": "Care Point Clinic",
+      "responseNetwork": "Response Network"
+    }
   },
   "dashboard": {
     "visuals": "Data Visuals",

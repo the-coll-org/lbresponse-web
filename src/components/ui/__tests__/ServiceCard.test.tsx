@@ -107,4 +107,20 @@ describe('ServiceCard', () => {
     expect(onSecondaryClick).toHaveBeenCalledTimes(1);
     expect(onActionClick).toHaveBeenCalledTimes(1);
   });
+
+  it('respects explicit text direction', () => {
+    act(() => {
+      root.render(
+        <ServiceCard
+          title="Ministry of Health"
+          actionLabel="Call 1900"
+          dir="ltr"
+        />
+      );
+    });
+
+    const card = container.firstElementChild as HTMLDivElement | null;
+
+    expect(card?.getAttribute('dir')).toBe('ltr');
+  });
 });

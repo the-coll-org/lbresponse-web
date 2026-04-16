@@ -6,12 +6,75 @@
   "common": {
     "lightMode": "الوضع الفاتح",
     "darkMode": "الوضع الداكن",
+    "toggleLanguage": "تبديل اللغة",
+    "toggleTheme": "تبديل المظهر",
     "loading": "جاري التحميل...",
     "fetchError": "فشل تحميل البيانات. تأكد من تشغيل الخادم.",
     "noData": "لا توجد بيانات."
   },
   "nav": {
     "dashboard": "لوحة المعلومات"
+  },
+  "helpCenter": {
+    "title": "مركز المساعدة",
+    "subtitle": "مرحباً، كيف يمكننا مساعدتك اليوم؟",
+    "emergencyTitle": "خطوط الطوارئ",
+    "openFilters": "افتح الفلاتر",
+    "searchPlaceholder": "ابحث عن منظمة أو منطقة...",
+    "resultsCountStatic": "20 / 30 منظمة",
+    "resultsCount_one": "{{visible}} / {{total}} منظمة",
+    "resultsCount_other": "{{visible}} / {{total}} منظمة",
+    "loadMoreStatic": "عرض المزيد (10 متبقية)",
+    "loadMore_one": "عرض المزيد ({{count}} متبقية)",
+    "loadMore_other": "عرض المزيد ({{count}} متبقية)",
+    "backToTop": "العودة إلى الأعلى",
+    "pinAction": "تثبيت المنظمة",
+    "verifyAction": "التحقق من المنظمة",
+    "filtersTitle": "الفلاتر",
+    "filtersDescription": "اختر الفلاتر لتضييق قائمة المنظمات.",
+    "filtersCancel": "إلغاء",
+    "filtersApply": "تطبيق",
+    "filtersPlaceholder": "سيتم إضافة أدوات الفلترة هنا لاحقاً.",
+    "hotlines": {
+      "marineRescue": "الإنقاذ البحري",
+      "medicalAid": "الإسعاف الطبي",
+      "civilDefense": "الدفاع المدني",
+      "ambulance": "الإسعاف"
+    },
+    "categories": {
+      "government": "حكومي",
+      "private": "خاص",
+      "nonProfit": "غير ربحي"
+    },
+    "descriptions": {
+      "healthServices": "الخدمات الصحية والاستشارات الطبية",
+      "screening": "فحوصات طبية شاملة وخدمات تطعيم",
+      "support": "دعم ورعاية صحية للمحتاجين",
+      "primaryCare": "رعاية أولية ودعم للمرضى الخارجيين",
+      "fieldResponse": "استجابة ميدانية ودعم عاجل للأسر"
+    },
+    "locations": {
+      "beirutTripoliSidon": "بيروت، طرابلس، صيدا",
+      "sidon": "صيدا",
+      "beirut": "بيروت",
+      "tripoli": "طرابلس",
+      "beirutTripoli": "بيروت، طرابلس"
+    },
+    "actions": {
+      "call1900": "اتصل 1900",
+      "whatsapp1900": "واتساب 1900",
+      "call1234800": "اتصل 1234-800",
+      "call4567700": "اتصل 4567-700",
+      "call8002222": "اتصل 800-2222",
+      "whatsapp2200": "واتساب 2200"
+    },
+    "items": {
+      "ministryHealth": "وزارة الصحة",
+      "screeningCenter": "مركز الفحص الشامل",
+      "hopeAssociation": "جمعية الأمل",
+      "carePoint": "عيادة نقطة الرعاية",
+      "responseNetwork": "شبكة الاستجابة"
+    }
   },
   "dashboard": {
     "visuals": "البيانات المرئية",

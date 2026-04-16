@@ -17,6 +17,7 @@ export interface ServiceCardProps extends Omit<
   locations?: ReactNode;
   actionLabel: ReactNode;
   actionIcon?: ReactNode;
+  actionVariant?: 'filled' | 'success';
   onActionClick?: MouseEventHandler<HTMLButtonElement>;
   primaryAction?: ServiceCardAction;
   secondaryAction?: ServiceCardAction;
@@ -76,25 +77,49 @@ export function ServiceCard({
   locations,
   actionLabel,
   actionIcon,
+  actionVariant = 'filled',
   onActionClick,
   primaryAction,
   secondaryAction,
   className = '',
   ...props
 }: ServiceCardProps) {
+  const actionClass =
+    actionVariant === 'success'
+      ? 'bg-[#00a63e] text-button-filled-text'
+      : 'bg-button-filled-bg text-button-filled-text';
+  const contentDirection = props.dir === 'ltr' ? 'ltr' : 'rtl';
+  const isRtl = contentDirection === 'rtl';
+  const topRowClass = isRtl
+    ? 'flex items-start justify-between gap-12 w-full'
+    : 'flex flex-row-reverse items-start justify-between gap-12 w-full';
+  const contentRowClass = isRtl
+    ? 'flex items-center gap-12 shrink min-w-0'
+    : 'flex flex-row-reverse items-center gap-12 shrink min-w-0';
+  const metaRowClass = isRtl
+    ? 'flex items-center gap-4 text-right text-button font-weight-regular text-text-black'
+    : 'flex flex-row-reverse items-center gap-4 text-left text-button font-weight-regular text-text-black';
+  const titleRowClass = isRtl
+    ? 'flex items-center justify-end gap-8 w-full min-w-0'
+    : 'flex flex-row-reverse items-center justify-end gap-8 w-full min-w-0';
+
   return (
-    <div className={`${CARD_BASE} ${className}`.trim()} dir="ltr" {...props}>
+    <div
+      className={`${CARD_BASE} ${className}`.trim()}
+      dir={contentDirection}
+      {...props}
+    >
       <div className="flex flex-col items-end justify-center gap-12 w-full">
-        <div className="flex items-start justify-between gap-12 w-full">
+        <div className={topRowClass}>
           {primaryAction ? (
             <CardIconButton {...primaryAction} />
           ) : (
             <span className="size-32 shrink-0" aria-hidden="true" />
           )}
 
-          <div className="flex items-center gap-12 shrink min-w-0">
+          <div className={contentRowClass}>
             <div className="flex flex-col items-end gap-8 min-w-0 text-right w-[161px]">
-              <div className="flex items-center justify-end gap-8 w-full min-w-0">
+              <div className={titleRowClass}>
                 {category && <CategoryPill>{category}</CategoryPill>}
                 <p className="text-sm font-weight-bold text-text-black whitespace-nowrap">
                   {title}
@@ -112,7 +137,7 @@ export function ServiceCard({
         </div>
 
         {locations && (
-          <div className="flex items-center gap-4 text-right text-button font-weight-regular text-text-black">
+          <div className={metaRowClass}>
             <span>{locations}</span>
             <span
               className="size-16 flex items-center justify-center"
@@ -142,7 +167,7 @@ export function ServiceCard({
             'w-full h-[44px] min-h-[37px] max-h-[48px]',
             'inline-flex items-center justify-center gap-8',
             'px-16 py-8 rounded-md overflow-hidden',
-            'bg-button-filled-bg text-button-filled-text',
+            actionClass,
             'text-button font-weight-medium',
             'cursor-pointer transition-opacity',
             'focus-visible:outline-2 focus-visible:outline-offset-2',
