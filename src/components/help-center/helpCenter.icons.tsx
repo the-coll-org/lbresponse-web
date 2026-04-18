@@ -11,7 +11,7 @@ import filterCategorySvg from '../../assets/help-center/filter-category.svg?raw'
 import searchSvg from '../../assets/help-center/search.svg?raw';
 import chevronDownSvg from '../../assets/help-center/chevron-down.svg?raw';
 import phoneSvg from '../../assets/help-center/phone.svg?raw';
-import chatSvg from '../../assets/help-center/chat.svg?raw';
+import whatsappSvg from '../../assets/help-center/whatsapp.svg?raw';
 import pinSvg from '../../assets/help-center/pin.svg?raw';
 import arrowUpSvg from '../../assets/help-center/arrow-up.svg?raw';
 
@@ -47,8 +47,8 @@ function PhoneIcon() {
   return <SvgIcon svg={phoneSvg} className="size-16" />;
 }
 
-function ChatIcon() {
-  return <SvgIcon svg={chatSvg} className="size-16" />;
+function WhatsappIcon() {
+  return <SvgIcon svg={whatsappSvg} className="size-16" />;
 }
 
 function PinIcon() {
@@ -157,7 +157,7 @@ export const helpCenterIcons = {
   search: SearchIcon,
   chevronDown: ChevronDownIcon,
   phone: PhoneIcon,
-  chat: ChatIcon,
+  whatsapp: WhatsappIcon,
   pin: PinIcon,
   pinFilled: FilledPinIcon,
   verify: VerifyIcon,

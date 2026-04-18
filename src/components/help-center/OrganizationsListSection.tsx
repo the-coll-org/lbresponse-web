@@ -105,7 +105,7 @@ export function OrganizationsListSection({
   }, [organizations.length]);
 
   const PhoneIcon = helpCenterIcons.phone;
-  const ChatIcon = helpCenterIcons.chat;
+  const WhatsappIcon = helpCenterIcons.whatsapp;
   const VerifyIcon = helpCenterIcons.verify;
   const ChevronDownIcon = helpCenterIcons.chevronDown;
   const ArrowUpIcon = helpCenterIcons.arrowUp;
@@ -141,7 +141,11 @@ export function OrganizationsListSection({
                     locations={item.locations}
                     actionLabel={item.actionLabel}
                     actionIcon={
-                      item.actionType === 'phone' ? <PhoneIcon /> : <ChatIcon />
+                      item.actionType === 'phone' ? (
+                        <PhoneIcon />
+                      ) : (
+                        <WhatsappIcon />
+                      )
                     }
                     actionVariant={
                       item.actionType === 'phone' ? 'filled' : 'success'

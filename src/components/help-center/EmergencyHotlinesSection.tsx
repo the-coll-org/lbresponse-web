@@ -18,16 +18,17 @@ function EmergencyShortcut({
   const Icon = helpCenterIcons[icon];
 
   return (
-    <button
-      type="button"
-      className="flex flex-1 appearance-none flex-col items-center gap-4 bg-transparent text-center"
+    <a
+      href={`tel:${number}`}
+      aria-label={`${label}: ${number}`}
+      className="flex flex-1 flex-col items-center gap-4 text-center no-underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid-primary-500"
     >
       <div className="flex size-48 items-center justify-center rounded-md border border-textfield-default-stroke bg-surface-primary text-button-icon-icon">
         <Icon />
       </div>
       <p className="text-2xs font-weight-medium text-text-black">{label}</p>
       <p className="text-2xs font-weight-medium text-text-black">{number}</p>
-    </button>
+    </a>
   );
 }
 
