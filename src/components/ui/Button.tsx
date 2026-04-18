@@ -2,7 +2,12 @@ import type { ButtonHTMLAttributes, ReactNode } from 'react';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-export type ButtonVariant = 'filled' | 'tonal' | 'text' | 'icon';
+export type ButtonVariant =
+  | 'filled'
+  | 'tonal'
+  | 'text'
+  | 'icon'
+  | 'destructive';
 export type ButtonSize = 'md' | 'sm';
 /** Maps directly to --radius-* tokens from tokens.css */
 export type ButtonRadius = 'sm' | 'md' | 'lg' | 'xl' | '2xl' | 'full';
@@ -49,6 +54,9 @@ const VARIANT_STYLES: Record<ButtonVariant, string> = {
   // --components-button-filled-*
   filled: 'bg-button-filled-bg text-button-filled-text',
 
+  // --components-button-destructive-*
+  destructive: 'bg-button-destructive-bg text-button-destructive-text',
+
   // --components-button-tonal-*
   tonal: 'bg-button-tonal-bg text-button-tonal-text',
 
@@ -67,12 +75,14 @@ const VARIANT_STYLES: Record<ButtonVariant, string> = {
 const SIZE_STYLES: Record<ButtonSize, Record<ButtonVariant, string>> = {
   md: {
     filled: 'px-16 py-8 gap-8',
+    destructive: 'px-16 py-8 gap-8',
     tonal: 'px-16 py-8 gap-8',
     text: 'px-8  py-8 gap-8',
     icon: 'p-12',
   },
   sm: {
     filled: 'px-12 py-8 gap-8',
+    destructive: 'px-12 py-8 gap-8',
     tonal: 'px-12 py-8 gap-8',
     text: 'px-8  py-8 gap-8',
     icon: 'p-8',

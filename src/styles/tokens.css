@@ -209,8 +209,10 @@
   --spacing-24: 24px;
   --spacing-32: 32px;
   --spacing-40: 40px;
+  --spacing-44: 44px;
   --spacing-48: 48px;
   --spacing-64: 64px;
+  --spacing-70: 70px;
 }
 
 /* ============================================================================
@@ -221,6 +223,9 @@
    ============================================================================ */
 
 :root {
+  /* ── Status ────────────────────────────────────────────────────────────── */
+  --status-error: #ed5158;
+
   /* ── Surface ───────────────────────────────────────────────────────────── */
   --surface-primary: var(--color-solid-white-400);
 
@@ -234,6 +239,11 @@
   --components-button-filled-bg: var(--color-solid-primary-700);
   --components-button-filled-text: var(--color-solid-white-400);
   --components-button-filled-icon: var(--color-solid-white-400);
+
+  /* ── Button — destructive ─────────────────────────────────────────────── */
+  --components-button-destructive-bg: var(--status-error);
+  --components-button-destructive-text: var(--color-solid-white-400);
+  --components-button-destructive-icon: var(--color-solid-white-400);
 
   /* ── Button — tonal ────────────────────────────────────────────────────── */
   --components-button-tonal-bg: var(--color-solid-primary-300);
@@ -287,6 +297,37 @@
   --font-body: 'Roboto', sans-serif;
 }
 
+[data-theme='dark'] {
+  --surface-primary: #16171d;
+  --text-black: var(--color-solid-white-400);
+  --icon-black: var(--color-solid-black-600);
+
+  --components-button-filled-bg: var(--color-solid-primary-500);
+  --components-button-destructive-bg: var(--status-error);
+  --components-button-destructive-text: var(--color-solid-white-400);
+  --components-button-destructive-icon: var(--color-solid-white-400);
+  --components-button-tonal-bg: #2e303a;
+  --components-button-tonal-text: var(--color-solid-white-400);
+  --components-button-tonal-icon: var(--color-solid-white-400);
+  --components-button-text-text: var(--color-solid-white-400);
+  --components-button-text-icon: var(--color-solid-white-400);
+  --components-button-icon-bg: #2e303a;
+  --components-button-icon-icon: var(--color-solid-white-400);
+
+  --components-text-bg: #1f2028;
+  --components-text-default-text: #9ca3af;
+  --components-text-default-stroke: #2e303a;
+  --components-text-value: var(--color-solid-white-400);
+  --components-text-value-stroke: #3b4252;
+  --components-text-focus-stroke: #6b7280;
+  --components-text-icon: #9ca3af;
+
+  --components-alert-bg: #1f2028;
+  --components-alert-stroke: #3b4252;
+  --components-alert-neutral-text: var(--color-solid-white-400);
+  --components-alert-neutral-icon: #9ca3af;
+}
+
 /* ============================================================================
    LAYER 3 — SEMANTIC TAILWIND UTILITIES (@theme inline)
    @theme inline wraps Layer 2 CSS variables as Tailwind utilities.
@@ -308,6 +349,11 @@
   --color-button-filled-bg: var(--components-button-filled-bg);
   --color-button-filled-text: var(--components-button-filled-text);
   --color-button-filled-icon: var(--components-button-filled-icon);
+
+  /* Button — destructive */
+  --color-button-destructive-bg: var(--components-button-destructive-bg);
+  --color-button-destructive-text: var(--components-button-destructive-text);
+  --color-button-destructive-icon: var(--components-button-destructive-icon);
 
   /* Button — tonal */
   --color-button-tonal-bg: var(--components-button-tonal-bg);

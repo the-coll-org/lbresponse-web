@@ -1,6 +1,6 @@
 import type { HTMLAttributes, MouseEvent, ReactNode } from 'react';
 
-export interface TagProps extends HTMLAttributes<HTMLDivElement> {
+export interface TagProps extends HTMLAttributes<HTMLSpanElement> {
   /** Optional explicit label. Falls back to `children` when omitted. */
   label?: ReactNode;
   /** Icon rendered before the label in the DOM. In RTL, this appears on the inline-end. */
@@ -12,7 +12,7 @@ export interface TagProps extends HTMLAttributes<HTMLDivElement> {
 }
 
 const BASE =
-  'inline-flex items-center gap-4 h-32 px-8 rounded-md border ' +
+  'inline-flex items-center gap-4 h-[32px] px-[8px] rounded-md border ' +
   'border-solid-black-300 bg-transparent text-solid-black-600 ' +
   'text-button font-weight-medium whitespace-nowrap';
 
@@ -54,7 +54,7 @@ export function Tag({
   };
 
   return (
-    <div className={`${BASE} ${className}`.trim()} {...props}>
+    <span className={`${BASE} ${className}`.trim()} {...props}>
       {leadingIcon && <span className={ICON_SLOT}>{leadingIcon}</span>}
       {content && (
         <span className="shrink-0 min-w-0" dir="auto">
@@ -77,6 +77,6 @@ export function Tag({
           <ClearIcon />
         </button>
       )}
-    </div>
+    </span>
   );
 }

@@ -1,8 +1,33 @@
-import { useMemo, useState } from 'react';
+import { type ReactNode, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { BottomSheet } from './ui/BottomSheet';
+import { useToast } from '../hooks/useToast';
+import {
+  HelpCenterFiltersSheet,
+  type HelpCenterFilterSection,
+} from './ui/HelpCenterFiltersSheet';
+import { Badge } from './ui/Badge';
+import {
+  PinnedOrganizationsSheet,
+  type PinnedOrganizationOption,
+} from './ui/PinnedOrganizationsSheet';
 import { ScreenHeader } from './ui/ScreenHeader';
+import { SearchEmptyState } from './ui/SearchEmptyState';
 import { ServiceCard } from './ui/ServiceCard';
+import { SvgIcon } from './ui/SvgIcon';
+import waterSvg from '../assets/help-center/water.svg?raw';
+import shieldSvg from '../assets/help-center/shield.svg?raw';
+import sirenSvg from '../assets/help-center/siren.svg?raw';
+import crossSvg from '../assets/help-center/cross.svg?raw';
+import filterSvg from '../assets/help-center/filter.svg?raw';
+import filterLocationSvg from '../assets/help-center/filter-location.svg?raw';
+import filterProviderSvg from '../assets/help-center/filter-provider.svg?raw';
+import filterCategorySvg from '../assets/help-center/filter-category.svg?raw';
+import searchSvg from '../assets/help-center/search.svg?raw';
+import chevronDownSvg from '../assets/help-center/chevron-down.svg?raw';
+import phoneSvg from '../assets/help-center/phone.svg?raw';
+import chatSvg from '../assets/help-center/chat.svg?raw';
+import pinSvg from '../assets/help-center/pin.svg?raw';
+import arrowUpSvg from '../assets/help-center/arrow-up.svg?raw';
 
 interface HelpCenterScreenProps {
   theme: 'light' | 'dark';
@@ -14,7 +39,7 @@ type HotlineItem = {
   id: string;
   labelKey: string;
   number: string;
-  icon: React.ReactNode;
+  icon: ReactNode;
 };
 
 type OrganizationItem = {
@@ -25,265 +50,90 @@ type OrganizationItem = {
   locationsKey: string;
   actionLabelKey: string;
   actionType: 'phone' | 'whatsapp';
+  regionValues: string[];
+  providerTypeValues: string[];
+  contactMethodValues: string[];
+};
+
+type FilterField =
+  | 'regionValues'
+  | 'providerTypeValues'
+  | 'contactMethodValues';
+
+type FilterSectionConfig = {
+  id: string;
+  titleKey: string;
+  field: FilterField;
+  icon: 'pin' | 'shield' | 'phone';
+  options: Array<{
+    id: string;
+    labelKey: string;
+    value: string;
+  }>;
 };
 
 function WaterIcon() {
-  return (
-    <svg
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.8"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <circle cx="12" cy="12" r="6.5" />
-      <path d="M12 3v4" />
-      <path d="M12 17v4" />
-      <path d="M3 12h4" />
-      <path d="M17 12h4" />
-      <path d="M6.2 6.2l2.8 2.8" />
-      <path d="M15 15l2.8 2.8" />
-      <path d="M17.8 6.2L15 9" />
-      <path d="M9 15l-2.8 2.8" />
-    </svg>
-  );
+  return <SvgIcon svg={waterSvg} className="size-24" />;
 }
 
 function ShieldIcon() {
-  return (
-    <svg
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.8"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <path d="M12 3l7 3v6c0 5-3.5 8.5-7 9-3.5-.5-7-4-7-9V6l7-3z" />
-    </svg>
-  );
+  return <SvgIcon svg={shieldSvg} className="size-24" />;
 }
 
 function SirenIcon() {
-  return (
-    <svg
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.8"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <path d="M8 14a4 4 0 0 1 8 0v2H8v-2z" />
-      <path d="M9 16v2h6v-2" />
-      <path d="M5 20h14" />
-      <path d="M12 4v3" />
-      <path d="M5 9l2 1" />
-      <path d="M19 9l-2 1" />
-      <path d="M6.5 5.5l1.5 1.5" />
-      <path d="M17.5 5.5L16 7" />
-    </svg>
-  );
+  return <SvgIcon svg={sirenSvg} className="size-24" />;
 }
 
 function CrossIcon() {
-  return (
-    <svg
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.8"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <path d="M12 5v14" />
-      <path d="M5 12h14" />
-    </svg>
-  );
+  return <SvgIcon svg={crossSvg} className="size-24" />;
 }
 
 function FilterIcon() {
-  return (
-    <svg
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.8"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <path d="M3 5h18l-7 8v6l-4-2v-4L3 5z" />
-    </svg>
-  );
+  return <SvgIcon svg={filterSvg} className="size-24" />;
 }
 
 function SearchIcon() {
-  return (
-    <svg
-      width="16"
-      height="16"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <circle cx="11" cy="11" r="8" />
-      <line x1="21" y1="21" x2="16.65" y2="16.65" />
-    </svg>
-  );
+  return <SvgIcon svg={searchSvg} className="size-16" />;
 }
 
 function ChevronDownIcon() {
-  return (
-    <svg
-      width="16"
-      height="16"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <polyline points="6 9 12 15 18 9" />
-    </svg>
-  );
+  return <SvgIcon svg={chevronDownSvg} className="h-[8.17px] w-[14.83px]" />;
 }
 
 function PhoneIcon() {
-  return (
-    <svg
-      width="16"
-      height="16"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.12.9.33 1.78.63 2.62a2 2 0 0 1-.45 2.11L8 9.91a16 16 0 0 0 6 6l1.46-1.29a2 2 0 0 1 2.11-.45c.84.3 1.72.51 2.62.63A2 2 0 0 1 22 16.92z" />
-    </svg>
-  );
+  return <SvgIcon svg={phoneSvg} className="size-16" />;
 }
 
 function ChatIcon() {
-  return (
-    <svg
-      width="16"
-      height="16"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <path d="M21 11.5a8.5 8.5 0 0 1-12.47 7.52L3 21l1.98-5.03A8.5 8.5 0 1 1 21 11.5z" />
-      <path d="M8.5 10.5h.01" />
-      <path d="M12 10.5h.01" />
-      <path d="M15.5 10.5h.01" />
-    </svg>
-  );
+  return <SvgIcon svg={chatSvg} className="size-16" />;
 }
 
 function PinIcon() {
-  return (
-    <svg
-      width="18"
-      height="18"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <path d="M12 17v4" />
-      <path d="M8 3h8l-1 5 3 3v2H6v-2l3-3-1-5z" />
-    </svg>
-  );
+  return <SvgIcon svg={pinSvg} className="size-[18px]" />;
 }
 
 function VerifyIcon() {
-  return (
-    <svg
-      width="18"
-      height="18"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <path d="M12 3l7 3v6c0 5-3.5 8.5-7 9-3.5-.5-7-4-7-9V6l7-3z" />
-    </svg>
-  );
+  return <SvgIcon svg={shieldSvg} className="size-[18px]" />;
 }
 
 function ArrowUpIcon() {
-  return (
-    <svg
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <path d="M12 19V5" />
-      <path d="M5 12l7-7 7 7" />
-    </svg>
-  );
+  return <SvgIcon svg={arrowUpSvg} className="size-24" />;
 }
 
-function GlobeIcon() {
-  return (
-    <svg
-      width="16"
-      height="16"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.8"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <circle cx="12" cy="12" r="9" />
-      <path d="M3 12h18" />
-      <path d="M12 3a14 14 0 0 1 0 18" />
-      <path d="M12 3a14 14 0 0 0 0 18" />
-    </svg>
-  );
+function SmallPinIcon() {
+  return <SvgIcon svg={filterLocationSvg} className="size-16" />;
+}
+
+function SmallShieldIcon() {
+  return <SvgIcon svg={filterProviderSvg} className="size-16" />;
+}
+
+function SmallFilterIcon() {
+  return <SvgIcon svg={filterSvg} className="size-16" />;
+}
+
+function SmallPhoneIcon() {
+  return <SvgIcon svg={filterCategorySvg} className="size-16" />;
 }
 
 function SunIcon() {
@@ -337,50 +187,28 @@ function EmergencyShortcut({
 }: {
   label: string;
   number: string;
-  icon: React.ReactNode;
+  icon: ReactNode;
 }) {
   return (
     <button
       type="button"
       className="flex w-[76px] appearance-none flex-col items-center gap-4 bg-transparent text-center"
     >
-      <span className="flex size-48 items-center justify-center rounded-md border border-solid-black-300 bg-solid-white-400 text-solid-black-500">
+      <div className="flex size-48 items-center justify-center rounded-md border border-textfield-default-stroke bg-surface-primary text-button-icon-icon">
         {icon}
-      </span>
-      <span
-        className="text-2xs font-weight-medium leading-[14px]"
-        style={{
-          color: 'var(--text-black)',
-          WebkitTextFillColor: 'var(--text-black)',
-        }}
-      >
-        {label}
-      </span>
-      <span
-        className="text-2xs font-weight-medium leading-[14px]"
-        style={{
-          color: 'var(--text-black)',
-          WebkitTextFillColor: 'var(--text-black)',
-        }}
-      >
-        {number}
-      </span>
+      </div>
+      <p className="text-2xs font-weight-medium text-text-black">{label}</p>
+      <p className="text-2xs font-weight-medium text-text-black">{number}</p>
     </button>
   );
 }
 
 const HOTLINES: HotlineItem[] = [
   {
-    id: 'marine',
-    labelKey: 'hotlines.marineRescue',
-    number: '1714',
-    icon: <WaterIcon />,
-  },
-  {
-    id: 'medical',
-    labelKey: 'hotlines.medicalAid',
-    number: '129',
-    icon: <ShieldIcon />,
+    id: 'ambulance',
+    labelKey: 'hotlines.ambulance',
+    number: '140',
+    icon: <CrossIcon />,
   },
   {
     id: 'civil',
@@ -389,10 +217,16 @@ const HOTLINES: HotlineItem[] = [
     icon: <SirenIcon />,
   },
   {
-    id: 'ambulance',
-    labelKey: 'hotlines.ambulance',
-    number: '140',
-    icon: <CrossIcon />,
+    id: 'medical',
+    labelKey: 'hotlines.medicalAid',
+    number: '129',
+    icon: <ShieldIcon />,
+  },
+  {
+    id: 'marine',
+    labelKey: 'hotlines.marineRescue',
+    number: '1714',
+    icon: <WaterIcon />,
   },
 ];
 
@@ -405,6 +239,9 @@ const ORGANIZATIONS: OrganizationItem[] = [
     locationsKey: 'locations.beirutTripoliSidon',
     actionLabelKey: 'actions.call1900',
     actionType: 'phone',
+    regionValues: ['beirut', 'tripoli', 'sidon'],
+    providerTypeValues: ['organization', 'clinic', 'medical'],
+    contactMethodValues: ['phone', 'visit', 'hotline'],
   },
   {
     id: 'ministry-whatsapp',
@@ -414,6 +251,9 @@ const ORGANIZATIONS: OrganizationItem[] = [
     locationsKey: 'locations.beirutTripoliSidon',
     actionLabelKey: 'actions.whatsapp1900',
     actionType: 'whatsapp',
+    regionValues: ['beirut', 'tripoli', 'sidon'],
+    providerTypeValues: ['organization', 'clinic', 'medical'],
+    contactMethodValues: ['whatsapp', 'message', 'hotline'],
   },
   {
     id: 'screening',
@@ -423,6 +263,9 @@ const ORGANIZATIONS: OrganizationItem[] = [
     locationsKey: 'locations.sidon',
     actionLabelKey: 'actions.call1234800',
     actionType: 'phone',
+    regionValues: ['sidon'],
+    providerTypeValues: ['clinic', 'screening', 'medical'],
+    contactMethodValues: ['phone', 'appointment', 'visit'],
   },
   {
     id: 'hope',
@@ -432,6 +275,9 @@ const ORGANIZATIONS: OrganizationItem[] = [
     locationsKey: 'locations.beirut',
     actionLabelKey: 'actions.call4567700',
     actionType: 'phone',
+    regionValues: ['beirut'],
+    providerTypeValues: ['organization', 'care', 'field'],
+    contactMethodValues: ['phone', 'visit', 'referral'],
   },
   {
     id: 'care-point',
@@ -441,6 +287,9 @@ const ORGANIZATIONS: OrganizationItem[] = [
     locationsKey: 'locations.tripoli',
     actionLabelKey: 'actions.call8002222',
     actionType: 'phone',
+    regionValues: ['tripoli'],
+    providerTypeValues: ['clinic', 'care', 'medical'],
+    contactMethodValues: ['phone', 'appointment', 'visit'],
   },
   {
     id: 'response-network',
@@ -450,8 +299,154 @@ const ORGANIZATIONS: OrganizationItem[] = [
     locationsKey: 'locations.beirutTripoli',
     actionLabelKey: 'actions.whatsapp2200',
     actionType: 'whatsapp',
+    regionValues: ['beirut', 'tripoli'],
+    providerTypeValues: ['organization', 'field', 'care'],
+    contactMethodValues: ['whatsapp', 'message', 'field-support'],
   },
 ];
+
+const FILTER_SECTIONS: FilterSectionConfig[] = [
+  {
+    id: 'location',
+    titleKey: 'filtersSections.location',
+    field: 'regionValues',
+    icon: 'pin',
+    options: [
+      { id: 'beirut', labelKey: 'filtersOptions.beirut', value: 'beirut' },
+      {
+        id: 'ain-el-tineh',
+        labelKey: 'filtersOptions.ainElTineh',
+        value: 'ain-el-tineh',
+      },
+      { id: 'chouf', labelKey: 'filtersOptions.chouf', value: 'chouf' },
+      { id: 'tripoli', labelKey: 'filtersOptions.tripoli', value: 'tripoli' },
+      { id: 'sidon', labelKey: 'filtersOptions.sidon', value: 'sidon' },
+      { id: 'jbeil', labelKey: 'filtersOptions.jbeil', value: 'jbeil' },
+      { id: 'zahle', labelKey: 'filtersOptions.zahle', value: 'zahle' },
+      { id: 'baalbek', labelKey: 'filtersOptions.baalbek', value: 'baalbek' },
+      { id: 'tyre', labelKey: 'filtersOptions.tyre', value: 'tyre' },
+      {
+        id: 'bourj-hammoud',
+        labelKey: 'filtersOptions.bourjHammoud',
+        value: 'bourj-hammoud',
+      },
+      { id: 'hamra', labelKey: 'filtersOptions.hamra', value: 'hamra' },
+      {
+        id: 'ain-el-remmaneh',
+        labelKey: 'filtersOptions.ainElRemmaneh',
+        value: 'ain-el-remmaneh',
+      },
+    ],
+  },
+  {
+    id: 'providerType',
+    titleKey: 'filtersSections.serviceType',
+    field: 'providerTypeValues',
+    icon: 'shield',
+    options: [
+      {
+        id: 'organization',
+        labelKey: 'filtersOptions.organization',
+        value: 'organization',
+      },
+      { id: 'care', labelKey: 'filtersOptions.care', value: 'care' },
+      { id: 'clinic', labelKey: 'filtersOptions.clinic', value: 'clinic' },
+      { id: 'medical', labelKey: 'filtersOptions.medical', value: 'medical' },
+      {
+        id: 'screening',
+        labelKey: 'filtersOptions.screening',
+        value: 'screening',
+      },
+      {
+        id: 'hospital',
+        labelKey: 'filtersOptions.hospital',
+        value: 'hospital',
+      },
+      {
+        id: 'pharmacy',
+        labelKey: 'filtersOptions.pharmacy',
+        value: 'pharmacy',
+      },
+      { id: 'lab', labelKey: 'filtersOptions.lab', value: 'lab' },
+      { id: 'shelter', labelKey: 'filtersOptions.shelter', value: 'shelter' },
+      { id: 'field', labelKey: 'filtersOptions.field', value: 'field' },
+      {
+        id: 'mental-health',
+        labelKey: 'filtersOptions.mentalHealth',
+        value: 'mental-health',
+      },
+    ],
+  },
+  {
+    id: 'contact',
+    titleKey: 'filtersSections.contact',
+    field: 'contactMethodValues',
+    icon: 'phone',
+    options: [
+      { id: 'phone', labelKey: 'filtersOptions.phone', value: 'phone' },
+      {
+        id: 'whatsapp',
+        labelKey: 'filtersOptions.whatsapp',
+        value: 'whatsapp',
+      },
+      { id: 'visit', labelKey: 'filtersOptions.visit', value: 'visit' },
+      { id: 'hotline', labelKey: 'filtersOptions.hotline', value: 'hotline' },
+      { id: 'message', labelKey: 'filtersOptions.message', value: 'message' },
+      {
+        id: 'appointment',
+        labelKey: 'filtersOptions.appointment',
+        value: 'appointment',
+      },
+      {
+        id: 'referral',
+        labelKey: 'filtersOptions.referral',
+        value: 'referral',
+      },
+      {
+        id: 'field-support',
+        labelKey: 'filtersOptions.fieldSupport',
+        value: 'field-support',
+      },
+      { id: 'email', labelKey: 'filtersOptions.email', value: 'email' },
+      { id: 'walk-in', labelKey: 'filtersOptions.walkIn', value: 'walk-in' },
+      { id: 'booking', labelKey: 'filtersOptions.booking', value: 'booking' },
+    ],
+  },
+];
+
+const MAX_PINNED_ORGANIZATIONS = 5;
+
+function createEmptyFilterSelection() {
+  return FILTER_SECTIONS.reduce<Record<string, string[]>>(
+    (accumulator, section) => {
+      accumulator[section.id] = [];
+      return accumulator;
+    },
+    {}
+  );
+}
+
+function cloneFilterSelection(selection: Record<string, string[]>) {
+  return Object.fromEntries(
+    Object.entries(selection).map(([sectionId, values]) => [
+      sectionId,
+      [...values],
+    ])
+  );
+}
+
+function countSelectedFilters(selection: Record<string, string[]>) {
+  return Object.values(selection).reduce(
+    (total, values) => total + values.length,
+    0
+  );
+}
+
+function findOrganizationById(organizationId: string) {
+  return ORGANIZATIONS.find(
+    (organization) => organization.id === organizationId
+  );
+}
 
 function normalizeArabic(value: string) {
   return value
@@ -461,50 +456,207 @@ function normalizeArabic(value: string) {
     .toLowerCase();
 }
 
+function filterOrganizations(
+  filters: Record<string, string[]>,
+  query: string,
+  translate: (key: string) => string
+) {
+  const normalizedQuery = normalizeArabic(query.trim());
+
+  return ORGANIZATIONS.filter((item) => {
+    const matchesFilters = FILTER_SECTIONS.every((section) => {
+      const activeValues = filters[section.id] ?? [];
+
+      if (activeValues.length === 0) return true;
+
+      return activeValues.some((value) => item[section.field].includes(value));
+    });
+
+    if (!matchesFilters) return false;
+
+    if (!normalizedQuery) return true;
+
+    const haystack = [
+      translate(`helpCenter.${item.nameKey}`),
+      translate(`helpCenter.${item.categoryKey}`),
+      translate(`helpCenter.${item.descriptionKey}`),
+      translate(`helpCenter.${item.locationsKey}`),
+    ]
+      .map(normalizeArabic)
+      .join(' ');
+
+    return haystack.includes(normalizedQuery);
+  });
+}
+
 export default function HelpCenterScreen({
   theme,
   onToggleTheme,
   onToggleLanguage,
 }: HelpCenterScreenProps) {
   const { t, i18n } = useTranslation();
+  const { addToast } = useToast();
   const [query, setQuery] = useState('');
   const [visibleCount, setVisibleCount] = useState(4);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
-  const contentDirection = i18n.dir(i18n.language);
-  const isRtl = contentDirection === 'rtl';
+  const [isPinnedOrganizationsSheetOpen, setIsPinnedOrganizationsSheetOpen] =
+    useState(false);
+  const [
+    organizationPendingReplacementId,
+    setOrganizationPendingReplacementId,
+  ] = useState<string | null>(null);
+  const [pinnedOrganizationIds, setPinnedOrganizationIds] = useState<string[]>(
+    []
+  );
+  const [appliedFilters, setAppliedFilters] = useState<
+    Record<string, string[]>
+  >(() => createEmptyFilterSelection());
+  const [draftFilters, setDraftFilters] = useState<Record<string, string[]>>(
+    () => createEmptyFilterSelection()
+  );
+  const activeLanguage = i18n.resolvedLanguage ?? i18n.language;
+  const languageToggleLabel = activeLanguage?.startsWith('ar') ? 'EN' : 'AR';
 
-  const organizations = useMemo(() => {
-    const normalizedQuery = normalizeArabic(query.trim());
+  const filterSections = useMemo<HelpCenterFilterSection[]>(
+    () =>
+      FILTER_SECTIONS.map((section) => ({
+        id: section.id,
+        title: t(`helpCenter.${section.titleKey}`),
+        icon:
+          section.icon === 'pin' ? (
+            <SmallPinIcon />
+          ) : section.icon === 'shield' ? (
+            <SmallShieldIcon />
+          ) : section.icon === 'phone' ? (
+            <SmallPhoneIcon />
+          ) : (
+            <SmallFilterIcon />
+          ),
+        options: section.options.map((option) => ({
+          id: option.id,
+          label: t(`helpCenter.${option.labelKey}`),
+          value: option.value,
+        })),
+      })),
+    [t]
+  );
 
-    return ORGANIZATIONS.filter((item) => {
-      if (!normalizedQuery) return true;
+  const organizations = useMemo(
+    () => filterOrganizations(appliedFilters, query, t),
+    [appliedFilters, query, t]
+  );
+  const appliedFiltersCount = useMemo(
+    () => countSelectedFilters(appliedFilters),
+    [appliedFilters]
+  );
+  const draftOrganizations = useMemo(
+    () => filterOrganizations(draftFilters, query, t),
+    [draftFilters, query, t]
+  );
+  const pinnedOrganizations = useMemo<PinnedOrganizationOption[]>(
+    () =>
+      pinnedOrganizationIds
+        .map(findOrganizationById)
+        .filter((organization): organization is OrganizationItem =>
+          Boolean(organization)
+        )
+        .map((organization) => ({
+          id: organization.id,
+          title: t(`helpCenter.${organization.nameKey}`),
+          category: t(`helpCenter.${organization.categoryKey}`),
+        })),
+    [pinnedOrganizationIds, t]
+  );
 
-      const haystack = [
-        t(`helpCenter.${item.nameKey}`),
-        t(`helpCenter.${item.categoryKey}`),
-        t(`helpCenter.${item.descriptionKey}`),
-        t(`helpCenter.${item.locationsKey}`),
-      ]
-        .map(normalizeArabic)
-        .join(' ');
-
-      return haystack.includes(normalizedQuery);
-    });
-  }, [query, t]);
-
+  const trimmedQuery = query.trim();
+  const hasActiveQuery = trimmedQuery.length > 0;
+  const hasSearchResults = organizations.length > 0;
   const visibleOrganizations = organizations.slice(0, visibleCount);
 
   const headerToggleClass = [
     'flex size-24 items-center justify-center rounded-md border',
     'border-white/35 bg-white/10 text-solid-white-400',
-    'backdrop-blur-sm',
+    'backdrop-blur-sm text-[10px] font-weight-bold tracking-[0.08em]',
   ].join(' ');
+
+  const handleToggleFilterOption = (sectionId: string, optionValue: string) => {
+    setDraftFilters((currentFilters) => {
+      const currentValues = currentFilters[sectionId] ?? [];
+      const hasValue = currentValues.includes(optionValue);
+      const nextValues = hasValue
+        ? currentValues.filter((value) => value !== optionValue)
+        : [...currentValues, optionValue];
+
+      return {
+        ...currentFilters,
+        [sectionId]: nextValues,
+      };
+    });
+  };
+
+  const handleOpenFilters = () => {
+    setDraftFilters(cloneFilterSelection(appliedFilters));
+    setIsFilterOpen(true);
+  };
+
+  const handleCancelFilters = () => {
+    setDraftFilters(cloneFilterSelection(appliedFilters));
+    setIsFilterOpen(false);
+  };
+
+  const handleClearFilters = () => {
+    const emptyFilters = createEmptyFilterSelection();
+    setDraftFilters(emptyFilters);
+    setAppliedFilters(emptyFilters);
+    setVisibleCount(4);
+  };
+
+  const handleApplyFilters = () => {
+    setAppliedFilters(cloneFilterSelection(draftFilters));
+    setVisibleCount(4);
+    setIsFilterOpen(false);
+  };
+
+  const handleClosePinnedOrganizationsSheet = () => {
+    setOrganizationPendingReplacementId(null);
+    setIsPinnedOrganizationsSheetOpen(false);
+  };
+
+  const handleTogglePinnedOrganization = (organizationId: string) => {
+    if (pinnedOrganizationIds.includes(organizationId)) {
+      setPinnedOrganizationIds((currentIds) =>
+        currentIds.filter((currentId) => currentId !== organizationId)
+      );
+      return;
+    }
+
+    if (pinnedOrganizationIds.length >= MAX_PINNED_ORGANIZATIONS) {
+      setOrganizationPendingReplacementId(organizationId);
+      setIsPinnedOrganizationsSheetOpen(true);
+      return;
+    }
+
+    setPinnedOrganizationIds((currentIds) => [...currentIds, organizationId]);
+  };
+
+  const handleReplacePinnedOrganization = (organizationIdToReplace: string) => {
+    if (!organizationPendingReplacementId) return;
+
+    setPinnedOrganizationIds((currentIds) => [
+      ...currentIds.filter(
+        (currentId) =>
+          currentId !== organizationIdToReplace &&
+          currentId !== organizationPendingReplacementId
+      ),
+      organizationPendingReplacementId,
+    ]);
+    handleClosePinnedOrganizationsSheet();
+  };
 
   return (
     <>
-      <section className="relative min-h-screen w-full overflow-hidden bg-surface-primary pb-40">
+      <section className="relative min-h-screen w-full overflow-hidden bg-surface-primary pb-32">
         <ScreenHeader
-          dir={contentDirection}
           title={t('helpCenter.title')}
           subtitle={t('helpCenter.subtitle')}
           actions={
@@ -515,7 +667,7 @@ export default function HelpCenterScreen({
                 onClick={onToggleLanguage}
                 className={headerToggleClass}
               >
-                <GlobeIcon />
+                <span aria-hidden="true">{languageToggleLabel}</span>
               </button>
 
               <button
@@ -530,13 +682,10 @@ export default function HelpCenterScreen({
           }
         />
 
-        <div className="mx-auto w-full max-w-[390px] px-16 pt-12">
+        <div className="mx-auto flex w-full  flex-col gap-22 px-16 pt-12">
           <section className="flex flex-col gap-8">
             <h2
-              className={[
-                'w-full text-lg font-weight-medium text-text-black',
-                isRtl ? 'text-right' : 'text-left',
-              ].join(' ')}
+              className="w-full text-lg font-weight-medium text-start text-text-black"
               style={{
                 color: 'var(--text-black)',
                 WebkitTextFillColor: 'var(--text-black)',
@@ -544,10 +693,7 @@ export default function HelpCenterScreen({
             >
               {t('helpCenter.emergencyTitle')}
             </h2>
-            <div
-              dir={contentDirection}
-              className="flex h-[84px] items-center justify-between"
-            >
+            <div className="flex h-[84px] items-center justify-between">
               {HOTLINES.map((item) => (
                 <EmergencyShortcut
                   key={item.id}
@@ -559,30 +705,15 @@ export default function HelpCenterScreen({
             </div>
           </section>
 
-          <section className="mt-22 flex flex-col gap-8">
-            <div
-              dir={contentDirection}
-              className={[
-                'flex items-center justify-between gap-16',
-                isRtl ? '' : 'flex-row-reverse',
-              ].join(' ')}
-            >
-              <button
-                type="button"
-                aria-label={t('helpCenter.openFilters')}
-                onClick={() => setIsFilterOpen(true)}
-                className="shrink-0 text-solid-black-400"
-              >
-                <FilterIcon />
-              </button>
-
-              <div
-                dir={contentDirection}
-                className={[
-                  'flex min-h-[36px] w-[318px] items-center gap-8 rounded-md border border-textfield-default-stroke bg-textfield-bg px-12 py-8',
-                  isRtl ? '' : 'flex-row-reverse',
-                ].join(' ')}
-              >
+          <section className="flex flex-col gap-8">
+            <div className="flex items-center justify-between gap-16">
+              <div className="flex min-h-[36px] w-[318px] items-center gap-8 rounded-md border border-textfield-default-stroke bg-textfield-bg px-12 py-8">
+                <span
+                  className="flex size-20 items-center justify-center"
+                  style={{ color: 'var(--components-text-icon)' }}
+                >
+                  <SearchIcon />
+                </span>
                 <input
                   type="search"
                   value={query}
@@ -591,92 +722,183 @@ export default function HelpCenterScreen({
                     setVisibleCount(4);
                   }}
                   placeholder={t('helpCenter.searchPlaceholder')}
-                  className={[
-                    'min-w-0 flex-1 bg-transparent text-button font-weight-regular text-textfield-value placeholder:text-textfield-default-text outline-none',
-                    isRtl ? 'text-right' : 'text-left',
-                  ].join(' ')}
+                  className="min-w-0 flex-1 bg-transparent text-button font-weight-regular text-textfield-value placeholder:text-textfield-default-text outline-none text-start"
                 />
-                <span className="flex size-20 items-center justify-center text-solid-black-400">
-                  <SearchIcon />
-                </span>
               </div>
+
+              <button
+                type="button"
+                aria-label={t('helpCenter.openFilters')}
+                onClick={handleOpenFilters}
+                className="relative flex shrink-0 items-center justify-center bg-surface-primary text-text-black"
+              >
+                <FilterIcon />
+                {appliedFiltersCount > 0 && (
+                  <Badge
+                    variant="destructive"
+                    className="absolute -start-4 -top-4 h-16 min-w-16 rounded-full p-0 text-[10px] leading-none"
+                    aria-hidden="true"
+                  >
+                    {appliedFiltersCount}
+                  </Badge>
+                )}
+              </button>
             </div>
 
-            <p
-              className={[
-                'w-full text-2xs font-weight-medium text-solid-black-400',
-                isRtl ? 'text-right' : 'text-left',
-              ].join(' ')}
-            >
-              {t('helpCenter.resultsCountStatic')}
+            <p className="w-full text-2xs font-weight-medium text-start text-solid-black-400">
+              {hasActiveQuery && !hasSearchResults
+                ? `0 ${t('helpCenter.organizationLabel')}`
+                : `${visibleOrganizations.length} / ${organizations.length} ${t(
+                    'helpCenter.organizationLabel'
+                  )}`}
             </p>
           </section>
 
-          <section className="relative mt-22 flex flex-col gap-12">
-            {visibleOrganizations.map((item) => (
-              <ServiceCard
-                key={item.id}
-                dir={contentDirection}
-                title={t(`helpCenter.${item.nameKey}`)}
-                category={t(`helpCenter.${item.categoryKey}`)}
-                description={t(`helpCenter.${item.descriptionKey}`)}
-                locations={t(`helpCenter.${item.locationsKey}`)}
-                actionLabel={t(`helpCenter.${item.actionLabelKey}`)}
-                actionIcon={
-                  item.actionType === 'phone' ? <PhoneIcon /> : <ChatIcon />
+          <section className="relative flex flex-col gap-12">
+            {hasActiveQuery && !hasSearchResults ? (
+              <SearchEmptyState
+                title={t('helpCenter.emptyStateTitle')}
+                description={t('helpCenter.emptyStateDescription', {
+                  query: trimmedQuery,
+                })}
+                actionLabel={t('helpCenter.emptyStateAction')}
+                actionAriaLabel={t('helpCenter.emptyStateActionAriaLabel')}
+                onAction={() =>
+                  addToast({
+                    heading: t('helpCenter.emptyStateToastHeading'),
+                    body: t('helpCenter.emptyStateToastBody'),
+                  })
                 }
-                actionVariant={
-                  item.actionType === 'phone' ? 'filled' : 'success'
-                }
-                primaryAction={{
-                  ariaLabel: t('helpCenter.pinAction'),
-                  icon: <PinIcon />,
-                }}
-                secondaryAction={{
-                  ariaLabel: t('helpCenter.verifyAction'),
-                  icon: <VerifyIcon />,
-                  variant: 'outline',
-                }}
               />
-            ))}
+            ) : (
+              <>
+                {visibleOrganizations.map((item) => {
+                  const isPinned = pinnedOrganizationIds.includes(item.id);
 
-            <button
-              type="button"
-              aria-label={t('helpCenter.backToTop')}
-              className="absolute bottom-[56px] left-0 flex size-[52px] items-center justify-center rounded-full border border-solid-black-300 bg-solid-white-400 text-solid-black-500 shadow-[0_8px_16px_rgba(0,0,0,0.3)]"
-              onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-            >
-              <ArrowUpIcon />
-            </button>
+                  return (
+                    <ServiceCard
+                      key={item.id}
+                      title={t(`helpCenter.${item.nameKey}`)}
+                      category={t(`helpCenter.${item.categoryKey}`)}
+                      description={t(`helpCenter.${item.descriptionKey}`)}
+                      locations={t(`helpCenter.${item.locationsKey}`)}
+                      actionLabel={t(`helpCenter.${item.actionLabelKey}`)}
+                      actionIcon={
+                        item.actionType === 'phone' ? (
+                          <PhoneIcon />
+                        ) : (
+                          <ChatIcon />
+                        )
+                      }
+                      actionVariant={
+                        item.actionType === 'phone' ? 'filled' : 'success'
+                      }
+                      primaryAction={{
+                        ariaLabel: isPinned
+                          ? t('helpCenter.unpinAction')
+                          : t('helpCenter.pinAction'),
+                        icon: <PinIcon />,
+                        onClick: () => handleTogglePinnedOrganization(item.id),
+                        variant: isPinned ? 'filled' : 'soft',
+                        iconClassName: isPinned
+                          ? 'rotate-[18deg] text-button-filled-text transition-transform duration-200 ease-out'
+                          : 'text-button-icon-icon transition-transform duration-200 ease-out',
+                      }}
+                      secondaryAction={{
+                        ariaLabel: t('helpCenter.verifyAction'),
+                        icon: <VerifyIcon />,
+                        variant: 'outline',
+                      }}
+                    />
+                  );
+                })}
+
+                {organizations.length > visibleCount && (
+                  <div className="flex justify-center">
+                    <button
+                      type="button"
+                      onClick={() => setVisibleCount((count) => count + 10)}
+                      className="inline-flex h-11 items-center justify-center gap-8 rounded-md px-16 py-8 text-button font-weight-medium text-text-black"
+                    >
+                      <span>
+                        {t('helpCenter.loadMore', {
+                          count: organizations.length - visibleCount,
+                        })}
+                      </span>
+                      <ChevronDownIcon />
+                    </button>
+                  </div>
+                )}
+
+                {hasSearchResults && (
+                  <button
+                    type="button"
+                    aria-label={t('helpCenter.backToTop')}
+                    className="absolute bottom-[56px] end-0 flex size-[52px] items-center justify-center rounded-full border border-textfield-default-stroke bg-button-icon-bg text-button-icon-icon shadow-[0_8px_16px_rgba(0,0,0,0.3)]"
+                    onClick={() =>
+                      window.scrollTo({ top: 0, behavior: 'smooth' })
+                    }
+                  >
+                    <ArrowUpIcon />
+                  </button>
+                )}
+              </>
+            )}
           </section>
-
-          <div className="mt-12 flex justify-center">
-            <button
-              type="button"
-              onClick={() => setVisibleCount((count) => count + 10)}
-              className="inline-flex h-44 items-center justify-center gap-8 rounded-md px-16 py-8 text-button font-weight-medium text-text-black"
-            >
-              <ChevronDownIcon />
-              <span>{t('helpCenter.loadMoreStatic')}</span>
-            </button>
-          </div>
         </div>
       </section>
 
-      <BottomSheet
+      <HelpCenterFiltersSheet
+        key={isFilterOpen ? 'open' : 'closed'}
         open={isFilterOpen}
         title={t('helpCenter.filtersTitle')}
-        description={t('helpCenter.filtersDescription')}
-        secondaryActionLabel={t('helpCenter.filtersCancel')}
-        primaryActionLabel={t('helpCenter.filtersApply')}
-        primaryDisabled
-        onOpenChange={setIsFilterOpen}
-        onSecondaryAction={() => setIsFilterOpen(false)}
-      >
-        <div className="flex h-full items-center justify-center rounded-lg border border-dashed border-solid-black-300 text-center text-button font-weight-regular text-solid-black-400">
-          {t('helpCenter.filtersPlaceholder')}
-        </div>
-      </BottomSheet>
+        closeAriaLabel={t('helpCenter.filtersClose')}
+        showMoreLabel={() => t('helpCenter.filtersShowMore')}
+        secondaryActionLabel={t('helpCenter.filtersReset')}
+        primaryActionLabel={t('helpCenter.filtersApplyCount', {
+          count: draftOrganizations.length,
+        })}
+        sections={filterSections}
+        selectedValues={draftFilters}
+        onOpenChange={(open) => {
+          if (!open) {
+            handleCancelFilters();
+            return;
+          }
+
+          setIsFilterOpen(true);
+        }}
+        onToggleOption={handleToggleFilterOption}
+        onSecondaryAction={handleClearFilters}
+        onPrimaryAction={handleApplyFilters}
+      />
+
+      <PinnedOrganizationsSheet
+        open={isPinnedOrganizationsSheetOpen}
+        title={t('helpCenter.pinnedOrganizationsTitle')}
+        description={t('helpCenter.pinnedOrganizationsDescription', {
+          count: MAX_PINNED_ORGANIZATIONS,
+        })}
+        closeAriaLabel={t('helpCenter.pinnedOrganizationsClose')}
+        cancelLabel={t('helpCenter.pinnedOrganizationsCancel')}
+        replaceLabel={t('helpCenter.pinnedOrganizationsReplace')}
+        replaceAriaLabel={(organizationTitle) =>
+          t('helpCenter.pinnedOrganizationsReplaceAriaLabel', {
+            organization: organizationTitle,
+          })
+        }
+        pinnedOrganizations={pinnedOrganizations}
+        onOpenChange={(open) => {
+          if (!open) {
+            handleClosePinnedOrganizationsSheet();
+            return;
+          }
+
+          setIsPinnedOrganizationsSheetOpen(true);
+        }}
+        onCancel={handleClosePinnedOrganizationsSheet}
+        onReplace={handleReplacePinnedOrganization}
+      />
     </>
   );
 }

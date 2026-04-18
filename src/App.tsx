@@ -8,7 +8,8 @@ function App() {
   const { theme, toggleTheme } = useTheme();
 
   const toggleLanguage = () => {
-    const next = i18n.language === 'ar' ? 'en' : 'ar';
+    const currentLanguage = i18n.resolvedLanguage ?? i18n.language;
+    const next = currentLanguage?.startsWith('ar') ? 'en' : 'ar';
     void i18n.changeLanguage(next);
   };
 

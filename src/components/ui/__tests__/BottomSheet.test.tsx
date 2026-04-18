@@ -27,6 +27,7 @@ describe('BottomSheet', () => {
   beforeEach(() => {
     desktopMatches = false;
     installMatchMediaMock();
+    document.documentElement.setAttribute('dir', 'rtl');
     container = document.createElement('div');
     document.body.appendChild(container);
     root = createRoot(container);
@@ -36,6 +37,7 @@ describe('BottomSheet', () => {
     act(() => {
       root.unmount();
     });
+    vi.useRealTimers();
     container.remove();
     document.body.innerHTML = '';
   });
@@ -124,6 +126,7 @@ describe('BottomSheet', () => {
   });
 
   it('calls onOpenChange when the close button is clicked', () => {
+    vi.useFakeTimers();
     const onOpenChange = vi.fn();
 
     act(() => {
@@ -138,18 +141,60 @@ describe('BottomSheet', () => {
       );
     });
 
-    const closeButton = document.body.querySelector(
+    const closeButton = document.body.querySelector<HTMLButtonElement>(
       'button[aria-label="Close bottom sheet"]'
     );
 
     act(() => {
       closeButton?.click();
+      vi.advanceTimersByTime(220);
+    });
+
+    expect(onOpenChange).toHaveBeenCalledWith(false);
+  });
+
+  it('calls onOpenChange when the mobile drag handle is pulled down', () => {
+    vi.useFakeTimers();
+    const onOpenChange = vi.fn();
+
+    act(() => {
+      root.render(
+        <BottomSheet
+          open
+          title="القيمة"
+          secondaryActionLabel="ملصق"
+          primaryActionLabel="ملصق"
+          onOpenChange={onOpenChange}
+        />
+      );
+    });
+
+    const dragHandle = document.body.querySelector<HTMLElement>(
+      '[data-testid="bottom-sheet-drag-handle"]'
+    );
+
+    act(() => {
+      const touchStartEvent = new Event('touchstart', { bubbles: true });
+      Object.defineProperty(touchStartEvent, 'touches', {
+        value: [{ clientY: 0 }],
+      });
+      dragHandle?.dispatchEvent(touchStartEvent);
+    });
+
+    act(() => {
+      const touchEndEvent = new Event('touchend', { bubbles: true });
+      Object.defineProperty(touchEndEvent, 'changedTouches', {
+        value: [{ clientY: 64 }],
+      });
+      dragHandle?.dispatchEvent(touchEndEvent);
+      vi.advanceTimersByTime(220);
     });
 
     expect(onOpenChange).toHaveBeenCalledWith(false);
   });
 
   it('calls onOpenChange when escape is pressed', () => {
+    vi.useFakeTimers();
     const onOpenChange = vi.fn();
 
     act(() => {
@@ -170,6 +215,7 @@ describe('BottomSheet', () => {
           key: 'Escape',
         })
       );
+      vi.advanceTimersByTime(220);
     });
 
     expect(onOpenChange).toHaveBeenCalledWith(false);
@@ -196,5 +242,57 @@ describe('BottomSheet', () => {
     );
 
     expect(primaryButton).toBeDefined();
+  });
+
+  it('inherits the active document direction for portal content', () => {
+    document.documentElement.setAttribute('dir', 'ltr');
+
+    act(() => {
+      root.render(
+        <BottomSheet
+          open
+          title="Value"
+          secondaryActionLabel="Cancel"
+          primaryActionLabel="Apply"
+          onOpenChange={() => undefined}
+        />
+      );
+    });
+
+    const dialog = document.body.querySelector('[role="dialog"]');
+
+    expect(dialog?.getAttribute('dir')).toBe('ltr');
+  });
+
+  it('locks background scrolling while open', () => {
+    act(() => {
+      root.render(
+        <BottomSheet
+          open
+          title="القيمة"
+          secondaryActionLabel="ملصق"
+          primaryActionLabel="ملصق"
+          onOpenChange={() => undefined}
+        />
+      );
+    });
+
+    expect(document.body.style.overflow).toBe('hidden');
+    expect(document.documentElement.style.overflow).toBe('hidden');
+
+    act(() => {
+      root.render(
+        <BottomSheet
+          open={false}
+          title="القيمة"
+          secondaryActionLabel="ملصق"
+          primaryActionLabel="ملصق"
+          onOpenChange={() => undefined}
+        />
+      );
+    });
+
+    expect(document.body.style.overflow).toBe('');
+    expect(document.documentElement.style.overflow).toBe('');
   });
 });

@@ -74,7 +74,7 @@ describe('Tag', () => {
       root.render(<Tag onClear={onClear}>Label</Tag>);
     });
 
-    const clearButton = container.querySelector(
+    const clearButton = container.querySelector<HTMLButtonElement>(
       'button[aria-label="Clear tag"]'
     );
 

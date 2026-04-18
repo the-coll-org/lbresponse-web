@@ -28,7 +28,7 @@ export interface AlertProps extends HTMLAttributes<HTMLDivElement> {
  *   No shadow                    → effects: [] in Figma
  */
 const BASE = [
-  'w-full flex flex-row items-center',
+  'w-full flex flex-row items-start',
   'px-16 py-12 gap-16',
   'rounded-md border bg-alert-bg',
   'transition-[border-color,color]',
@@ -127,7 +127,7 @@ export function Alert({
        *   gap-12 → itemSpacing: 12px (Figma "Icon + Content" frame)
        *   items-center → icon vertically centered against the 2-line text block
        */}
-      <div className="flex flex-row items-center gap-12 flex-1 min-w-0">
+      <div className="flex flex-row items-start gap-12 flex-1 min-w-0">
         {/*
          * Icon-aligner — 16×16 fixed (Figma: Icon-aligner frame = 16×16)
          * Color override: neutral-icon (#818283) differs from neutral-text (#2B272B)

@@ -1,10 +1,14 @@
 import type { HTMLAttributes, MouseEventHandler, ReactNode } from 'react';
+import { Button } from './Button';
+import { SvgIcon } from './SvgIcon';
+import locationSvg from '../../assets/help-center/location.svg?raw';
 
 export interface ServiceCardAction {
   ariaLabel: string;
   icon: ReactNode;
   onClick?: MouseEventHandler<HTMLButtonElement>;
-  variant?: 'soft' | 'outline';
+  variant?: 'soft' | 'outline' | 'filled';
+  iconClassName?: string;
 }
 
 export interface ServiceCardProps extends Omit<
@@ -24,20 +28,28 @@ export interface ServiceCardProps extends Omit<
 }
 
 const CARD_BASE = [
-  'w-[358px] max-w-full rounded-lg border border-solid-black-300',
-  'bg-solid-white-400 p-12 overflow-hidden',
+  'w-full rounded-lg border border-textfield-default-stroke',
+  'bg-surface-primary p-12 overflow-hidden',
 ].join(' ');
+
+const ACTION_VARIANTS = {
+  filled: 'bg-button-filled-bg text-button-filled-text',
+  success: 'bg-solid-green-600 text-button-filled-text',
+} as const;
 
 function CardIconButton({
   ariaLabel,
   icon,
   onClick,
   variant = 'soft',
+  iconClassName = '',
 }: ServiceCardAction) {
   const variantClass =
-    variant === 'outline'
-      ? 'w-[38px] h-[40px] border border-solid-black-300 bg-solid-white-400 p-4'
-      : 'size-32 bg-button-icon-bg p-8';
+    variant === 'filled'
+      ? 'size-32 bg-button-filled-bg p-8 text-button-filled-text'
+      : variant === 'outline'
+        ? 'w-[38px] h-[40px] border border-textfield-default-stroke bg-surface-primary p-4'
+        : 'size-32 bg-button-icon-bg p-8';
 
   return (
     <button
@@ -52,19 +64,19 @@ function CardIconButton({
         variantClass,
       ].join(' ')}
     >
-      <span
-        className="size-[18px] flex items-center justify-center"
+      <div
+        className={`size-[18px] flex items-center justify-center ${iconClassName}`.trim()}
         aria-hidden="true"
       >
         {icon}
-      </span>
+      </div>
     </button>
   );
 }
 
 function CategoryPill({ children }: { children: ReactNode }) {
   return (
-    <span className="inline-flex items-center justify-center rounded-md border border-black/10 px-8 py-4 text-2xs font-weight-regular text-[#0a0a0a] whitespace-nowrap">
+    <span className="inline-flex items-center justify-center rounded-md border border-textfield-default-stroke px-8 py-4 text-2xs font-weight-regular text-text-black">
       {children}
     </span>
   );
@@ -84,107 +96,71 @@ export function ServiceCard({
   className = '',
   ...props
 }: ServiceCardProps) {
-  const actionClass =
-    actionVariant === 'success'
-      ? 'bg-[#00a63e] text-button-filled-text'
-      : 'bg-button-filled-bg text-button-filled-text';
-  const contentDirection = props.dir === 'ltr' ? 'ltr' : 'rtl';
-  const isRtl = contentDirection === 'rtl';
-  const topRowClass = isRtl
-    ? 'flex items-start justify-between gap-12 w-full'
-    : 'flex flex-row-reverse items-start justify-between gap-12 w-full';
-  const contentRowClass = isRtl
-    ? 'flex items-center gap-12 shrink min-w-0'
-    : 'flex flex-row-reverse items-center gap-12 shrink min-w-0';
-  const metaRowClass = isRtl
-    ? 'flex items-center gap-4 text-right text-button font-weight-regular text-text-black'
-    : 'flex flex-row-reverse items-center gap-4 text-left text-button font-weight-regular text-text-black';
-  const titleRowClass = isRtl
-    ? 'flex items-center justify-end gap-8 w-full min-w-0'
-    : 'flex flex-row-reverse items-center justify-end gap-8 w-full min-w-0';
+  const actionClass = ACTION_VARIANTS[actionVariant];
 
   return (
-    <div
-      className={`${CARD_BASE} ${className}`.trim()}
-      dir={contentDirection}
-      {...props}
-    >
-      <div className="flex flex-col items-end justify-center gap-12 w-full">
-        <div className={topRowClass}>
-          {primaryAction ? (
-            <CardIconButton {...primaryAction} />
-          ) : (
-            <span className="size-32 shrink-0" aria-hidden="true" />
-          )}
+    <article className={`${CARD_BASE} ${className}`.trim()} {...props}>
+      <div className="flex w-full flex-col items-start justify-center gap-12">
+        <header className="flex w-full items-start justify-start gap-12">
+          {secondaryAction && <CardIconButton {...secondaryAction} />}
 
-          <div className={contentRowClass}>
-            <div className="flex flex-col items-end gap-8 min-w-0 text-right w-[161px]">
-              <div className={titleRowClass}>
-                {category && <CategoryPill>{category}</CategoryPill>}
-                <p className="text-sm font-weight-bold text-text-black whitespace-nowrap">
+          <div className="flex flex-1 justify-start">
+            <div className="flex flex-1 flex-col items-start gap-8 text-start">
+              <div className="flex w-full flex-wrap items-center justify-start gap-8">
+                <p className="text-sm font-weight-bold text-text-black break-words">
                   {title}
                 </p>
+                {category && <CategoryPill>{category}</CategoryPill>}
               </div>
               {description && (
-                <p className="w-full text-2xs font-weight-regular text-solid-black-400">
+                <p className="w-full text-2xs font-weight-regular text-textfield-default-text">
                   {description}
                 </p>
               )}
             </div>
-
-            {secondaryAction && <CardIconButton {...secondaryAction} />}
           </div>
-        </div>
+
+          <div className="shrink-0">
+            {primaryAction ? (
+              <CardIconButton {...primaryAction} />
+            ) : (
+              <div className="block size-32" aria-hidden="true" />
+            )}
+          </div>
+        </header>
 
         {locations && (
-          <div className={metaRowClass}>
-            <span>{locations}</span>
-            <span
-              className="size-16 flex items-center justify-center"
+          <div className="flex w-full items-center justify-start gap-4 text-start text-button font-weight-regular text-text-black">
+            <div
+              className="flex size-16 items-center justify-center"
               aria-hidden="true"
             >
-              <svg
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="M12 21s-6-5.33-6-11a6 6 0 1 1 12 0c0 5.67-6 11-6 11z" />
-                <circle cx="12" cy="10" r="2.5" />
-              </svg>
-            </span>
+              <SvgIcon svg={locationSvg} className="size-16" />
+            </div>
+            <p className="break-words">{locations}</p>
           </div>
         )}
 
-        <button
-          type="button"
+        <Button
           onClick={onActionClick}
           className={[
-            'w-full h-[44px] min-h-[37px] max-h-[48px]',
-            'inline-flex items-center justify-center gap-8',
-            'px-16 py-8 rounded-md overflow-hidden',
+            'h-[44px] w-full min-h-[37px] max-h-[48px] overflow-hidden',
             actionClass,
-            'text-button font-weight-medium',
-            'cursor-pointer transition-opacity',
-            'focus-visible:outline-2 focus-visible:outline-offset-2',
-            'focus-visible:outline-solid-primary-500',
           ].join(' ')}
+          rightIcon={
+            actionIcon ? (
+              <div
+                className="flex size-16 shrink-0 items-center justify-center"
+                aria-hidden="true"
+              >
+                {actionIcon}
+              </div>
+            ) : undefined
+          }
         >
-          {actionIcon && (
-            <span
-              className="shrink-0 size-16 flex items-center justify-center"
-              aria-hidden="true"
-            >
-              {actionIcon}
-            </span>
-          )}
-          <span>{actionLabel}</span>
-        </button>
+          {actionLabel}
+        </Button>
       </div>
-    </div>
+    </article>
   );
 }
