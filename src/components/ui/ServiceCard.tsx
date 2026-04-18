@@ -100,7 +100,7 @@ export function ServiceCard({
 
   return (
     <article className={`${CARD_BASE} ${className}`.trim()} {...props}>
-      <div className="flex w-full flex-col items-start justify-center gap-12">
+      <div className="flex h-full w-full flex-col items-start gap-12">
         <header className="flex w-full items-start justify-start gap-12">
           {secondaryAction && <CardIconButton {...secondaryAction} />}
 
@@ -144,7 +144,7 @@ export function ServiceCard({
         <Button
           onClick={onActionClick}
           className={[
-            'h-[44px] w-full min-h-[37px] max-h-[48px] overflow-hidden',
+            'mt-auto h-[44px] w-full min-h-[37px] max-h-[48px] overflow-hidden',
             actionClass,
           ].join(' ')}
           rightIcon={
