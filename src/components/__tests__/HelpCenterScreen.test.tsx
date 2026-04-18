@@ -87,4 +87,46 @@ describe('HelpCenterScreen', () => {
 
     expect(document.body.textContent).toContain('Replace pinned organization');
   });
+
+  it('updates the draft filter result count and can reset it', () => {
+    act(() => {
+      root.render(
+        <ToastProvider>
+          <HelpCenterScreen
+            theme="light"
+            onToggleTheme={() => undefined}
+            onToggleLanguage={() => undefined}
+          />
+        </ToastProvider>
+      );
+    });
+
+    const openFiltersButton = document.body.querySelector<HTMLButtonElement>(
+      'button[aria-label="Open filters"]'
+    );
+
+    act(() => {
+      openFiltersButton?.click();
+    });
+
+    const beirutChip = Array.from(
+      document.body.querySelectorAll<HTMLButtonElement>('button')
+    ).find((button) => button.textContent?.trim() === 'Beirut');
+
+    act(() => {
+      beirutChip?.click();
+    });
+
+    expect(document.body.textContent).toContain('Apply (4 organizations)');
+
+    const resetButton = Array.from(
+      document.body.querySelectorAll<HTMLButtonElement>('button')
+    ).find((button) => button.textContent?.trim() === 'Reset');
+
+    act(() => {
+      resetButton?.click();
+    });
+
+    expect(document.body.textContent).toContain('Apply (6 organizations)');
+  });
 });
