@@ -12,6 +12,7 @@ import {
   cloneFilterSelection,
   countSelectedFilters,
   createEmptyFilterSelection,
+  findOrganizationById,
   filterOrganizations,
 } from './helpCenter.utils';
 import type { HelpCenterFilterSelection } from './helpCenter.types';
@@ -99,6 +100,10 @@ export function useHelpCenterScreenState() {
         locations: t(`helpCenter.${organization.locationsKey}`),
         actionLabel: t(`helpCenter.${organization.actionLabelKey}`),
         actionType: organization.actionType,
+        actionValue: organization.actionValue,
+        whatsappMessage: organization.whatsappMessageKey
+          ? t(`helpCenter.${organization.whatsappMessageKey}`)
+          : '',
         isPinned: pinnedOrganizationIds.includes(organization.id),
       })),
     [organizations, pinnedOrganizationIds, t, visibleCount]
@@ -193,6 +198,26 @@ export function useHelpCenterScreenState() {
     setVisibleCount((count) => count + 10);
   }
 
+  function handleActivateOrganizationAction(organizationId: string) {
+    const organization = findOrganizationById(organizationId);
+
+    if (!organization || typeof window === 'undefined') {
+      return;
+    }
+
+    if (organization.actionType === 'phone') {
+      window.location.href = `tel:${organization.actionValue}`;
+      return;
+    }
+
+    const message = organization.whatsappMessageKey
+      ? t(`helpCenter.${organization.whatsappMessageKey}`)
+      : '';
+    const whatsappUrl = `https://wa.me/${organization.actionValue}?text=${encodeURIComponent(message)}`;
+
+    window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
+  }
+
   return {
     t,
     query,
@@ -222,6 +247,7 @@ export function useHelpCenterScreenState() {
     handleReplacePinnedOrganization,
     handleClosePinnedOrganizationsSheet,
     handleLoadMore,
+    handleActivateOrganizationAction,
     setIsFilterOpen,
     setIsPinnedOrganizationsSheetOpen,
   };

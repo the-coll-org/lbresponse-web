@@ -19,6 +19,8 @@ export interface HelpCenterOrganization {
   locationsKey: string;
   actionLabelKey: string;
   actionType: 'phone' | 'whatsapp';
+  actionValue: string;
+  whatsappMessageKey?: string;
   regionValues: string[];
   providerTypeValues: string[];
   contactMethodValues: string[];

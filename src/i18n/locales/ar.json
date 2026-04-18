@@ -134,6 +134,9 @@
       "call8002222": "اتصل 800-2222",
       "whatsapp2200": "واتساب 2200"
     },
+    "messages": {
+      "defaultWhatsapp": "مرحبا، أحتاج إلى مساعدة بخصوص خدماتكم."
+    },
     "items": {
       "ministryHealth": "وزارة الصحة",
       "screeningCenter": "مركز الفحص الشامل",

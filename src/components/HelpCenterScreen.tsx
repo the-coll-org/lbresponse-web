@@ -44,6 +44,7 @@ export default function HelpCenterScreen({
     handleReplacePinnedOrganization,
     handleClosePinnedOrganizationsSheet,
     handleLoadMore,
+    handleActivateOrganizationAction,
     setIsFilterOpen,
     setIsPinnedOrganizationsSheetOpen,
   } = useHelpCenterScreenState();
@@ -116,6 +117,7 @@ export default function HelpCenterScreen({
               })
             }
             onLoadMore={handleLoadMore}
+            onActivateOrganizationAction={handleActivateOrganizationAction}
             onTogglePinnedOrganization={handleTogglePinnedOrganization}
           />
         </div>

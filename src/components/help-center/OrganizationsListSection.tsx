@@ -10,6 +10,8 @@ interface OrganizationCardViewModel {
   locations: string;
   actionLabel: string;
   actionType: 'phone' | 'whatsapp';
+  actionValue: string;
+  whatsappMessage: string;
   isPinned: boolean;
 }
 
@@ -29,6 +31,7 @@ interface OrganizationsListSectionProps {
   showLoadMore: boolean;
   onEmptyStateAction: () => void;
   onLoadMore: () => void;
+  onActivateOrganizationAction: (organizationId: string) => void;
   onTogglePinnedOrganization: (organizationId: string) => void;
 }
 
@@ -48,6 +51,7 @@ export function OrganizationsListSection({
   showLoadMore,
   onEmptyStateAction,
   onLoadMore,
+  onActivateOrganizationAction,
   onTogglePinnedOrganization,
 }: OrganizationsListSectionProps) {
   const PhoneIcon = helpCenterIcons.phone;
@@ -88,6 +92,7 @@ export function OrganizationsListSection({
                   actionVariant={
                     item.actionType === 'phone' ? 'filled' : 'success'
                   }
+                  onActionClick={() => onActivateOrganizationAction(item.id)}
                   primaryAction={{
                     ariaLabel: item.isPinned
                       ? unpinActionAriaLabel
