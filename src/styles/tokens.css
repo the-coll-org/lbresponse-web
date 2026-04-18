@@ -289,20 +289,25 @@
   --focus-ring-error: #fca5a5;
 
   /* ── Body font — defaults to Arabic; overridden per language ─────────── */
-  --font-body: 'Dubai', sans-serif;
+  --font-body:
+    'Dubai', 'Tajawal', 'Noto Sans Arabic', system-ui, -apple-system,
+    'Segoe UI', sans-serif;
 }
 
 /* Switch body font to English when lang="en" is set on <html> */
 [lang='en'] {
-  --font-body: 'Roboto', sans-serif;
+  --font-body:
+    'Roboto', system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
 }
 
 [data-theme='dark'] {
   --surface-primary: #16171d;
   --text-black: var(--color-solid-white-400);
-  --icon-black: var(--color-solid-black-600);
+  --icon-black: var(--color-solid-white-400);
 
-  --components-button-filled-bg: var(--color-solid-primary-500);
+  --components-button-filled-bg: var(--color-solid-primary-400);
+  --components-button-filled-text: var(--color-solid-black-600);
+  --components-button-filled-icon: var(--color-solid-black-600);
   --components-button-destructive-bg: var(--status-error);
   --components-button-destructive-text: var(--color-solid-white-400);
   --components-button-destructive-icon: var(--color-solid-white-400);
@@ -316,16 +321,24 @@
 
   --components-text-bg: #1f2028;
   --components-text-default-text: #9ca3af;
-  --components-text-default-stroke: #2e303a;
+  --components-text-default-stroke: #3b4252;
   --components-text-value: var(--color-solid-white-400);
-  --components-text-value-stroke: #3b4252;
-  --components-text-focus-stroke: #6b7280;
+  --components-text-value-stroke: #4b5563;
+  --components-text-focus-stroke: #9ca3af;
   --components-text-icon: #9ca3af;
 
   --components-alert-bg: #1f2028;
   --components-alert-stroke: #3b4252;
   --components-alert-neutral-text: var(--color-solid-white-400);
   --components-alert-neutral-icon: #9ca3af;
+
+  --components-badges-primary: var(--color-solid-white-400);
+  --components-badges-secondary: #2e303a;
+  --components-badges-text: var(--color-solid-black-600);
+  --components-badges-outline-stroke: var(--color-solid-white-400);
+
+  --focus-ring: #6b7280;
+  --focus-ring-error: #fca5a5;
 }
 
 /* ============================================================================

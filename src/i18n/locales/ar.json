@@ -8,7 +8,7 @@
     "darkMode": "الوضع الداكن",
     "toggleLanguage": "تبديل اللغة",
     "toggleTheme": "تبديل المظهر",
-    "loading": "جاري التحميل...",
+    "loading": "جارٍ التحميل...",
     "fetchError": "فشل تحميل البيانات. تأكد من تشغيل الخادم.",
     "noData": "لا توجد بيانات."
   },
@@ -48,6 +48,12 @@
     "filtersReset": "إعادة تعيين",
     "filtersApply": "تطبيق",
     "filtersShowMore": "عرض المزيد",
+    "filtersApply_zero": "عرض {{count}} منظمة",
+    "filtersApply_one": "عرض {{count}} منظمة",
+    "filtersApply_two": "عرض {{count}} منظمتين",
+    "filtersApply_few": "عرض {{count}} منظمات",
+    "filtersApply_many": "عرض {{count}} منظمة",
+    "filtersApply_other": "عرض {{count}} منظمة",
     "filtersApplyCount_zero": "تطبيق ({{count}} منظمة)",
     "filtersApplyCount_one": "تطبيق ({{count}} منظمة)",
     "filtersApplyCount_two": "تطبيق ({{count}} منظمتين)",
@@ -64,7 +70,7 @@
       "marineRescue": "الإنقاذ البحري",
       "medicalAid": "الإسعاف الطبي",
       "civilDefense": "الدفاع المدني",
-      "ambulance": "الإسعاف"
+      "ambulance": "سيارة الإسعاف"
     },
     "categories": {
       "government": "حكومي",
@@ -74,7 +80,7 @@
     "filtersSections": {
       "serviceType": "نوع مقدم الخدمة",
       "contact": "التواصل",
-      "location": "مع الموقع"
+      "location": "الموقع"
     },
     "filtersOptions": {
       "phone": "اتصال",

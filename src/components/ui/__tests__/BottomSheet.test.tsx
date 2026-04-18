@@ -120,7 +120,7 @@ describe('BottomSheet', () => {
     const dialog = document.body.querySelector('[role="dialog"]');
 
     expect(overlay?.className).toContain('items-center');
-    expect(dialog?.className).toContain('w-[390px]');
+    expect(dialog?.className).toContain('max-w-[560px]');
     expect(dialog?.className).toContain('rounded-2xl');
     expect(document.body.querySelector('.h-6.w-48')).toBeNull();
   });

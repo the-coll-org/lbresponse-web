@@ -16,4 +16,9 @@
   display: flex;
   justify-content: center;
   min-height: 100svh;
+  width: 100%;
+}
+
+.app-stage > * {
+  width: 100%;
 }

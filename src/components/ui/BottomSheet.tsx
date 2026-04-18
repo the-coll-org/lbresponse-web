@@ -30,7 +30,7 @@ const OVERLAY_BASE =
   'fixed inset-0 z-[9998] bg-solid-black-700/30 backdrop-blur-[6px] flex justify-center';
 
 const SHEET_BASE = [
-  'relative flex max-h-[calc(100svh-32px)] w-full flex-col overflow-hidden bg-surface-primary',
+  'relative flex max-h-[calc(100svh-32px)] flex-col overflow-hidden bg-surface-primary',
   'shadow-[0_-12px_32px_rgba(13,14,16,0.12)]',
 ].join(' ');
 const DRAG_CLOSE_THRESHOLD = 48;
@@ -135,7 +135,7 @@ export function BottomSheet({
   }, [open, requestClose]);
 
   const overlayClass = `${OVERLAY_BASE} ${isDesktop ? 'items-center' : 'items-end'}`;
-  const sheetClass = `${SHEET_BASE} ${isDesktop ? 'mx-16 w-[390px] rounded-2xl' : 'w-full rounded-t-2xl'}`;
+  const sheetClass = `${SHEET_BASE} ${isDesktop ? 'mx-16 w-full max-w-[560px] rounded-2xl' : 'w-full rounded-t-2xl'}`;
 
   const handleDragStart = (clientY: number) => {
     dragStartYRef.current = clientY;

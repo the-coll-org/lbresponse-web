@@ -48,7 +48,7 @@ function FilterChip({
         'inline-flex h-32 items-center justify-center rounded-md border px-8',
         'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid-primary-500',
         selected
-          ? 'border-solid-primary-400 bg-solid-primary-300 text-text-black'
+          ? 'border-solid-primary-400 bg-solid-primary-300 text-solid-black-600'
           : 'border-textfield-default-stroke bg-surface-primary text-text-black',
       ].join(' ')}
     >

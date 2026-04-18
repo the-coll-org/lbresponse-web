@@ -5,6 +5,7 @@ import {
   FILTER_SECTIONS,
   HOTLINES,
   MAX_PINNED_ORGANIZATIONS,
+  MIN_VISIBLE_BEFORE_LOAD_MORE,
 } from './helpCenter.data';
 import { helpCenterIcons } from './helpCenter.icons';
 import {
@@ -20,7 +21,10 @@ import type { HelpCenterFilterSelection } from './helpCenter.types';
 export function useHelpCenterScreenState() {
   const { t, i18n } = useTranslation();
   const [query, setQuery] = useState('');
-  const [visibleCount, setVisibleCount] = useState(4);
+  const [fitCount, setFitCount] = useState(MIN_VISIBLE_BEFORE_LOAD_MORE);
+  const [extraVisibleCount, setExtraVisibleCount] = useState(0);
+  const visibleCount =
+    Math.max(fitCount, MIN_VISIBLE_BEFORE_LOAD_MORE) + extraVisibleCount;
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [isPinnedOrganizationsSheetOpen, setIsPinnedOrganizationsSheetOpen] =
     useState(false);
@@ -74,10 +78,18 @@ export function useHelpCenterScreenState() {
     [t]
   );
 
-  const organizations = useMemo(
-    () => filterOrganizations(appliedFilters, query, t),
-    [appliedFilters, query, t]
-  );
+  const organizations = useMemo(() => {
+    const filtered = filterOrganizations(appliedFilters, query, t);
+    if (pinnedOrganizationIds.length === 0) {
+      return filtered;
+    }
+    const pinnedSet = new Set(pinnedOrganizationIds);
+    return [...filtered].sort((a, b) => {
+      const aRank = pinnedSet.has(a.id) ? 0 : 1;
+      const bRank = pinnedSet.has(b.id) ? 0 : 1;
+      return aRank - bRank;
+    });
+  }, [appliedFilters, query, t, pinnedOrganizationIds]);
   const draftOrganizations = useMemo(
     () => filterOrganizations(draftFilters, query, t),
     [draftFilters, query, t]
@@ -115,7 +127,11 @@ export function useHelpCenterScreenState() {
 
   function handleQueryChange(nextQuery: string) {
     setQuery(nextQuery);
-    setVisibleCount(4);
+    setExtraVisibleCount(0);
+  }
+
+  function handleFitCountChange(nextFitCount: number) {
+    setFitCount(nextFitCount);
   }
 
   function handleToggleFilterOption(sectionId: string, optionValue: string) {
@@ -147,12 +163,12 @@ export function useHelpCenterScreenState() {
     const emptyFilters = createEmptyFilterSelection();
     setDraftFilters(emptyFilters);
     setAppliedFilters(emptyFilters);
-    setVisibleCount(4);
+    setExtraVisibleCount(0);
   }
 
   function handleApplyFilters() {
     setAppliedFilters(cloneFilterSelection(draftFilters));
-    setVisibleCount(4);
+    setExtraVisibleCount(0);
     setIsFilterOpen(false);
   }
 
@@ -195,7 +211,9 @@ export function useHelpCenterScreenState() {
   }
 
   function handleLoadMore() {
-    setVisibleCount((count) => count + 10);
+    setExtraVisibleCount(
+      (count) => count + Math.max(fitCount, MIN_VISIBLE_BEFORE_LOAD_MORE)
+    );
   }
 
   function handleActivateOrganizationAction(organizationId: string) {
@@ -247,6 +265,7 @@ export function useHelpCenterScreenState() {
     handleReplacePinnedOrganization,
     handleClosePinnedOrganizationsSheet,
     handleLoadMore,
+    handleFitCountChange,
     handleActivateOrganizationAction,
     setIsFilterOpen,
     setIsPinnedOrganizationsSheetOpen,

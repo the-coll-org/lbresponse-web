@@ -44,6 +44,7 @@ export default function HelpCenterScreen({
     handleReplacePinnedOrganization,
     handleClosePinnedOrganizationsSheet,
     handleLoadMore,
+    handleFitCountChange,
     handleActivateOrganizationAction,
     setIsFilterOpen,
     setIsPinnedOrganizationsSheetOpen,
@@ -74,7 +75,7 @@ export default function HelpCenterScreen({
           }
         />
 
-        <div className="mx-auto flex w-full flex-col gap-22 px-16 pt-12">
+        <div className="mx-auto flex w-full max-w-[1200px] flex-col gap-22 px-16 pt-12 md:px-32 lg:px-48">
           <EmergencyHotlinesSection
             title={t('helpCenter.emergencyTitle')}
             hotlines={hotlines}
@@ -84,10 +85,12 @@ export default function HelpCenterScreen({
             query={query}
             placeholder={t('helpCenter.searchPlaceholder')}
             filterAriaLabel={t('helpCenter.openFilters')}
+            clearFiltersAriaLabel={t('helpCenter.filtersClear')}
             appliedFiltersCount={appliedFiltersCount}
             resultsLabel={resultsLabel}
             onQueryChange={handleQueryChange}
             onOpenFilters={handleOpenFilters}
+            onClearFilters={handleClearFilters}
           />
 
           <OrganizationsListSection
@@ -117,6 +120,7 @@ export default function HelpCenterScreen({
               })
             }
             onLoadMore={handleLoadMore}
+            onFitCountChange={handleFitCountChange}
             onActivateOrganizationAction={handleActivateOrganizationAction}
             onTogglePinnedOrganization={handleTogglePinnedOrganization}
           />

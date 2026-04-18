@@ -224,3 +224,5 @@ export const FILTER_SECTIONS: HelpCenterFilterSectionConfig[] = [
 ];
 
 export const MAX_PINNED_ORGANIZATIONS = 5;
+
+export const MIN_VISIBLE_BEFORE_LOAD_MORE = 12;
