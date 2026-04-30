@@ -11,36 +11,70 @@ export interface HelpCenterHotline {
   icon: 'cross' | 'siren' | 'shield' | 'water';
 }
 
-export interface HelpCenterOrganization {
+export interface HelpCenterOrganizationApiItem {
   id: string;
-  nameKey: string;
-  categoryKey: string;
-  descriptionKey: string;
-  locationsKey: string;
-  actionLabelKey: string;
-  actionType: 'phone' | 'whatsapp';
-  actionValue: string;
-  whatsappMessageKey?: string;
-  regionValues: string[];
-  providerTypeValues: string[];
-  contactMethodValues: string[];
+  title: string;
+  title_ar: string | null;
+  description: string | null;
+  description_ar: string | null;
+  email: string | null;
+  pinned: boolean;
+  verified: boolean;
+  phone_number: string | null;
+  type: string | null;
+  locations: string[];
+  organization_type: string | null;
+  provider_type?: string | null;
+  sector?: string | null;
+  service_subtype?: string | null;
+  shelter_type?: string | null;
+  updated_at: string | null;
 }
 
-export type HelpCenterFilterField =
-  | 'regionValues'
-  | 'providerTypeValues'
-  | 'contactMethodValues';
+export interface HelpCenterOrganizationsResponse {
+  data: HelpCenterOrganizationApiItem[];
+  total: number;
+  page: number;
+  page_size: number;
+}
+
+export interface HelpCenterFilterOptionApiItem {
+  id: string;
+  label: string;
+  label_ar: string | null;
+  result_count: number;
+  display_order: number;
+}
+
+export interface HelpCenterFilterGroupApiItem {
+  group_id: string;
+  group_label: string;
+  group_label_ar: string;
+  options: HelpCenterFilterOptionApiItem[];
+}
+
+export interface HelpCenterFiltersResponse {
+  data: HelpCenterFilterGroupApiItem[];
+}
+
+export interface HelpCenterOrganizationViewModel {
+  id: string;
+  title: string;
+  category: string;
+  description: string;
+  locations: string;
+  actionLabel: string;
+  actionDisabled: boolean;
+  actionType: 'phone' | 'email';
+  actionValue: string;
+  verified: boolean;
+  isPinned: boolean;
+}
 
 export interface HelpCenterFilterSectionConfig {
   id: string;
   titleKey: string;
-  field: HelpCenterFilterField;
   icon: 'pin' | 'shield' | 'phone';
-  options: Array<{
-    id: string;
-    labelKey: string;
-    value: string;
-  }>;
 }
 
 export type HelpCenterFilterSelection = Record<string, string[]>;

@@ -1,7 +1,6 @@
 import type {
   HelpCenterFilterSectionConfig,
   HelpCenterHotline,
-  HelpCenterOrganization,
 } from './helpCenter.types';
 
 export const HOTLINES: HelpCenterHotline[] = [
@@ -31,198 +30,28 @@ export const HOTLINES: HelpCenterHotline[] = [
   },
 ];
 
-export const ORGANIZATIONS: HelpCenterOrganization[] = [
-  {
-    id: 'ministry-phone',
-    nameKey: 'items.ministryHealth',
-    categoryKey: 'categories.government',
-    descriptionKey: 'descriptions.healthServices',
-    locationsKey: 'locations.beirutTripoliSidon',
-    actionLabelKey: 'actions.call1900',
-    actionType: 'phone',
-    actionValue: '1900',
-    regionValues: ['beirut', 'tripoli', 'sidon'],
-    providerTypeValues: ['organization', 'clinic', 'medical'],
-    contactMethodValues: ['phone', 'visit', 'hotline'],
-  },
-  {
-    id: 'ministry-whatsapp',
-    nameKey: 'items.ministryHealth',
-    categoryKey: 'categories.government',
-    descriptionKey: 'descriptions.healthServices',
-    locationsKey: 'locations.beirutTripoliSidon',
-    actionLabelKey: 'actions.whatsapp1900',
-    actionType: 'whatsapp',
-    actionValue: '1900',
-    whatsappMessageKey: 'messages.defaultWhatsapp',
-    regionValues: ['beirut', 'tripoli', 'sidon'],
-    providerTypeValues: ['organization', 'clinic', 'medical'],
-    contactMethodValues: ['whatsapp', 'message', 'hotline'],
-  },
-  {
-    id: 'screening',
-    nameKey: 'items.screeningCenter',
-    categoryKey: 'categories.private',
-    descriptionKey: 'descriptions.screening',
-    locationsKey: 'locations.sidon',
-    actionLabelKey: 'actions.call1234800',
-    actionType: 'phone',
-    actionValue: '1234800',
-    regionValues: ['sidon'],
-    providerTypeValues: ['clinic', 'screening', 'medical'],
-    contactMethodValues: ['phone', 'appointment', 'visit'],
-  },
-  {
-    id: 'hope',
-    nameKey: 'items.hopeAssociation',
-    categoryKey: 'categories.nonProfit',
-    descriptionKey: 'descriptions.support',
-    locationsKey: 'locations.beirut',
-    actionLabelKey: 'actions.call4567700',
-    actionType: 'phone',
-    actionValue: '4567700',
-    regionValues: ['beirut'],
-    providerTypeValues: ['organization', 'care', 'field'],
-    contactMethodValues: ['phone', 'visit', 'referral'],
-  },
-  {
-    id: 'care-point',
-    nameKey: 'items.carePoint',
-    categoryKey: 'categories.private',
-    descriptionKey: 'descriptions.primaryCare',
-    locationsKey: 'locations.tripoli',
-    actionLabelKey: 'actions.call8002222',
-    actionType: 'phone',
-    actionValue: '8002222',
-    regionValues: ['tripoli'],
-    providerTypeValues: ['clinic', 'care', 'medical'],
-    contactMethodValues: ['phone', 'appointment', 'visit'],
-  },
-  {
-    id: 'response-network',
-    nameKey: 'items.responseNetwork',
-    categoryKey: 'categories.nonProfit',
-    descriptionKey: 'descriptions.fieldResponse',
-    locationsKey: 'locations.beirutTripoli',
-    actionLabelKey: 'actions.whatsapp2200',
-    actionType: 'whatsapp',
-    actionValue: '2200',
-    whatsappMessageKey: 'messages.defaultWhatsapp',
-    regionValues: ['beirut', 'tripoli'],
-    providerTypeValues: ['organization', 'field', 'care'],
-    contactMethodValues: ['whatsapp', 'message', 'field-support'],
-  },
-];
-
 export const FILTER_SECTIONS: HelpCenterFilterSectionConfig[] = [
   {
-    id: 'location',
-    titleKey: 'filtersSections.location',
-    field: 'regionValues',
-    icon: 'pin',
-    options: [
-      { id: 'beirut', labelKey: 'filtersOptions.beirut', value: 'beirut' },
-      {
-        id: 'ain-el-tineh',
-        labelKey: 'filtersOptions.ainElTineh',
-        value: 'ain-el-tineh',
-      },
-      { id: 'chouf', labelKey: 'filtersOptions.chouf', value: 'chouf' },
-      { id: 'tripoli', labelKey: 'filtersOptions.tripoli', value: 'tripoli' },
-      { id: 'sidon', labelKey: 'filtersOptions.sidon', value: 'sidon' },
-      { id: 'jbeil', labelKey: 'filtersOptions.jbeil', value: 'jbeil' },
-      { id: 'zahle', labelKey: 'filtersOptions.zahle', value: 'zahle' },
-      { id: 'baalbek', labelKey: 'filtersOptions.baalbek', value: 'baalbek' },
-      { id: 'tyre', labelKey: 'filtersOptions.tyre', value: 'tyre' },
-      {
-        id: 'bourj-hammoud',
-        labelKey: 'filtersOptions.bourjHammoud',
-        value: 'bourj-hammoud',
-      },
-      { id: 'hamra', labelKey: 'filtersOptions.hamra', value: 'hamra' },
-      {
-        id: 'ain-el-remmaneh',
-        labelKey: 'filtersOptions.ainElRemmaneh',
-        value: 'ain-el-remmaneh',
-      },
-    ],
-  },
-  {
-    id: 'providerType',
+    id: 'provider_type',
     titleKey: 'filtersSections.serviceType',
-    field: 'providerTypeValues',
     icon: 'shield',
-    options: [
-      {
-        id: 'organization',
-        labelKey: 'filtersOptions.organization',
-        value: 'organization',
-      },
-      { id: 'care', labelKey: 'filtersOptions.care', value: 'care' },
-      { id: 'clinic', labelKey: 'filtersOptions.clinic', value: 'clinic' },
-      { id: 'medical', labelKey: 'filtersOptions.medical', value: 'medical' },
-      {
-        id: 'screening',
-        labelKey: 'filtersOptions.screening',
-        value: 'screening',
-      },
-      {
-        id: 'hospital',
-        labelKey: 'filtersOptions.hospital',
-        value: 'hospital',
-      },
-      {
-        id: 'pharmacy',
-        labelKey: 'filtersOptions.pharmacy',
-        value: 'pharmacy',
-      },
-      { id: 'lab', labelKey: 'filtersOptions.lab', value: 'lab' },
-      { id: 'shelter', labelKey: 'filtersOptions.shelter', value: 'shelter' },
-      { id: 'field', labelKey: 'filtersOptions.field', value: 'field' },
-      {
-        id: 'mental-health',
-        labelKey: 'filtersOptions.mentalHealth',
-        value: 'mental-health',
-      },
-    ],
   },
   {
-    id: 'contact',
+    id: 'sector',
     titleKey: 'filtersSections.contact',
-    field: 'contactMethodValues',
     icon: 'phone',
-    options: [
-      { id: 'phone', labelKey: 'filtersOptions.phone', value: 'phone' },
-      {
-        id: 'whatsapp',
-        labelKey: 'filtersOptions.whatsapp',
-        value: 'whatsapp',
-      },
-      { id: 'visit', labelKey: 'filtersOptions.visit', value: 'visit' },
-      { id: 'hotline', labelKey: 'filtersOptions.hotline', value: 'hotline' },
-      { id: 'message', labelKey: 'filtersOptions.message', value: 'message' },
-      {
-        id: 'appointment',
-        labelKey: 'filtersOptions.appointment',
-        value: 'appointment',
-      },
-      {
-        id: 'referral',
-        labelKey: 'filtersOptions.referral',
-        value: 'referral',
-      },
-      {
-        id: 'field-support',
-        labelKey: 'filtersOptions.fieldSupport',
-        value: 'field-support',
-      },
-      { id: 'email', labelKey: 'filtersOptions.email', value: 'email' },
-      { id: 'walk-in', labelKey: 'filtersOptions.walkIn', value: 'walk-in' },
-      { id: 'booking', labelKey: 'filtersOptions.booking', value: 'booking' },
-    ],
+  },
+  {
+    id: 'service_subtype',
+    titleKey: 'filtersSections.contact',
+    icon: 'phone',
+  },
+  {
+    id: 'shelter_type',
+    titleKey: 'filtersSections.location',
+    icon: 'pin',
   },
 ];
 
 export const MAX_PINNED_ORGANIZATIONS = 5;
-
-export const MIN_VISIBLE_BEFORE_LOAD_MORE = 12;
+export const ORGANIZATIONS_PAGE_SIZE = 20;

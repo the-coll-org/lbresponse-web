@@ -1,4 +1,5 @@
-import { useEffect, useLayoutEffect, useRef } from 'react';
+import { Alert } from '../ui/Alert';
+import { Button } from '../ui/Button';
 import { SearchEmptyState } from '../ui/SearchEmptyState';
 import { ServiceCard } from '../ui/ServiceCard';
 import { helpCenterIcons } from './helpCenter.icons';
@@ -10,14 +11,21 @@ interface OrganizationCardViewModel {
   description: string;
   locations: string;
   actionLabel: string;
-  actionType: 'phone' | 'whatsapp';
+  actionDisabled: boolean;
+  actionType: 'phone' | 'email';
   actionValue: string;
-  whatsappMessage: string;
+  verified: boolean;
   isPinned: boolean;
 }
 
 interface OrganizationsListSectionProps {
   organizations: OrganizationCardViewModel[];
+  isLoading: boolean;
+  isLoadingMore: boolean;
+  hasError: boolean;
+  loadingLabel: string;
+  errorLabel: string;
+  retryLabel: string;
   hasActiveQuery: boolean;
   hasSearchResults: boolean;
   emptyStateTitle: string;
@@ -31,14 +39,20 @@ interface OrganizationsListSectionProps {
   verifyActionAriaLabel: string;
   showLoadMore: boolean;
   onEmptyStateAction: () => void;
+  onRetry: () => void;
   onLoadMore: () => void;
-  onFitCountChange: (count: number) => void;
   onActivateOrganizationAction: (organizationId: string) => void;
   onTogglePinnedOrganization: (organizationId: string) => void;
 }
 
 export function OrganizationsListSection({
   organizations,
+  isLoading,
+  isLoadingMore,
+  hasError,
+  loadingLabel,
+  errorLabel,
+  retryLabel,
   hasActiveQuery,
   hasSearchResults,
   emptyStateTitle,
@@ -52,67 +66,46 @@ export function OrganizationsListSection({
   verifyActionAriaLabel,
   showLoadMore,
   onEmptyStateAction,
+  onRetry,
   onLoadMore,
-  onFitCountChange,
   onActivateOrganizationAction,
   onTogglePinnedOrganization,
 }: OrganizationsListSectionProps) {
-  const gridRef = useRef<HTMLDivElement>(null);
-  const fitCountChangeRef = useRef(onFitCountChange);
-
-  useEffect(() => {
-    fitCountChangeRef.current = onFitCountChange;
-  }, [onFitCountChange]);
-
-  useLayoutEffect(() => {
-    const grid = gridRef.current;
-    if (!grid) return;
-
-    const computeFit = () => {
-      const firstCard = grid.firstElementChild as HTMLElement | null;
-      if (!firstCard) return;
-
-      const style = window.getComputedStyle(grid);
-      const columns = style.gridTemplateColumns
-        .split(' ')
-        .filter(Boolean).length;
-      const rowGap = parseFloat(style.rowGap) || 0;
-      const cardHeight = firstCard.getBoundingClientRect().height;
-      if (!cardHeight || !columns) return;
-
-      const gridTop = grid.getBoundingClientRect().top + window.scrollY;
-      const viewportBottom = window.scrollY + window.innerHeight;
-      const available = Math.max(viewportBottom - gridTop, cardHeight);
-      const rows = Math.max(
-        1,
-        Math.floor((available + rowGap) / (cardHeight + rowGap))
-      );
-
-      fitCountChangeRef.current(columns * rows);
-    };
-
-    computeFit();
-
-    const observer = new ResizeObserver(computeFit);
-    observer.observe(grid);
-    if (grid.firstElementChild) observer.observe(grid.firstElementChild);
-    window.addEventListener('resize', computeFit);
-
-    return () => {
-      observer.disconnect();
-      window.removeEventListener('resize', computeFit);
-    };
-  }, [organizations.length]);
-
   const PhoneIcon = helpCenterIcons.phone;
   const WhatsappIcon = helpCenterIcons.whatsapp;
   const VerifyIcon = helpCenterIcons.verify;
   const ChevronDownIcon = helpCenterIcons.chevronDown;
   const ArrowUpIcon = helpCenterIcons.arrowUp;
 
-  return (
-    <section className="relative flex flex-col gap-12">
-      {hasActiveQuery && !hasSearchResults ? (
+  if (isLoading) {
+    return (
+      <section className="relative flex flex-col gap-12">
+        <div className="flex min-h-160 items-center justify-center rounded-lg border border-textfield-default-stroke bg-surface-primary p-16 text-sm font-weight-medium text-text-black">
+          {loadingLabel}
+        </div>
+      </section>
+    );
+  }
+
+  if (hasError) {
+    return (
+      <section className="relative flex flex-col gap-12">
+        <Alert
+          variant="error"
+          heading={errorLabel}
+          action={
+            <Button variant="text" size="sm" onClick={onRetry}>
+              {retryLabel}
+            </Button>
+          }
+        />
+      </section>
+    );
+  }
+
+  if (hasActiveQuery && !hasSearchResults) {
+    return (
+      <section className="relative flex flex-col gap-12">
         <SearchEmptyState
           title={emptyStateTitle}
           description={emptyStateDescription}
@@ -120,84 +113,99 @@ export function OrganizationsListSection({
           actionAriaLabel={emptyStateActionAriaLabel}
           onAction={onEmptyStateAction}
         />
-      ) : (
-        <>
-          <div
-            ref={gridRef}
-            className="grid grid-cols-1 gap-12 md:grid-cols-2 xl:grid-cols-3"
-          >
-            {organizations.map((item) =>
-              (() => {
-                const PinIcon = item.isPinned
-                  ? helpCenterIcons.pinFilled
-                  : helpCenterIcons.pin;
+      </section>
+    );
+  }
 
-                return (
-                  <ServiceCard
-                    key={item.id}
-                    title={item.title}
-                    category={item.category}
-                    description={item.description}
-                    locations={item.locations}
-                    actionLabel={item.actionLabel}
-                    actionIcon={
-                      item.actionType === 'phone' ? (
-                        <PhoneIcon />
-                      ) : (
-                        <WhatsappIcon />
-                      )
-                    }
-                    actionVariant={
-                      item.actionType === 'phone' ? 'filled' : 'success'
-                    }
-                    onActionClick={() => onActivateOrganizationAction(item.id)}
-                    primaryAction={{
-                      ariaLabel: item.isPinned
-                        ? unpinActionAriaLabel
-                        : pinActionAriaLabel,
-                      icon: <PinIcon />,
-                      onClick: () => onTogglePinnedOrganization(item.id),
-                      variant: item.isPinned ? 'filled' : 'soft',
-                      iconClassName: item.isPinned
-                        ? 'scale-110 rotate-12 text-button-filled-text transition-transform duration-200 ease-out'
-                        : 'text-button-icon-icon transition-transform duration-200 ease-out',
-                    }}
-                    secondaryAction={{
+  if (!hasSearchResults) {
+    return (
+      <section className="relative flex flex-col gap-12">
+        <SearchEmptyState
+          title={emptyStateTitle}
+          description={emptyStateDescription}
+        />
+      </section>
+    );
+  }
+
+  return (
+    <section className="relative flex flex-col gap-12">
+      <div className="grid grid-cols-1 gap-12 md:grid-cols-2 xl:grid-cols-3">
+        {organizations.map((item) => {
+          const PinIcon = item.isPinned
+            ? helpCenterIcons.pinFilled
+            : helpCenterIcons.pin;
+
+          return (
+            <ServiceCard
+              key={item.id}
+              title={item.title}
+              category={item.category}
+              description={item.description}
+              locations={item.locations}
+              actionLabel={item.actionLabel}
+              actionIcon={
+                item.actionDisabled ? undefined : item.actionType ===
+                  'phone' ? (
+                  <PhoneIcon />
+                ) : (
+                  <WhatsappIcon />
+                )
+              }
+              actionVariant={item.actionType === 'phone' ? 'filled' : 'success'}
+              actionDisabled={item.actionDisabled}
+              onActionClick={
+                item.actionDisabled
+                  ? undefined
+                  : () => onActivateOrganizationAction(item.id)
+              }
+              primaryAction={{
+                ariaLabel: item.isPinned
+                  ? unpinActionAriaLabel
+                  : pinActionAriaLabel,
+                icon: <PinIcon />,
+                onClick: () => onTogglePinnedOrganization(item.id),
+                variant: item.isPinned ? 'filled' : 'soft',
+                iconClassName: item.isPinned
+                  ? 'scale-110 rotate-12 text-button-filled-text transition-transform duration-200 ease-out'
+                  : 'text-button-icon-icon transition-transform duration-200 ease-out',
+              }}
+              secondaryAction={
+                item.verified
+                  ? {
                       ariaLabel: verifyActionAriaLabel,
                       icon: <VerifyIcon />,
                       variant: 'outline',
-                    }}
-                  />
-                );
-              })()
-            )}
-          </div>
+                    }
+                  : undefined
+              }
+            />
+          );
+        })}
+      </div>
 
-          {showLoadMore && (
-            <div className="flex justify-center">
-              <button
-                type="button"
-                onClick={onLoadMore}
-                className="inline-flex h-44 items-center justify-center gap-8 rounded-md px-16 py-8 text-button font-weight-medium text-text-black"
-              >
-                <span>{loadMoreLabel}</span>
-                <ChevronDownIcon />
-              </button>
-            </div>
-          )}
-
-          {hasSearchResults && (
-            <button
-              type="button"
-              aria-label={backToTopAriaLabel}
-              className="fixed bottom-24 end-24 z-10 flex size-48 items-center justify-center rounded-full border border-textfield-default-stroke bg-button-icon-bg text-button-icon-icon shadow-md"
-              onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-            >
-              <ArrowUpIcon />
-            </button>
-          )}
-        </>
+      {showLoadMore && (
+        <div className="flex justify-center">
+          <button
+            type="button"
+            onClick={onLoadMore}
+            disabled={isLoadingMore}
+            className="inline-flex h-44 items-center justify-center gap-8 rounded-md px-16 py-8 text-button font-weight-medium text-text-black disabled:opacity-40"
+          >
+            <span>{isLoadingMore ? loadingLabel : loadMoreLabel}</span>
+            {!isLoadingMore && <ChevronDownIcon />}
+          </button>
+        </div>
       )}
+
+      <button
+        type="button"
+        aria-label={backToTopAriaLabel}
+        className="fixed bottom-24 end-24 z-10 flex size-48 items-center justify-center rounded-full border border-textfield-default-stroke bg-button-icon-bg text-button-icon-icon shadow-md"
+        onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+      >
+        <ArrowUpIcon />
+      </button>
     </section>
   );
 }

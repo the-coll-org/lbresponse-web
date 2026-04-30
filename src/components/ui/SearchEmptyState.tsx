@@ -6,9 +6,9 @@ import addSvg from '../../assets/help-center/add.svg?raw';
 export interface SearchEmptyStateProps {
   title: string;
   description: string;
-  actionLabel: string;
-  actionAriaLabel: string;
-  onAction: () => void;
+  actionLabel?: string;
+  actionAriaLabel?: string;
+  onAction?: () => void;
 }
 
 function EmptySearchIllustration() {
@@ -42,14 +42,16 @@ export function SearchEmptyState({
         </p>
       </div>
 
-      <Button
-        aria-label={actionAriaLabel}
-        className="h-44 justify-center"
-        onClick={onAction}
-        leftIcon={<AddIcon />}
-      >
-        {actionLabel}
-      </Button>
+      {actionLabel && actionAriaLabel && onAction ? (
+        <Button
+          aria-label={actionAriaLabel}
+          className="h-44 justify-center"
+          onClick={onAction}
+          leftIcon={<AddIcon />}
+        >
+          {actionLabel}
+        </Button>
+      ) : null}
     </section>
   );
 }

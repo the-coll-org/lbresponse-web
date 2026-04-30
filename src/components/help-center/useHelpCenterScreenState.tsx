@@ -1,30 +1,47 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { type HelpCenterFilterSection } from '../ui/HelpCenterFiltersSheet';
 import {
   FILTER_SECTIONS,
   HOTLINES,
   MAX_PINNED_ORGANIZATIONS,
-  MIN_VISIBLE_BEFORE_LOAD_MORE,
+  ORGANIZATIONS_PAGE_SIZE,
 } from './helpCenter.data';
 import { helpCenterIcons } from './helpCenter.icons';
 import {
   buildPinnedOrganizationOptions,
+  buildOrganizationsUrl,
   cloneFilterSelection,
+  collectFilterOptions,
   countSelectedFilters,
   createEmptyFilterSelection,
   findOrganizationById,
-  filterOrganizations,
+  mapOrganizationToViewModel,
+  mergeOrganizations,
+  sortPinnedOrganizations,
 } from './helpCenter.utils';
-import type { HelpCenterFilterSelection } from './helpCenter.types';
+import type {
+  HelpCenterFiltersResponse,
+  HelpCenterFilterSelection,
+  HelpCenterOrganizationsResponse,
+  HelpCenterOrganizationApiItem,
+} from './helpCenter.types';
+
+function mapSectionIcon(icon: 'pin' | 'shield' | 'phone') {
+  if (icon === 'pin') {
+    return helpCenterIcons.smallPin;
+  }
+
+  if (icon === 'phone') {
+    return helpCenterIcons.smallPhone;
+  }
+
+  return helpCenterIcons.smallShield;
+}
 
 export function useHelpCenterScreenState() {
   const { t, i18n } = useTranslation();
   const [query, setQuery] = useState('');
-  const [fitCount, setFitCount] = useState(MIN_VISIBLE_BEFORE_LOAD_MORE);
-  const [extraVisibleCount, setExtraVisibleCount] = useState(0);
-  const visibleCount =
-    Math.max(fitCount, MIN_VISIBLE_BEFORE_LOAD_MORE) + extraVisibleCount;
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [isPinnedOrganizationsSheetOpen, setIsPinnedOrganizationsSheetOpen] =
     useState(false);
@@ -40,33 +57,63 @@ export function useHelpCenterScreenState() {
   const [draftFilters, setDraftFilters] = useState<HelpCenterFilterSelection>(
     () => createEmptyFilterSelection()
   );
+  const [page, setPage] = useState(1);
+  const [allOrganizations, setAllOrganizations] = useState<
+    HelpCenterOrganizationApiItem[]
+  >([]);
+  const [organizationDirectory, setOrganizationDirectory] = useState<
+    HelpCenterOrganizationApiItem[]
+  >([]);
+  const [totalOrganizations, setTotalOrganizations] = useState(0);
+  const [filtersResponse, setFiltersResponse] =
+    useState<HelpCenterFiltersResponse | null>(null);
+  const [isOrganizationsLoading, setIsOrganizationsLoading] = useState(true);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const [organizationsError, setOrganizationsError] = useState(false);
+  const [draftOrganizationsCount, setDraftOrganizationsCount] = useState(0);
+  const [reloadKey, setReloadKey] = useState(0);
+  const [pinOverrides, setPinOverrides] = useState<Record<string, boolean>>({});
+  const pinOverridesRef = useRef(pinOverrides);
 
   const activeLanguage = i18n.resolvedLanguage ?? i18n.language;
   const languageToggleLabel = activeLanguage?.startsWith('ar') ? 'EN' : 'AR';
 
+  useEffect(() => {
+    pinOverridesRef.current = pinOverrides;
+  }, [pinOverrides]);
+
+  const filterOptions = useMemo(
+    () =>
+      filtersResponse
+        ? collectFilterOptions(filtersResponse, activeLanguage)
+        : ({} as Record<string, HelpCenterFilterSection['options']>),
+    [activeLanguage, filtersResponse]
+  );
+
   const filterSections = useMemo<HelpCenterFilterSection[]>(
     () =>
-      FILTER_SECTIONS.map((section) => {
-        const icon =
-          section.icon === 'pin'
-            ? helpCenterIcons.smallPin
-            : section.icon === 'shield'
-              ? helpCenterIcons.smallShield
-              : helpCenterIcons.smallPhone;
-        const Icon = icon;
+      filtersResponse?.data.map((group) => {
+        const section = FILTER_SECTIONS.find(
+          ({ id }) => id === group.group_id
+        ) ?? {
+          id: group.group_id,
+          titleKey: '',
+          icon: 'shield' as const,
+        };
+        const Icon = mapSectionIcon(section.icon);
+        const isArabic = activeLanguage.startsWith('ar');
 
         return {
-          id: section.id,
-          title: t(`helpCenter.${section.titleKey}`),
+          id: group.group_id,
+          title:
+            (isArabic ? group.group_label_ar : group.group_label) ??
+            group.group_label ??
+            group.group_id,
           icon: <Icon />,
-          options: section.options.map((option) => ({
-            id: option.id,
-            label: t(`helpCenter.${option.labelKey}`),
-            value: option.value,
-          })),
+          options: filterOptions[group.group_id] ?? [],
         };
-      }),
-    [t]
+      }) ?? [],
+    [activeLanguage, filterOptions, filtersResponse]
   );
 
   const hotlines = useMemo(
@@ -78,73 +125,235 @@ export function useHelpCenterScreenState() {
     [t]
   );
 
-  const organizations = useMemo(() => {
-    const filtered = filterOrganizations(appliedFilters, query, t);
-    if (pinnedOrganizationIds.length === 0) {
-      return filtered;
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadFilterOptions() {
+      try {
+        const response = await fetch('/api/filters');
+
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status.toString()}`);
+        }
+
+        const json = (await response.json()) as HelpCenterFiltersResponse;
+
+        if (!cancelled) {
+          setFiltersResponse(json);
+        }
+      } catch {
+        if (!cancelled) {
+          setFiltersResponse(null);
+        }
+      }
     }
-    const pinnedSet = new Set(pinnedOrganizationIds);
-    return [...filtered].sort((a, b) => {
-      const aRank = pinnedSet.has(a.id) ? 0 : 1;
-      const bRank = pinnedSet.has(b.id) ? 0 : 1;
-      return aRank - bRank;
-    });
-  }, [appliedFilters, query, t, pinnedOrganizationIds]);
-  const draftOrganizations = useMemo(
-    () => filterOrganizations(draftFilters, query, t),
-    [draftFilters, query, t]
+
+    void loadFilterOptions();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadOrganizations() {
+      const isLoadingFirstPage = page === 1;
+
+      if (isLoadingFirstPage) {
+        setIsOrganizationsLoading(true);
+      } else {
+        setIsLoadingMore(true);
+      }
+
+      try {
+        const response = await fetch(
+          buildOrganizationsUrl(
+            appliedFilters,
+            query,
+            page,
+            ORGANIZATIONS_PAGE_SIZE
+          )
+        );
+
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status.toString()}`);
+        }
+
+        const json = (await response.json()) as HelpCenterOrganizationsResponse;
+
+        if (cancelled) {
+          return;
+        }
+
+        setAllOrganizations((currentOrganizations) =>
+          isLoadingFirstPage
+            ? json.data
+            : mergeOrganizations(currentOrganizations, json.data)
+        );
+        setOrganizationDirectory((currentOrganizations) =>
+          mergeOrganizations(currentOrganizations, json.data)
+        );
+        setPinnedOrganizationIds((currentIds) => {
+          const nextIds = new Set(currentIds);
+
+          for (const organization of json.data) {
+            if (pinOverridesRef.current[organization.id] !== undefined) {
+              continue;
+            }
+
+            if (organization.pinned) {
+              nextIds.add(organization.id);
+            } else {
+              nextIds.delete(organization.id);
+            }
+          }
+
+          return [...nextIds];
+        });
+        setTotalOrganizations(json.total);
+        setOrganizationsError(false);
+      } catch {
+        if (!cancelled) {
+          setOrganizationsError(true);
+          if (isLoadingFirstPage) {
+            setAllOrganizations([]);
+            setTotalOrganizations(0);
+          }
+        }
+      } finally {
+        if (!cancelled) {
+          setIsOrganizationsLoading(false);
+          setIsLoadingMore(false);
+        }
+      }
+    }
+
+    void loadOrganizations();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [appliedFilters, page, query, reloadKey]);
+
+  useEffect(() => {
+    if (!isFilterOpen) {
+      setDraftOrganizationsCount(totalOrganizations);
+      return;
+    }
+
+    let cancelled = false;
+
+    async function loadDraftOrganizationsCount() {
+      try {
+        const response = await fetch(
+          buildOrganizationsUrl(draftFilters, query, 1, 1)
+        );
+
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status.toString()}`);
+        }
+
+        const json = (await response.json()) as HelpCenterOrganizationsResponse;
+
+        if (!cancelled) {
+          setDraftOrganizationsCount(json.total);
+        }
+      } catch {
+        if (!cancelled) {
+          setDraftOrganizationsCount(0);
+        }
+      }
+    }
+
+    void loadDraftOrganizationsCount();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [draftFilters, isFilterOpen, query, totalOrganizations]);
+
+  const organizationLabels = useMemo(
+    () => ({
+      call: t('helpCenter.contactCall'),
+      email: t('helpCenter.contactEmail'),
+      unavailable: t('helpCenter.contactUnavailable'),
+      uncategorized: t('helpCenter.uncategorized'),
+    }),
+    [t]
   );
+
+  const visibleOrganizations = useMemo(
+    () =>
+      sortPinnedOrganizations(
+        allOrganizations.map((organization) =>
+          mapOrganizationToViewModel(
+            organization,
+            activeLanguage,
+            pinnedOrganizationIds.includes(organization.id),
+            organizationLabels
+          )
+        ),
+        pinnedOrganizationIds
+      ),
+    [
+      activeLanguage,
+      allOrganizations,
+      organizationLabels,
+      pinnedOrganizationIds,
+    ]
+  );
+
   const appliedFiltersCount = useMemo(
     () => countSelectedFilters(appliedFilters),
     [appliedFilters]
   );
+
   const pinnedOrganizations = useMemo(
-    () => buildPinnedOrganizationOptions(pinnedOrganizationIds, t),
-    [pinnedOrganizationIds, t]
-  );
-  const visibleOrganizations = useMemo(
     () =>
-      organizations.slice(0, visibleCount).map((organization) => ({
-        id: organization.id,
-        title: t(`helpCenter.${organization.nameKey}`),
-        category: t(`helpCenter.${organization.categoryKey}`),
-        description: t(`helpCenter.${organization.descriptionKey}`),
-        locations: t(`helpCenter.${organization.locationsKey}`),
-        actionLabel: t(`helpCenter.${organization.actionLabelKey}`),
-        actionType: organization.actionType,
-        actionValue: organization.actionValue,
-        whatsappMessage: organization.whatsappMessageKey
-          ? t(`helpCenter.${organization.whatsappMessageKey}`)
-          : '',
-        isPinned: pinnedOrganizationIds.includes(organization.id),
-      })),
-    [organizations, pinnedOrganizationIds, t, visibleCount]
+      buildPinnedOrganizationOptions(
+        pinnedOrganizationIds,
+        sortPinnedOrganizations(
+          organizationDirectory.map((organization) =>
+            mapOrganizationToViewModel(
+              organization,
+              activeLanguage,
+              pinnedOrganizationIds.includes(organization.id),
+              organizationLabels
+            )
+          ),
+          pinnedOrganizationIds
+        )
+      ),
+    [
+      activeLanguage,
+      organizationDirectory,
+      organizationLabels,
+      pinnedOrganizationIds,
+    ]
   );
 
   const trimmedQuery = query.trim();
   const hasActiveQuery = trimmedQuery.length > 0;
-  const hasSearchResults = organizations.length > 0;
+  const hasSearchResults = visibleOrganizations.length > 0;
+  const canLoadMore = visibleOrganizations.length < totalOrganizations;
 
   function handleQueryChange(nextQuery: string) {
     setQuery(nextQuery);
-    setExtraVisibleCount(0);
-  }
-
-  function handleFitCountChange(nextFitCount: number) {
-    setFitCount(nextFitCount);
+    setPage(1);
   }
 
   function handleToggleFilterOption(sectionId: string, optionValue: string) {
     setDraftFilters((currentFilters) => {
       const currentValues = currentFilters[sectionId] ?? [];
       const hasValue = currentValues.includes(optionValue);
-      const nextValues = hasValue
-        ? currentValues.filter((value) => value !== optionValue)
-        : [...currentValues, optionValue];
 
       return {
         ...currentFilters,
-        [sectionId]: nextValues,
+        [sectionId]: hasValue
+          ? currentValues.filter((value) => value !== optionValue)
+          : [...currentValues, optionValue],
       };
     });
   }
@@ -160,15 +369,17 @@ export function useHelpCenterScreenState() {
   }
 
   function handleClearFilters() {
-    const emptyFilters = createEmptyFilterSelection();
+    const emptyFilters = createEmptyFilterSelection(
+      filterSections.map((section) => section.id)
+    );
     setDraftFilters(emptyFilters);
     setAppliedFilters(emptyFilters);
-    setExtraVisibleCount(0);
+    setPage(1);
   }
 
   function handleApplyFilters() {
     setAppliedFilters(cloneFilterSelection(draftFilters));
-    setExtraVisibleCount(0);
+    setPage(1);
     setIsFilterOpen(false);
   }
 
@@ -179,6 +390,10 @@ export function useHelpCenterScreenState() {
 
   function handleTogglePinnedOrganization(organizationId: string) {
     if (pinnedOrganizationIds.includes(organizationId)) {
+      setPinOverrides((currentOverrides) => ({
+        ...currentOverrides,
+        [organizationId]: false,
+      }));
       setPinnedOrganizationIds((currentIds) =>
         currentIds.filter((currentId) => currentId !== organizationId)
       );
@@ -191,6 +406,10 @@ export function useHelpCenterScreenState() {
       return;
     }
 
+    setPinOverrides((currentOverrides) => ({
+      ...currentOverrides,
+      [organizationId]: true,
+    }));
     setPinnedOrganizationIds((currentIds) => [...currentIds, organizationId]);
   }
 
@@ -207,19 +426,35 @@ export function useHelpCenterScreenState() {
       ),
       organizationPendingReplacementId,
     ]);
+    setPinOverrides((currentOverrides) => ({
+      ...currentOverrides,
+      [organizationIdToReplace]: false,
+      [organizationPendingReplacementId]: true,
+    }));
     handleClosePinnedOrganizationsSheet();
   }
 
   function handleLoadMore() {
-    setExtraVisibleCount(
-      (count) => count + Math.max(fitCount, MIN_VISIBLE_BEFORE_LOAD_MORE)
-    );
+    if (canLoadMore) {
+      setPage((currentPage) => currentPage + 1);
+    }
+  }
+
+  function handleRetryOrganizations() {
+    setReloadKey((currentKey) => currentKey + 1);
   }
 
   function handleActivateOrganizationAction(organizationId: string) {
-    const organization = findOrganizationById(organizationId);
+    const organization = findOrganizationById(
+      visibleOrganizations,
+      organizationId
+    );
 
-    if (!organization || typeof window === 'undefined') {
+    if (
+      !organization ||
+      organization.actionDisabled ||
+      typeof window === 'undefined'
+    ) {
       return;
     }
 
@@ -228,20 +463,14 @@ export function useHelpCenterScreenState() {
       return;
     }
 
-    const message = organization.whatsappMessageKey
-      ? t(`helpCenter.${organization.whatsappMessageKey}`)
-      : '';
-    const whatsappUrl = `https://wa.me/${organization.actionValue}?text=${encodeURIComponent(message)}`;
-
-    window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
+    window.location.href = `mailto:${organization.actionValue}`;
   }
 
   return {
     t,
     query,
+    organizations: allOrganizations,
     visibleOrganizations,
-    organizations,
-    draftOrganizations,
     filterSections,
     hotlines,
     pinnedOrganizations,
@@ -249,11 +478,16 @@ export function useHelpCenterScreenState() {
     draftFilters,
     isFilterOpen,
     isPinnedOrganizationsSheetOpen,
+    isOrganizationsLoading,
+    isLoadingMore,
+    organizationsError,
     languageToggleLabel,
     trimmedQuery,
     hasActiveQuery,
     hasSearchResults,
-    visibleCount,
+    totalOrganizations,
+    draftOrganizationsCount,
+    canLoadMore,
     maxPinnedOrganizations: MAX_PINNED_ORGANIZATIONS,
     handleQueryChange,
     handleOpenFilters,
@@ -265,7 +499,7 @@ export function useHelpCenterScreenState() {
     handleReplacePinnedOrganization,
     handleClosePinnedOrganizationsSheet,
     handleLoadMore,
-    handleFitCountChange,
+    handleRetryOrganizations,
     handleActivateOrganizationAction,
     setIsFilterOpen,
     setIsPinnedOrganizationsSheetOpen,

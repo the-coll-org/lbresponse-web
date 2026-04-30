@@ -22,6 +22,7 @@ export interface ServiceCardProps extends Omit<
   actionLabel: ReactNode;
   actionIcon?: ReactNode;
   actionVariant?: 'filled' | 'success';
+  actionDisabled?: boolean;
   onActionClick?: MouseEventHandler<HTMLButtonElement>;
   primaryAction?: ServiceCardAction;
   secondaryAction?: ServiceCardAction;
@@ -90,6 +91,7 @@ export function ServiceCard({
   actionLabel,
   actionIcon,
   actionVariant = 'filled',
+  actionDisabled = false,
   onActionClick,
   primaryAction,
   secondaryAction,
@@ -142,7 +144,8 @@ export function ServiceCard({
         )}
 
         <Button
-          onClick={onActionClick}
+          onClick={actionDisabled ? undefined : onActionClick}
+          disabled={actionDisabled}
           className={[
             'mt-auto h-[44px] w-full min-h-[37px] max-h-[48px] overflow-hidden',
             actionClass,

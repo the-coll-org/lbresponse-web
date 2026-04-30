@@ -19,8 +19,6 @@ export default function HelpCenterScreen({
     t,
     query,
     visibleOrganizations,
-    organizations,
-    draftOrganizations,
     filterSections,
     hotlines,
     pinnedOrganizations,
@@ -28,11 +26,16 @@ export default function HelpCenterScreen({
     draftFilters,
     isFilterOpen,
     isPinnedOrganizationsSheetOpen,
+    isOrganizationsLoading,
+    isLoadingMore,
+    organizationsError,
     languageToggleLabel,
     trimmedQuery,
     hasActiveQuery,
     hasSearchResults,
-    visibleCount,
+    totalOrganizations,
+    draftOrganizationsCount,
+    canLoadMore,
     maxPinnedOrganizations,
     handleQueryChange,
     handleOpenFilters,
@@ -44,7 +47,7 @@ export default function HelpCenterScreen({
     handleReplacePinnedOrganization,
     handleClosePinnedOrganizationsSheet,
     handleLoadMore,
-    handleFitCountChange,
+    handleRetryOrganizations,
     handleActivateOrganizationAction,
     setIsFilterOpen,
     setIsPinnedOrganizationsSheetOpen,
@@ -53,7 +56,7 @@ export default function HelpCenterScreen({
   const resultsLabel =
     hasActiveQuery && !hasSearchResults
       ? `0 ${t('helpCenter.organizationLabel')}`
-      : `${visibleOrganizations.length} / ${organizations.length} ${t(
+      : `${visibleOrganizations.length} / ${totalOrganizations} ${t(
           'helpCenter.organizationLabel'
         )}`;
 
@@ -95,32 +98,50 @@ export default function HelpCenterScreen({
 
           <OrganizationsListSection
             organizations={visibleOrganizations}
+            isLoading={isOrganizationsLoading}
+            isLoadingMore={isLoadingMore}
+            hasError={organizationsError}
+            loadingLabel={t('common.loading')}
+            errorLabel={t('common.fetchError')}
+            retryLabel={t('showcase.alert.retry')}
             hasActiveQuery={hasActiveQuery}
             hasSearchResults={hasSearchResults}
-            emptyStateTitle={t('helpCenter.emptyStateTitle')}
-            emptyStateDescription={t('helpCenter.emptyStateDescription', {
-              query: trimmedQuery,
-            })}
+            emptyStateTitle={t(
+              hasActiveQuery
+                ? 'helpCenter.emptyStateTitle'
+                : 'helpCenter.emptyStateNoDataTitle'
+            )}
+            emptyStateDescription={t(
+              hasActiveQuery
+                ? 'helpCenter.emptyStateDescription'
+                : 'helpCenter.emptyStateNoDataDescription',
+              {
+                query: trimmedQuery,
+              }
+            )}
             emptyStateActionLabel={t('helpCenter.emptyStateAction')}
             emptyStateActionAriaLabel={t(
               'helpCenter.emptyStateActionAriaLabel'
             )}
             loadMoreLabel={t('helpCenter.loadMore', {
-              count: organizations.length - visibleCount,
+              count: Math.max(
+                totalOrganizations - visibleOrganizations.length,
+                0
+              ),
             })}
             backToTopAriaLabel={t('helpCenter.backToTop')}
             pinActionAriaLabel={t('helpCenter.pinAction')}
             unpinActionAriaLabel={t('helpCenter.unpinAction')}
             verifyActionAriaLabel={t('helpCenter.verifyAction')}
-            showLoadMore={organizations.length > visibleCount}
+            showLoadMore={canLoadMore}
             onEmptyStateAction={() =>
               addToast({
                 heading: t('helpCenter.emptyStateToastHeading'),
                 body: t('helpCenter.emptyStateToastBody'),
               })
             }
+            onRetry={handleRetryOrganizations}
             onLoadMore={handleLoadMore}
-            onFitCountChange={handleFitCountChange}
             onActivateOrganizationAction={handleActivateOrganizationAction}
             onTogglePinnedOrganization={handleTogglePinnedOrganization}
           />
@@ -135,7 +156,7 @@ export default function HelpCenterScreen({
         showMoreLabel={() => t('helpCenter.filtersShowMore')}
         secondaryActionLabel={t('helpCenter.filtersReset')}
         primaryActionLabel={t('helpCenter.filtersApplyCount', {
-          count: draftOrganizations.length,
+          count: draftOrganizationsCount,
         })}
         sections={filterSections}
         selectedValues={draftFilters}
