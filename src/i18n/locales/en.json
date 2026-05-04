@@ -52,6 +52,8 @@
     "emptyStateDescription": "We couldn't find \"{{query}}\"",
     "emptyStateNoDataTitle": "No organizations available",
     "emptyStateNoDataDescription": "There are no organizations to show right now.",
+    "errorStateTitle": "We couldn't load the list",
+    "errorStateDescription": "Please check your connection and try again.",
     "emptyStateAction": "Request this organization",
     "emptyStateActionAriaLabel": "Request this organization",
     "emptyStateToastHeading": "Request received",

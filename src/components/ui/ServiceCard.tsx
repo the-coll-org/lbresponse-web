@@ -77,7 +77,7 @@ function CardIconButton({
 
 function CategoryPill({ children }: { children: ReactNode }) {
   return (
-    <span className="inline-flex items-center justify-center rounded-md border border-textfield-default-stroke px-8 py-4 text-2xs font-weight-regular text-text-black">
+    <span className="inline-flex shrink-0 items-center justify-center rounded-md border border-textfield-default-stroke px-8 py-4 text-2xs font-weight-regular text-text-black">
       {children}
     </span>
   );
@@ -108,8 +108,8 @@ export function ServiceCard({
 
           <div className="flex flex-1 justify-start">
             <div className="flex flex-1 flex-col items-start gap-8 text-start">
-              <div className="flex w-full flex-wrap items-center justify-start gap-8">
-                <p className="text-sm font-weight-bold text-text-black break-words">
+              <div className="flex w-full items-start justify-between gap-8">
+                <p className="min-w-0 flex-1 text-sm font-weight-bold text-text-black break-words">
                   {title}
                 </p>
                 {category && <CategoryPill>{category}</CategoryPill>}

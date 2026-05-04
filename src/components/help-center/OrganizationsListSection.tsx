@@ -1,4 +1,3 @@
-import { Alert } from '../ui/Alert';
 import { Button } from '../ui/Button';
 import { SearchEmptyState } from '../ui/SearchEmptyState';
 import { ServiceCard } from '../ui/ServiceCard';
@@ -24,7 +23,8 @@ interface OrganizationsListSectionProps {
   isLoadingMore: boolean;
   hasError: boolean;
   loadingLabel: string;
-  errorLabel: string;
+  errorTitle: string;
+  errorDescription: string;
   retryLabel: string;
   hasActiveQuery: boolean;
   hasSearchResults: boolean;
@@ -51,7 +51,8 @@ export function OrganizationsListSection({
   isLoadingMore,
   hasError,
   loadingLabel,
-  errorLabel,
+  errorTitle,
+  errorDescription,
   retryLabel,
   hasActiveQuery,
   hasSearchResults,
@@ -90,15 +91,19 @@ export function OrganizationsListSection({
   if (hasError) {
     return (
       <section className="relative flex flex-col gap-12">
-        <Alert
-          variant="error"
-          heading={errorLabel}
-          action={
-            <Button variant="text" size="sm" onClick={onRetry}>
-              {retryLabel}
-            </Button>
-          }
-        />
+        <div className="flex w-full flex-col items-center gap-12 py-32 text-center">
+          <div className="flex w-full max-w-full flex-col items-center gap-4">
+            <h3 className="text-sm font-weight-medium text-text-black">
+              {errorTitle}
+            </h3>
+            <p className="text-xs font-weight-regular text-solid-black-400">
+              {errorDescription}
+            </p>
+          </div>
+          <Button className="h-44 justify-center" onClick={onRetry}>
+            {retryLabel}
+          </Button>
+        </div>
       </section>
     );
   }

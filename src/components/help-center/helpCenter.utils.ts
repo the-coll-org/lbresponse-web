@@ -172,7 +172,7 @@ export function filterOrganizations(
       organization.service_subtype,
       organization.shelter_type,
       organization.email,
-      organization.phone_number,
+      ...organization.phone_numbers,
       ...organization.locations,
     ].some((value) => matchesSearchValue(value, normalizedQuery));
   });
@@ -203,7 +203,10 @@ export function mapOrganizationToViewModel(
     organization.organization_type ??
     labels.uncategorized;
   const locations = organization.locations.join(', ');
-  const phoneNumber = organization.phone_number?.trim() ?? '';
+  const phoneNumber =
+    organization.phone_numbers
+      .map((number) => number.trim())
+      .find((number) => number.length > 0) ?? '';
   const email = organization.email?.trim() ?? '';
 
   if (phoneNumber) {

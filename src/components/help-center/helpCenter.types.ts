@@ -20,7 +20,7 @@ export interface HelpCenterOrganizationApiItem {
   email: string | null;
   pinned: boolean;
   verified: boolean;
-  phone_number: string | null;
+  phone_numbers: string[];
   type: string | null;
   locations: string[];
   organization_type: string | null;

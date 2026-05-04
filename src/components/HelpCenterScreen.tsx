@@ -133,7 +133,8 @@ export default function HelpCenterScreen({
             isLoadingMore={isLoadingMore}
             hasError={organizationsError}
             loadingLabel={t('common.loading')}
-            errorLabel={t('common.fetchError')}
+            errorTitle={t('helpCenter.errorStateTitle')}
+            errorDescription={t('helpCenter.errorStateDescription')}
             retryLabel={t('showcase.alert.retry')}
             hasActiveQuery={hasActiveQuery}
             hasSearchResults={hasSearchResults}

@@ -64,6 +64,8 @@
     "emptyStateDescription": "لم نتمكن من العثور على \"{{query}}\"",
     "emptyStateNoDataTitle": "لا توجد منظمات متاحة",
     "emptyStateNoDataDescription": "لا توجد منظمات لعرضها حالياً.",
+    "errorStateTitle": "تعذّر تحميل القائمة",
+    "errorStateDescription": "يرجى التحقق من الاتصال والمحاولة مرة أخرى.",
     "emptyStateAction": "طلب إضافة هذه المنظمة",
     "emptyStateActionAriaLabel": "طلب إضافة هذه المنظمة",
     "emptyStateToastHeading": "تم استلام الطلب",

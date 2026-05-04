@@ -26,8 +26,8 @@ const organizations = Array.from({ length: 25 }, (_, index) => {
         : null,
     pinned: organizationNumber === 20,
     verified: organizationNumber % 2 === 0,
-    phone_number:
-      hasUnavailableContact || emailOnly ? null : `100${organizationNumber}`,
+    phone_numbers:
+      hasUnavailableContact || emailOnly ? [] : [`100${organizationNumber}`],
     type: 'support',
     locations: isNgo ? ['Beirut'] : ['Tripoli'],
     organization_type: isNgo ? 'NGO' : 'UN Agency',
@@ -103,7 +103,9 @@ async function createResponse(
         email: requestBody.email ?? null,
         pinned: false,
         verified: false,
-        phone_number: requestBody.phone_number ?? null,
+        phone_numbers: requestBody.phone_number
+          ? [requestBody.phone_number]
+          : [],
         type: requestBody.contact_type ?? null,
         locations: [],
         organization_type: requestBody.organization_type ?? null,
@@ -213,7 +215,7 @@ async function createResponse(
       organization.description,
       organization.description_ar,
       organization.email,
-      organization.phone_number,
+      ...organization.phone_numbers,
     ].some((value) => value?.toLowerCase().includes(search));
   });
 
