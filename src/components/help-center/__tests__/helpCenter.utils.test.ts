@@ -136,6 +136,6 @@ describe('helpCenter.utils', () => {
         1,
         20
       )
-    ).toContain('provider_type=ngo');
+    ).toContain('organization_type=ngo');
   });
 });

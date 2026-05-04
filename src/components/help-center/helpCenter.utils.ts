@@ -2,6 +2,9 @@ import type {
   HelpCenterFiltersResponse,
   HelpCenterFilterSelection,
   HelpCenterOrganizationApiItem,
+  HelpCenterOrganizationType,
+  HelpCenterOrganizationRequestFormValues,
+  HelpCenterOrganizationRequestPayload,
   HelpCenterOrganizationViewModel,
 } from './helpCenter.types';
 import { FILTER_SECTIONS } from './helpCenter.data';
@@ -87,15 +90,23 @@ export function buildOrganizationsUrl(
   }
 
   for (const [groupId, values] of Object.entries(filters)) {
-    for (const value of values) {
-      params.append(groupId, value);
+    if (values.length === 0) {
+      continue;
     }
+
+    const parameterName =
+      groupId === 'provider_type' ? 'organization_type' : groupId;
+
+    params.set(parameterName, values.join(','));
   }
 
   return `/api/organizations?${params.toString()}`;
 }
 
-function matchesSearchValue(value: string | null, normalizedQuery: string) {
+function matchesSearchValue(
+  value: string | null | undefined,
+  normalizedQuery: string
+) {
   return value?.toLocaleLowerCase().includes(normalizedQuery) ?? false;
 }
 
@@ -104,7 +115,7 @@ function getOrganizationFilterValues(
   filterKey: string
 ) {
   const filterValue =
-    filterKey === 'provider_type'
+    filterKey === 'provider_type' || filterKey === 'organization_type'
       ? (organization.provider_type ?? organization.organization_type)
       : filterKey === 'location'
         ? organization.locations
@@ -300,4 +311,107 @@ export function findOrganizationById(
   return organizations.find(
     (organization) => organization.id === organizationId
   );
+}
+
+const LEBANON_PHONE_PREFIX = '+961';
+const LEBANON_LOCAL_DIGITS_MAX = 8;
+
+export function createEmptyOrganizationRequestForm(
+  _language: string,
+  query = ''
+): HelpCenterOrganizationRequestFormValues {
+  const trimmedQuery = query.trim();
+
+  return {
+    organizationName: trimmedQuery,
+    organizationType: '',
+    contactValue: '',
+    contactMode: 'neutral',
+  };
+}
+
+function compactContactValue(value: string) {
+  return value.replace(/\s+/g, '');
+}
+
+function extractLocalLebanonDigits(value: string) {
+  const digitsOnly = compactContactValue(value).replace(/\D/g, '');
+
+  if (digitsOnly.startsWith('961')) {
+    return digitsOnly.slice(3);
+  }
+
+  return digitsOnly;
+}
+
+export function normalizeRequestContactInput(
+  value: string
+): Pick<
+  HelpCenterOrganizationRequestFormValues,
+  'contactValue' | 'contactMode'
+> {
+  const compactValue = compactContactValue(value);
+
+  if (!compactValue) {
+    return {
+      contactValue: '',
+      contactMode: 'neutral',
+    };
+  }
+
+  if (/[A-Za-z]/.test(compactValue) || compactValue.includes('@')) {
+    return {
+      contactValue: value,
+      contactMode: 'email',
+    };
+  }
+
+  const localDigits = extractLocalLebanonDigits(compactValue);
+
+  if (localDigits.length < 3) {
+    return {
+      contactValue: localDigits,
+      contactMode: 'neutral',
+    };
+  }
+
+  return {
+    contactValue: localDigits.slice(0, LEBANON_LOCAL_DIGITS_MAX),
+    contactMode: 'phone',
+  };
+}
+
+export function isValidRequestEmail(value: string) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
+}
+
+export function isValidRequestPhone(value: string) {
+  return extractLocalLebanonDigits(value).length >= 8;
+}
+
+export function buildOrganizationRequestPayload(
+  formValues: HelpCenterOrganizationRequestFormValues
+): HelpCenterOrganizationRequestPayload {
+  const trimmedName = formValues.organizationName.trim();
+  const organizationType =
+    formValues.organizationType || ('ngo' as HelpCenterOrganizationType);
+  const payload: HelpCenterOrganizationRequestPayload = {
+    name: trimmedName,
+    name_ar: trimmedName,
+    contact_type: formValues.contactMode === 'phone' ? 'phone' : 'email',
+    organization_type: organizationType,
+  };
+
+  if (formValues.contactMode === 'phone') {
+    payload.phone_number = `${LEBANON_PHONE_PREFIX}${extractLocalLebanonDigits(
+      formValues.contactValue
+    )}`;
+  } else {
+    const trimmedContactValue = formValues.contactValue.trim();
+    if (trimmedContactValue) {
+      payload.email = trimmedContactValue;
+    }
+  }
+
+  return payload;
 }

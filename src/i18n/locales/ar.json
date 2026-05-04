@@ -68,6 +68,41 @@
     "emptyStateActionAriaLabel": "طلب إضافة هذه المنظمة",
     "emptyStateToastHeading": "تم استلام الطلب",
     "emptyStateToastBody": "سنراجع إضافة هذه المنظمة قريباً.",
+    "requestForm": {
+      "title": "طلب إضافة منظمة",
+      "close": "إغلاق نموذج طلب إضافة منظمة",
+      "cancel": "إلغاء",
+      "submit": "إرسال الطلب",
+      "submitting": "جارٍ الإرسال...",
+      "successHeading": "تم استلام الطلب",
+      "successBody": "سنراجع هذه المنظمة ونضيفها إذا كانت مناسبة لمركز المساعدة.",
+      "fields": {
+        "name": "اسم المنظمة",
+        "contact": "البريد الإلكتروني أو رقم الهاتف",
+        "organizationType": "نوع المنظمة"
+      },
+      "placeholders": {
+        "name": "مركز المساعدة",
+        "contact": "Email or Phone Number"
+      },
+      "options": {
+        "organizationTypes": {
+          "government": "حكومي",
+          "private": "خاص",
+          "nonProfit": "غير ربحي",
+          "other": "أخرى"
+        }
+      },
+      "errors": {
+        "nameRequired": "أدخل اسم المنظمة.",
+        "organizationTypeRequired": "اختر نوع المنظمة.",
+        "contactRequired": "أدخل البريد الإلكتروني أو رقم الهاتف.",
+        "contactInvalid": "أدخل بريداً إلكترونياً أو رقم هاتف لبناني صالحاً.",
+        "emailInvalid": "أدخل بريداً إلكترونياً صالحاً.",
+        "phoneInvalid": "أدخل رقم هاتف لبناني صالحاً.",
+        "submitFailed": "تعذر إرسال الطلب. حاول مرة أخرى."
+      }
+    },
     "contactCall": "اتصل",
     "contactEmail": "راسل",
     "contactUnavailable": "بيانات التواصل غير متاحة",

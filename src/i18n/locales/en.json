@@ -56,6 +56,41 @@
     "emptyStateActionAriaLabel": "Request this organization",
     "emptyStateToastHeading": "Request received",
     "emptyStateToastBody": "We’ll review adding this organization soon.",
+    "requestForm": {
+      "title": "Request an organization",
+      "close": "Close request organization form",
+      "cancel": "Cancel",
+      "submit": "Send request",
+      "submitting": "Sending...",
+      "successHeading": "Request received",
+      "successBody": "We’ll review this organization and add it if it fits the Help Center.",
+      "fields": {
+        "name": "Organization name",
+        "contact": "Email or phone number",
+        "organizationType": "Organization type"
+      },
+      "placeholders": {
+        "name": "Help Center",
+        "contact": "Email or Phone Number"
+      },
+      "options": {
+        "organizationTypes": {
+          "government": "Government",
+          "private": "Private",
+          "nonProfit": "Non-profit",
+          "other": "Other"
+        }
+      },
+      "errors": {
+        "nameRequired": "Enter the organization name.",
+        "organizationTypeRequired": "Choose an organization type.",
+        "contactRequired": "Enter an email or phone number.",
+        "contactInvalid": "Enter a valid email or Lebanese mobile number.",
+        "emailInvalid": "Enter a valid email address.",
+        "phoneInvalid": "Enter a valid Lebanese mobile number.",
+        "submitFailed": "We couldn't send the request. Please try again."
+      }
+    },
     "contactCall": "Call",
     "contactEmail": "Email",
     "contactUnavailable": "Contact unavailable",

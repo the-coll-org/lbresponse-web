@@ -10,14 +10,19 @@ import {
 import { helpCenterIcons } from './helpCenter.icons';
 import {
   buildPinnedOrganizationOptions,
+  buildOrganizationRequestPayload,
   buildOrganizationsUrl,
   cloneFilterSelection,
   collectFilterOptions,
   countSelectedFilters,
+  createEmptyOrganizationRequestForm,
   createEmptyFilterSelection,
   findOrganizationById,
+  isValidRequestEmail,
+  isValidRequestPhone,
   mapOrganizationToViewModel,
   mergeOrganizations,
+  normalizeRequestContactInput,
   sortPinnedOrganizations,
 } from './helpCenter.utils';
 import type {
@@ -25,6 +30,10 @@ import type {
   HelpCenterFilterSelection,
   HelpCenterOrganizationsResponse,
   HelpCenterOrganizationApiItem,
+  HelpCenterOrganizationRequestErrors,
+  HelpCenterOrganizationRequestField,
+  HelpCenterOrganizationRequestFormValues,
+  HelpCenterOrganizationType,
 } from './helpCenter.types';
 
 function mapSectionIcon(icon: 'pin' | 'shield' | 'phone') {
@@ -44,6 +53,8 @@ export function useHelpCenterScreenState() {
   const [query, setQuery] = useState('');
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [isPinnedOrganizationsSheetOpen, setIsPinnedOrganizationsSheetOpen] =
+    useState(false);
+  const [isRequestOrganizationSheetOpen, setIsRequestOrganizationSheetOpen] =
     useState(false);
   const [
     organizationPendingReplacementId,
@@ -73,6 +84,14 @@ export function useHelpCenterScreenState() {
   const [draftOrganizationsCount, setDraftOrganizationsCount] = useState(0);
   const [reloadKey, setReloadKey] = useState(0);
   const [pinOverrides, setPinOverrides] = useState<Record<string, boolean>>({});
+  const [requestOrganizationForm, setRequestOrganizationForm] =
+    useState<HelpCenterOrganizationRequestFormValues>(() =>
+      createEmptyOrganizationRequestForm(i18n.resolvedLanguage ?? i18n.language)
+    );
+  const [requestOrganizationErrors, setRequestOrganizationErrors] =
+    useState<HelpCenterOrganizationRequestErrors>({});
+  const [isSubmittingOrganizationRequest, setIsSubmittingOrganizationRequest] =
+    useState(false);
   const pinOverridesRef = useRef(pinOverrides);
 
   const activeLanguage = i18n.resolvedLanguage ?? i18n.language;
@@ -122,6 +141,30 @@ export function useHelpCenterScreenState() {
         ...item,
         label: t(`helpCenter.${item.labelKey}`),
       })),
+    [t]
+  );
+
+  const organizationTypeOptions = useMemo<
+    { value: HelpCenterOrganizationType; label: string }[]
+  >(
+    () => [
+      {
+        value: 'government',
+        label: t('helpCenter.requestForm.options.organizationTypes.government'),
+      },
+      {
+        value: 'private_company',
+        label: t('helpCenter.requestForm.options.organizationTypes.private'),
+      },
+      {
+        value: 'ngo',
+        label: t('helpCenter.requestForm.options.organizationTypes.nonProfit'),
+      },
+      {
+        value: 'local_organization',
+        label: t('helpCenter.requestForm.options.organizationTypes.other'),
+      },
+    ],
     [t]
   );
 
@@ -310,6 +353,24 @@ export function useHelpCenterScreenState() {
     [appliedFilters]
   );
 
+  const appliedFilterChips = useMemo(
+    () =>
+      filterSections.flatMap((section) =>
+        (appliedFilters[section.id] ?? []).map((value) => {
+          const option = (filterOptions[section.id] ?? []).find(
+            (o) => o.value === value
+          );
+          return {
+            sectionId: section.id,
+            value,
+            label: option?.label ?? value,
+            icon: section.icon,
+          };
+        })
+      ),
+    [appliedFilters, filterOptions, filterSections]
+  );
+
   const pinnedOrganizations = useMemo(
     () =>
       buildPinnedOrganizationOptions(
@@ -339,6 +400,55 @@ export function useHelpCenterScreenState() {
   const hasSearchResults = visibleOrganizations.length > 0;
   const canLoadMore = visibleOrganizations.length < totalOrganizations;
 
+  function resetRequestOrganizationForm() {
+    setRequestOrganizationForm(
+      createEmptyOrganizationRequestForm(activeLanguage, trimmedQuery)
+    );
+    setRequestOrganizationErrors({});
+  }
+
+  function validateOrganizationRequestForm() {
+    const nextErrors: HelpCenterOrganizationRequestErrors = {};
+    const trimmedName = requestOrganizationForm.organizationName.trim();
+    const trimmedContactValue = requestOrganizationForm.contactValue.trim();
+
+    if (!trimmedName) {
+      nextErrors.organizationName = t(
+        'helpCenter.requestForm.errors.nameRequired'
+      );
+    }
+
+    if (!requestOrganizationForm.organizationType) {
+      nextErrors.organizationType = t(
+        'helpCenter.requestForm.errors.organizationTypeRequired'
+      );
+    }
+
+    if (!trimmedContactValue) {
+      nextErrors.contactValue = t(
+        'helpCenter.requestForm.errors.contactRequired'
+      );
+    } else if (requestOrganizationForm.contactMode === 'email') {
+      if (!isValidRequestEmail(trimmedContactValue)) {
+        nextErrors.contactValue = t(
+          'helpCenter.requestForm.errors.emailInvalid'
+        );
+      }
+    } else if (requestOrganizationForm.contactMode === 'phone') {
+      if (!isValidRequestPhone(trimmedContactValue)) {
+        nextErrors.contactValue = t(
+          'helpCenter.requestForm.errors.phoneInvalid'
+        );
+      }
+    } else {
+      nextErrors.contactValue = t(
+        'helpCenter.requestForm.errors.contactInvalid'
+      );
+    }
+
+    return nextErrors;
+  }
+
   function handleQueryChange(nextQuery: string) {
     setQuery(nextQuery);
     setPage(1);
@@ -356,6 +466,71 @@ export function useHelpCenterScreenState() {
           : [...currentValues, optionValue],
       };
     });
+  }
+
+  function handleOpenRequestOrganizationSheet() {
+    setRequestOrganizationForm(
+      createEmptyOrganizationRequestForm(activeLanguage, trimmedQuery)
+    );
+    setRequestOrganizationErrors({});
+    setIsRequestOrganizationSheetOpen(true);
+  }
+
+  function handleCloseRequestOrganizationSheet() {
+    setIsRequestOrganizationSheetOpen(false);
+    setRequestOrganizationErrors({});
+  }
+
+  function handleRequestOrganizationFieldChange(
+    field: HelpCenterOrganizationRequestField,
+    value: string
+  ) {
+    if (field === 'contactValue') {
+      const normalizedContact = normalizeRequestContactInput(value);
+
+      setRequestOrganizationForm((currentForm) => ({
+        ...currentForm,
+        ...normalizedContact,
+      }));
+      setRequestOrganizationErrors((currentErrors) => ({
+        ...currentErrors,
+        contactValue: undefined,
+        submit: undefined,
+      }));
+      return;
+    }
+
+    setRequestOrganizationForm((currentForm) => ({
+      ...currentForm,
+      [field]: value,
+    }));
+    setRequestOrganizationErrors((currentErrors) => ({
+      ...currentErrors,
+      [field]: undefined,
+      submit: undefined,
+    }));
+  }
+
+  function handleSelectRequestOrganizationType(
+    value: HelpCenterOrganizationType
+  ) {
+    setRequestOrganizationForm((currentForm) => ({
+      ...currentForm,
+      organizationType: value,
+    }));
+    setRequestOrganizationErrors((currentErrors) => ({
+      ...currentErrors,
+      organizationType: undefined,
+      submit: undefined,
+    }));
+  }
+
+  function handleRemoveFilter(sectionId: string, value: string) {
+    setAppliedFilters((currentFilters) => ({
+      ...currentFilters,
+      [sectionId]: (currentFilters[sectionId] ?? []).filter((v) => v !== value),
+    }));
+    setPage(1);
   }
 
   function handleOpenFilters() {
@@ -444,6 +619,65 @@ export function useHelpCenterScreenState() {
     setReloadKey((currentKey) => currentKey + 1);
   }
 
+  async function handleSubmitOrganizationRequest() {
+    const nextErrors = validateOrganizationRequestForm();
+
+    if (Object.keys(nextErrors).length > 0) {
+      setRequestOrganizationErrors(nextErrors);
+      return false;
+    }
+
+    setIsSubmittingOrganizationRequest(true);
+    setRequestOrganizationErrors({});
+
+    try {
+      const payload = buildOrganizationRequestPayload(requestOrganizationForm);
+      const response = await fetch('/api/organizations', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        let errorMessage = t('helpCenter.requestForm.errors.submitFailed');
+
+        try {
+          const json = (await response.json()) as { message?: string };
+          if (json.message) {
+            errorMessage = json.message;
+          }
+        } catch {
+          const text = await response.text();
+          if (text) {
+            errorMessage = text;
+          }
+        }
+
+        setRequestOrganizationErrors({ submit: errorMessage });
+        return false;
+      }
+
+      const createdOrganization =
+        (await response.json()) as HelpCenterOrganizationApiItem;
+
+      setOrganizationDirectory((currentOrganizations) =>
+        mergeOrganizations(currentOrganizations, [createdOrganization])
+      );
+      setIsRequestOrganizationSheetOpen(false);
+      resetRequestOrganizationForm();
+      return true;
+    } catch {
+      setRequestOrganizationErrors({
+        submit: t('helpCenter.requestForm.errors.submitFailed'),
+      });
+      return false;
+    } finally {
+      setIsSubmittingOrganizationRequest(false);
+    }
+  }
+
   function handleActivateOrganizationAction(organizationId: string) {
     const organization = findOrganizationById(
       visibleOrganizations,
@@ -475,12 +709,18 @@ export function useHelpCenterScreenState() {
     hotlines,
     pinnedOrganizations,
     appliedFiltersCount,
+    appliedFilterChips,
     draftFilters,
     isFilterOpen,
     isPinnedOrganizationsSheetOpen,
+    isRequestOrganizationSheetOpen,
     isOrganizationsLoading,
     isLoadingMore,
     organizationsError,
+    requestOrganizationForm,
+    requestOrganizationErrors,
+    isSubmittingOrganizationRequest,
+    organizationTypeOptions,
     languageToggleLabel,
     trimmedQuery,
     hasActiveQuery,
@@ -490,6 +730,7 @@ export function useHelpCenterScreenState() {
     canLoadMore,
     maxPinnedOrganizations: MAX_PINNED_ORGANIZATIONS,
     handleQueryChange,
+    handleRemoveFilter,
     handleOpenFilters,
     handleCancelFilters,
     handleClearFilters,
@@ -498,10 +739,16 @@ export function useHelpCenterScreenState() {
     handleTogglePinnedOrganization,
     handleReplacePinnedOrganization,
     handleClosePinnedOrganizationsSheet,
+    handleOpenRequestOrganizationSheet,
+    handleCloseRequestOrganizationSheet,
+    handleRequestOrganizationFieldChange,
+    handleSelectRequestOrganizationType,
+    handleSubmitOrganizationRequest,
     handleLoadMore,
     handleRetryOrganizations,
     handleActivateOrganizationAction,
     setIsFilterOpen,
     setIsPinnedOrganizationsSheetOpen,
+    setIsRequestOrganizationSheetOpen,
   };
 }

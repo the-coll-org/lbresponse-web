@@ -102,7 +102,7 @@ const INPUT_BASE = [
  */
 const ICON_WRAPPER: Record<TextFieldSize, string> = {
   md: 'flex flex-col w-20 shrink-0 justify-center items-center p-[2px]',
-  lg: 'inline-flex flex-col shrink-0 justify-center items-center p-12',
+  lg: 'flex flex-col shrink-0 justify-center items-center p-[2px]',
 };
 
 // ─── Component ────────────────────────────────────────────────────────────────

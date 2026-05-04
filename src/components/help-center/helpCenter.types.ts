@@ -71,6 +71,49 @@ export interface HelpCenterOrganizationViewModel {
   isPinned: boolean;
 }
 
+export type HelpCenterOrganizationType =
+  | 'ngo'
+  | 'un'
+  | 'local_organization'
+  | 'government'
+  | 'private_donor'
+  | 'private_company';
+
+export type HelpCenterContactType =
+  | 'phone'
+  | 'whatsapp'
+  | 'email'
+  | 'telegram'
+  | 'sms'
+  | 'other';
+
+export type HelpCenterContactMode = 'neutral' | 'email' | 'phone';
+
+export interface HelpCenterOrganizationRequestPayload {
+  name: string;
+  name_ar: string;
+  contact_type: 'phone' | 'email';
+  organization_type: HelpCenterOrganizationType;
+  email?: string;
+  phone_number?: string;
+}
+
+export interface HelpCenterOrganizationRequestFormValues {
+  organizationName: string;
+  organizationType: HelpCenterOrganizationType | '';
+  contactValue: string;
+  contactMode: HelpCenterContactMode;
+}
+
+export type HelpCenterOrganizationRequestField =
+  | 'organizationName'
+  | 'organizationType'
+  | 'contactValue';
+
+export type HelpCenterOrganizationRequestErrors = Partial<
+  Record<HelpCenterOrganizationRequestField | 'submit', string>
+>;
+
 export interface HelpCenterFilterSectionConfig {
   id: string;
   titleKey: string;
