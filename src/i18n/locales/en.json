@@ -94,8 +94,11 @@
       }
     },
     "contactCall": "Call",
+    "contactWhatsapp": "WhatsApp",
     "contactEmail": "Email",
     "contactUnavailable": "Contact unavailable",
+    "mapAction": "Map",
+    "mapActionAriaLabel": "Open location on Google Maps",
     "uncategorized": "Uncategorized",
     "hotlines": {
       "marineRescue": "Marine rescue",

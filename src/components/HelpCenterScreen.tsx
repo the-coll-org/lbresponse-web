@@ -1,5 +1,6 @@
 import { useToast } from '../hooks/useToast';
 import { EmergencyHotlinesSection } from './help-center/EmergencyHotlinesSection';
+import { HelpCenterFilterChips } from './help-center/HelpCenterFilterChips';
 import { HelpCenterHeaderActions } from './help-center/HelpCenterHeaderActions';
 import { HelpCenterSearchBar } from './help-center/HelpCenterSearchBar';
 import { OrganizationsListSection } from './help-center/OrganizationsListSection';
@@ -21,6 +22,7 @@ export default function HelpCenterScreen({
     query,
     visibleOrganizations,
     filterSections,
+    appliedFilters,
     hotlines,
     pinnedOrganizations,
     appliedFiltersCount,
@@ -51,6 +53,7 @@ export default function HelpCenterScreen({
     handleClearFilters,
     handleApplyFilters,
     handleToggleFilterOption,
+    handleToggleSectorChip,
     handleTogglePinnedOrganization,
     handleReplacePinnedOrganization,
     handleClosePinnedOrganizationsSheet,
@@ -62,6 +65,7 @@ export default function HelpCenterScreen({
     handleLoadMore,
     handleRetryOrganizations,
     handleActivateOrganizationAction,
+    handleOpenMap,
     setIsFilterOpen,
     setIsPinnedOrganizationsSheetOpen,
   } = useHelpCenterScreenState();
@@ -127,6 +131,25 @@ export default function HelpCenterScreen({
             onRemoveFilter={handleRemoveFilter}
           />
 
+          {(() => {
+            const sectorSection = filterSections.find((s) => s.id === 'sector');
+            if (!sectorSection || sectorSection.options.length === 0)
+              return null;
+            const activeSector = appliedFilters.sector?.[0] ?? null;
+            return (
+              <HelpCenterFilterChips
+                ariaLabel={t('helpCenter.filtersTitle')}
+                chips={sectorSection.options.map((option) => ({
+                  id: option.value,
+                  label: option.label,
+                  icon: sectorSection.icon,
+                  isActive: option.value === activeSector,
+                  onClick: () => handleToggleSectorChip(option.value),
+                }))}
+              />
+            );
+          })()}
+
           <OrganizationsListSection
             organizations={visibleOrganizations}
             isLoading={isOrganizationsLoading}
@@ -165,11 +188,14 @@ export default function HelpCenterScreen({
             pinActionAriaLabel={t('helpCenter.pinAction')}
             unpinActionAriaLabel={t('helpCenter.unpinAction')}
             verifyActionAriaLabel={t('helpCenter.verifyAction')}
+            mapActionLabel={t('helpCenter.mapAction')}
+            mapActionAriaLabel={t('helpCenter.mapActionAriaLabel')}
             showLoadMore={canLoadMore}
             onEmptyStateAction={handleOpenRequestOrganizationSheet}
             onRetry={handleRetryOrganizations}
             onLoadMore={handleLoadMore}
             onActivateOrganizationAction={handleActivateOrganizationAction}
+            onOpenMap={handleOpenMap}
             onTogglePinnedOrganization={handleTogglePinnedOrganization}
           />
         </div>

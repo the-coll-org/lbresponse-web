@@ -320,6 +320,7 @@ export function useHelpCenterScreenState() {
   const organizationLabels = useMemo(
     () => ({
       call: t('helpCenter.contactCall'),
+      whatsapp: t('helpCenter.contactWhatsapp'),
       email: t('helpCenter.contactEmail'),
       unavailable: t('helpCenter.contactUnavailable'),
       uncategorized: t('helpCenter.uncategorized'),
@@ -466,6 +467,19 @@ export function useHelpCenterScreenState() {
           : [...currentValues, optionValue],
       };
     });
+  }
+
+  function handleToggleSectorChip(value: string) {
+    setAppliedFilters((current) => {
+      const currentValues = current.sector ?? [];
+      const isSelected =
+        currentValues.length === 1 && currentValues[0] === value;
+      return {
+        ...current,
+        sector: isSelected ? [] : [value],
+      };
+    });
+    setPage(1);
   }
 
   function handleOpenRequestOrganizationSheet() {
@@ -686,18 +700,34 @@ export function useHelpCenterScreenState() {
 
     if (
       !organization ||
-      organization.actionDisabled ||
+      organization.primaryActionDisabled ||
       typeof window === 'undefined'
     ) {
       return;
     }
 
-    if (organization.actionType === 'phone') {
-      window.location.href = `tel:${organization.actionValue}`;
+    if (organization.primaryActionType === 'phone') {
+      window.location.href = `tel:${organization.primaryActionValue}`;
       return;
     }
 
-    window.location.href = `mailto:${organization.actionValue}`;
+    if (organization.primaryActionType === 'whatsapp') {
+      const digits = organization.primaryActionValue.replace(/\D/g, '');
+      const intl = digits.startsWith('961')
+        ? digits
+        : `961${digits.replace(/^0+/, '')}`;
+      window.open(`https://wa.me/${intl}`, '_blank', 'noopener,noreferrer');
+      return;
+    }
+
+    if (organization.primaryActionType === 'email') {
+      window.location.href = `mailto:${organization.primaryActionValue}`;
+    }
+  }
+
+  function handleOpenMap(mapUrl: string) {
+    if (typeof window === 'undefined') return;
+    window.open(mapUrl, '_blank', 'noopener,noreferrer');
   }
 
   return {
@@ -706,6 +736,7 @@ export function useHelpCenterScreenState() {
     organizations: allOrganizations,
     visibleOrganizations,
     filterSections,
+    appliedFilters,
     hotlines,
     pinnedOrganizations,
     appliedFiltersCount,
@@ -736,6 +767,7 @@ export function useHelpCenterScreenState() {
     handleClearFilters,
     handleApplyFilters,
     handleToggleFilterOption,
+    handleToggleSectorChip,
     handleTogglePinnedOrganization,
     handleReplacePinnedOrganization,
     handleClosePinnedOrganizationsSheet,
@@ -747,6 +779,7 @@ export function useHelpCenterScreenState() {
     handleLoadMore,
     handleRetryOrganizations,
     handleActivateOrganizationAction,
+    handleOpenMap,
     setIsFilterOpen,
     setIsPinnedOrganizationsSheetOpen,
     setIsRequestOrganizationSheetOpen,

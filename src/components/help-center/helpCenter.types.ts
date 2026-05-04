@@ -21,8 +21,10 @@ export interface HelpCenterOrganizationApiItem {
   pinned: boolean;
   verified: boolean;
   phone_numbers: string[];
+  whatsapp: string | null;
   type: string | null;
   locations: string[];
+  map_url: string | null;
   organization_type: string | null;
   provider_type?: string | null;
   sector?: string | null;
@@ -63,10 +65,12 @@ export interface HelpCenterOrganizationViewModel {
   category: string;
   description: string;
   locations: string;
-  actionLabel: string;
-  actionDisabled: boolean;
-  actionType: 'phone' | 'email';
-  actionValue: string;
+  primaryActionLabel: string;
+  primaryActionType: 'phone' | 'whatsapp' | 'email' | 'unavailable';
+  primaryActionValue: string;
+  primaryActionDisabled: boolean;
+  mapUrl: string | null;
+  timeLabel: string;
   verified: boolean;
   isPinned: boolean;
 }

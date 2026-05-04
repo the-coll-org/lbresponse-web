@@ -106,8 +106,11 @@
       }
     },
     "contactCall": "اتصل",
+    "contactWhatsapp": "واتساب",
     "contactEmail": "راسل",
     "contactUnavailable": "بيانات التواصل غير متاحة",
+    "mapAction": "خريطة",
+    "mapActionAriaLabel": "فتح الموقع على خرائط جوجل",
     "uncategorized": "غير مصنفة",
     "hotlines": {
       "marineRescue": "الإنقاذ البحري",

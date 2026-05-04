@@ -178,12 +178,34 @@ export function filterOrganizations(
   });
 }
 
+export function formatRelativeTime(
+  iso: string | null,
+  language: string
+): string {
+  if (!iso) return '';
+  const ts = new Date(iso).getTime();
+  if (Number.isNaN(ts)) return '';
+  const diffSec = Math.max(0, Math.floor((Date.now() - ts) / 1000));
+  const rtf = new Intl.RelativeTimeFormat(language, { numeric: 'auto' });
+  if (diffSec < 60) return rtf.format(-diffSec, 'second');
+  const diffMin = Math.floor(diffSec / 60);
+  if (diffMin < 60) return rtf.format(-diffMin, 'minute');
+  const diffHr = Math.floor(diffMin / 60);
+  if (diffHr < 24) return rtf.format(-diffHr, 'hour');
+  const diffDay = Math.floor(diffHr / 24);
+  if (diffDay < 30) return rtf.format(-diffDay, 'day');
+  const diffMo = Math.floor(diffDay / 30);
+  if (diffMo < 12) return rtf.format(-diffMo, 'month');
+  return rtf.format(-Math.floor(diffDay / 365), 'year');
+}
+
 export function mapOrganizationToViewModel(
   organization: HelpCenterOrganizationApiItem,
   language: string,
   isPinned: boolean,
   labels: {
     call: string;
+    whatsapp: string;
     email: string;
     unavailable: string;
     uncategorized: string;
@@ -207,38 +229,31 @@ export function mapOrganizationToViewModel(
     organization.phone_numbers
       .map((number) => number.trim())
       .find((number) => number.length > 0) ?? '';
+  const whatsapp = organization.whatsapp?.trim() ?? '';
   const email = organization.email?.trim() ?? '';
+  const timeLabel = formatRelativeTime(organization.updated_at, language);
 
-  if (phoneNumber) {
-    return {
-      id: organization.id,
-      title,
-      category,
-      description,
-      locations,
-      actionLabel: `${labels.call} ${phoneNumber}`,
-      actionDisabled: false,
-      actionType: 'phone',
-      actionValue: phoneNumber,
-      verified: organization.verified,
-      isPinned,
-    };
-  }
+  let primaryActionLabel = labels.unavailable;
+  let primaryActionType: HelpCenterOrganizationViewModel['primaryActionType'] =
+    'unavailable';
+  let primaryActionValue = '';
+  let primaryActionDisabled = true;
 
-  if (email) {
-    return {
-      id: organization.id,
-      title,
-      category,
-      description,
-      locations,
-      actionLabel: `${labels.email} ${email}`,
-      actionDisabled: false,
-      actionType: 'email',
-      actionValue: email,
-      verified: organization.verified,
-      isPinned,
-    };
+  if (whatsapp) {
+    primaryActionLabel = `${labels.whatsapp} ${whatsapp}`;
+    primaryActionType = 'whatsapp';
+    primaryActionValue = whatsapp;
+    primaryActionDisabled = false;
+  } else if (phoneNumber) {
+    primaryActionLabel = `${labels.call} ${phoneNumber}`;
+    primaryActionType = 'phone';
+    primaryActionValue = phoneNumber;
+    primaryActionDisabled = false;
+  } else if (email) {
+    primaryActionLabel = `${labels.email} ${email}`;
+    primaryActionType = 'email';
+    primaryActionValue = email;
+    primaryActionDisabled = false;
   }
 
   return {
@@ -247,10 +262,12 @@ export function mapOrganizationToViewModel(
     category,
     description,
     locations,
-    actionLabel: labels.unavailable,
-    actionDisabled: true,
-    actionType: 'email',
-    actionValue: '',
+    primaryActionLabel,
+    primaryActionType,
+    primaryActionValue,
+    primaryActionDisabled,
+    mapUrl: organization.map_url,
+    timeLabel,
     verified: organization.verified,
     isPinned,
   };

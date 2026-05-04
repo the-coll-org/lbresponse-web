@@ -2,23 +2,10 @@ import { Button } from '../ui/Button';
 import { SearchEmptyState } from '../ui/SearchEmptyState';
 import { ServiceCard } from '../ui/ServiceCard';
 import { helpCenterIcons } from './helpCenter.icons';
-
-interface OrganizationCardViewModel {
-  id: string;
-  title: string;
-  category: string;
-  description: string;
-  locations: string;
-  actionLabel: string;
-  actionDisabled: boolean;
-  actionType: 'phone' | 'email';
-  actionValue: string;
-  verified: boolean;
-  isPinned: boolean;
-}
+import type { HelpCenterOrganizationViewModel } from './helpCenter.types';
 
 interface OrganizationsListSectionProps {
-  organizations: OrganizationCardViewModel[];
+  organizations: HelpCenterOrganizationViewModel[];
   isLoading: boolean;
   isLoadingMore: boolean;
   hasError: boolean;
@@ -37,11 +24,14 @@ interface OrganizationsListSectionProps {
   pinActionAriaLabel: string;
   unpinActionAriaLabel: string;
   verifyActionAriaLabel: string;
+  mapActionLabel: string;
+  mapActionAriaLabel: string;
   showLoadMore: boolean;
   onEmptyStateAction: () => void;
   onRetry: () => void;
   onLoadMore: () => void;
   onActivateOrganizationAction: (organizationId: string) => void;
+  onOpenMap: (mapUrl: string) => void;
   onTogglePinnedOrganization: (organizationId: string) => void;
 }
 
@@ -65,18 +55,26 @@ export function OrganizationsListSection({
   pinActionAriaLabel,
   unpinActionAriaLabel,
   verifyActionAriaLabel,
+  mapActionLabel,
+  mapActionAriaLabel,
   showLoadMore,
   onEmptyStateAction,
   onRetry,
   onLoadMore,
   onActivateOrganizationAction,
+  onOpenMap,
   onTogglePinnedOrganization,
 }: OrganizationsListSectionProps) {
   const PhoneIcon = helpCenterIcons.phone;
   const WhatsappIcon = helpCenterIcons.whatsapp;
-  const VerifyIcon = helpCenterIcons.verify;
+  const ShieldIcon = helpCenterIcons.shield;
+  const SmallPinIcon = helpCenterIcons.smallPin;
   const ChevronDownIcon = helpCenterIcons.chevronDown;
   const ArrowUpIcon = helpCenterIcons.arrowUp;
+  void unpinActionAriaLabel;
+  void pinActionAriaLabel;
+  void verifyActionAriaLabel;
+  void onTogglePinnedOrganization;
 
   if (isLoading) {
     return (
@@ -137,10 +135,8 @@ export function OrganizationsListSection({
     <section className="relative flex flex-col gap-12">
       <div className="grid grid-cols-1 gap-12 md:grid-cols-2 xl:grid-cols-3">
         {organizations.map((item) => {
-          const PinIcon = item.isPinned
-            ? helpCenterIcons.pinFilled
-            : helpCenterIcons.pin;
-
+          const isWhatsapp = item.primaryActionType === 'whatsapp';
+          const ActionIcon = isWhatsapp ? WhatsappIcon : PhoneIcon;
           return (
             <ServiceCard
               key={item.id}
@@ -148,39 +144,26 @@ export function OrganizationsListSection({
               category={item.category}
               description={item.description}
               locations={item.locations}
-              actionLabel={item.actionLabel}
+              actionLabel={item.primaryActionLabel}
               actionIcon={
-                item.actionDisabled ? undefined : item.actionType ===
-                  'phone' ? (
-                  <PhoneIcon />
-                ) : (
-                  <WhatsappIcon />
-                )
+                item.primaryActionDisabled ? undefined : <ActionIcon />
               }
-              actionVariant={item.actionType === 'phone' ? 'filled' : 'success'}
-              actionDisabled={item.actionDisabled}
+              actionVariant={isWhatsapp ? 'success' : 'filled'}
+              actionDisabled={item.primaryActionDisabled}
               onActionClick={
-                item.actionDisabled
+                item.primaryActionDisabled
                   ? undefined
                   : () => onActivateOrganizationAction(item.id)
               }
-              primaryAction={{
-                ariaLabel: item.isPinned
-                  ? unpinActionAriaLabel
-                  : pinActionAriaLabel,
-                icon: <PinIcon />,
-                onClick: () => onTogglePinnedOrganization(item.id),
-                variant: item.isPinned ? 'filled' : 'soft',
-                iconClassName: item.isPinned
-                  ? 'scale-110 rotate-12 text-button-filled-text transition-transform duration-200 ease-out'
-                  : 'text-button-icon-icon transition-transform duration-200 ease-out',
-              }}
-              secondaryAction={
-                item.verified
+              timeLabel={item.timeLabel || undefined}
+              categoryIcon={<ShieldIcon />}
+              secondaryButton={
+                item.mapUrl
                   ? {
-                      ariaLabel: verifyActionAriaLabel,
-                      icon: <VerifyIcon />,
-                      variant: 'outline',
+                      label: mapActionLabel,
+                      ariaLabel: mapActionAriaLabel,
+                      icon: <SmallPinIcon />,
+                      onClick: () => onOpenMap(item.mapUrl!),
                     }
                   : undefined
               }
