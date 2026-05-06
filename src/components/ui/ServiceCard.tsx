@@ -193,9 +193,9 @@ export function ServiceCard({
         </div>
 
         {locations && (
-          <div className="flex w-full items-center justify-start gap-4 text-start text-button font-weight-regular text-text-black">
+          <div className="flex w-full items-start justify-start gap-4 text-start text-button font-weight-regular text-text-black">
             <div
-              className="flex size-16 items-center justify-center"
+              className="mt-2 flex size-16 shrink-0 items-center justify-center"
               aria-hidden="true"
             >
               <SvgIcon svg={locationSvg} className="size-16" />

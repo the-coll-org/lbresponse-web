@@ -1,6 +1,7 @@
 import { useToast } from '../hooks/useToast';
 import { EmergencyHotlinesSection } from './help-center/EmergencyHotlinesSection';
 import { HelpCenterFilterChips } from './help-center/HelpCenterFilterChips';
+import { SectorIcon } from './help-center/sectorIcons';
 import { HelpCenterHeaderActions } from './help-center/HelpCenterHeaderActions';
 import { HelpCenterSearchBar } from './help-center/HelpCenterSearchBar';
 import { OrganizationsListSection } from './help-center/OrganizationsListSection';
@@ -142,7 +143,7 @@ export default function HelpCenterScreen({
                 chips={sectorSection.options.map((option) => ({
                   id: option.value,
                   label: option.label,
-                  icon: sectorSection.icon,
+                  icon: <SectorIcon sector={option.value} />,
                   isActive: option.value === activeSector,
                   onClick: () => handleToggleSectorChip(option.value),
                 }))}
