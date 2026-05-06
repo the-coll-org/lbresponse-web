@@ -2,6 +2,7 @@ import { Button } from '../ui/Button';
 import { SearchEmptyState } from '../ui/SearchEmptyState';
 import { ServiceCard } from '../ui/ServiceCard';
 import { helpCenterIcons } from './helpCenter.icons';
+import { SectorIcon } from './sectorIcons';
 import type { HelpCenterOrganizationViewModel } from './helpCenter.types';
 
 interface OrganizationsListSectionProps {
@@ -67,7 +68,7 @@ export function OrganizationsListSection({
 }: OrganizationsListSectionProps) {
   const PhoneIcon = helpCenterIcons.phone;
   const WhatsappIcon = helpCenterIcons.whatsapp;
-  const ShieldIcon = helpCenterIcons.shield;
+  const MailIcon = helpCenterIcons.mail;
   const SmallPinIcon = helpCenterIcons.smallPin;
   const ChevronDownIcon = helpCenterIcons.chevronDown;
   const ArrowUpIcon = helpCenterIcons.arrowUp;
@@ -135,8 +136,12 @@ export function OrganizationsListSection({
     <section className="relative flex flex-col gap-12">
       <div className="grid grid-cols-1 gap-12 md:grid-cols-2 xl:grid-cols-3">
         {organizations.map((item) => {
-          const isWhatsapp = item.primaryActionType === 'whatsapp';
-          const ActionIcon = isWhatsapp ? WhatsappIcon : PhoneIcon;
+          const ActionIcon =
+            item.primaryActionType === 'whatsapp'
+              ? WhatsappIcon
+              : item.primaryActionType === 'email'
+                ? MailIcon
+                : PhoneIcon;
           return (
             <ServiceCard
               key={item.id}
@@ -148,7 +153,9 @@ export function OrganizationsListSection({
               actionIcon={
                 item.primaryActionDisabled ? undefined : <ActionIcon />
               }
-              actionVariant={isWhatsapp ? 'success' : 'filled'}
+              actionVariant={
+                item.primaryActionType === 'whatsapp' ? 'success' : 'filled'
+              }
               actionDisabled={item.primaryActionDisabled}
               onActionClick={
                 item.primaryActionDisabled
@@ -156,7 +163,7 @@ export function OrganizationsListSection({
                   : () => onActivateOrganizationAction(item.id)
               }
               timeLabel={item.timeLabel || undefined}
-              categoryIcon={<ShieldIcon />}
+              categoryIcon={<SectorIcon sector={item.category} />}
               secondaryButton={
                 item.mapUrl
                   ? {
