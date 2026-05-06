@@ -69,7 +69,7 @@ export function OrganizationsListSection({
   const PhoneIcon = helpCenterIcons.phone;
   const WhatsappIcon = helpCenterIcons.whatsapp;
   const MailIcon = helpCenterIcons.mail;
-  const SmallPinIcon = helpCenterIcons.smallPin;
+  const MapButtonIcon = helpCenterIcons.map;
   const ChevronDownIcon = helpCenterIcons.chevronDown;
   const ArrowUpIcon = helpCenterIcons.arrowUp;
   void unpinActionAriaLabel;
@@ -134,7 +134,7 @@ export function OrganizationsListSection({
 
   return (
     <section className="relative flex flex-col gap-12">
-      <div className="grid grid-cols-1 gap-12 md:grid-cols-2 xl:grid-cols-3">
+      <div className="grid grid-cols-1 gap-16 md:grid-cols-2 xl:grid-cols-3">
         {organizations.map((item) => {
           const ActionIcon =
             item.primaryActionType === 'whatsapp'
@@ -169,7 +169,7 @@ export function OrganizationsListSection({
                   ? {
                       label: mapActionLabel,
                       ariaLabel: mapActionAriaLabel,
-                      icon: <SmallPinIcon />,
+                      icon: <MapButtonIcon />,
                       onClick: () => onOpenMap(item.mapUrl!),
                     }
                   : undefined

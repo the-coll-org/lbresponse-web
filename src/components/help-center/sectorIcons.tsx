@@ -27,36 +27,33 @@ function BookIcon() {
   );
 }
 
-function WheatIcon() {
+function ForkKnifeIcon() {
   return (
     <Svg>
-      <path d="M12 21V8" />
-      <path d="M12 8c0-2 1.5-4 4-4 0 2-1.5 4-4 4Z" />
-      <path d="M12 8c0-2-1.5-4-4-4 0 2 1.5 4 4 4Z" />
-      <path d="M12 13c0-2 1.5-4 4-4 0 2-1.5 4-4 4Z" />
-      <path d="M12 13c0-2-1.5-4-4-4 0 2 1.5 4 4 4Z" />
-      <path d="M12 18c0-2 1.5-4 4-4 0 2-1.5 4-4 4Z" />
-      <path d="M12 18c0-2-1.5-4-4-4 0 2 1.5 4 4 4Z" />
+      <path d="M7 3v8a2 2 0 0 0 2 2" />
+      <path d="M9 3v18" />
+      <path d="M5 3v6" />
+      <path d="M17 3c-1.5 0-3 1.5-3 4s1.5 4 3 4" />
+      <path d="M17 3v18" />
     </Svg>
   );
 }
 
-function HeartShieldIcon() {
+function HeartCrossIcon() {
   return (
     <Svg>
-      <path d="M12 21s-7-4.35-7-10V6l7-3 7 3v5c0 5.65-7 10-7 10z" />
-      <path d="M9.5 11a1.7 1.7 0 0 1 2.5-1.4 1.7 1.7 0 0 1 2.5 1.4c0 1.5-2.5 3-2.5 3s-2.5-1.5-2.5-3z" />
+      <path d="M12 20s-7-4.5-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.5-7 10-7 10Z" />
+      <path d="M12 9.5v4" />
+      <path d="M10 11.5h4" />
     </Svg>
   );
 }
 
-function NutritionIcon() {
+function AppleIcon() {
   return (
     <Svg>
-      <path d="M12 4c-3 0-5 3-5 7s2 9 5 9 5-5 5-9-2-7-5-7Z" />
-      <path d="M12 4V2" />
-      <path d="M9 5l-1-1" />
-      <path d="M15 5l1-1" />
+      <path d="M16.5 3.5c-1.6 0-2.9 1-3.5 2-.6-1-1.9-2-3.5-2C7 3.5 4 6 4 10s4 11 8 11 8-7 8-11-3-6.5-3.5-6.5Z" />
+      <path d="M12 5.5c0-1.5 1-3 2.5-3" />
     </Svg>
   );
 }
@@ -80,13 +77,12 @@ function ShieldIcon() {
   );
 }
 
-function HomeShelterIcon() {
+function HouseIcon() {
   return (
     <Svg>
-      <path d="M3 12 12 4l9 8" />
-      <path d="M5 11v9h14v-9" />
+      <path d="M3 11.5 12 4l9 7.5" />
+      <path d="M5.5 10.5V20h13v-9.5" />
       <path d="M10 20v-5h4v5" />
-      <path d="M9 8h6" />
     </Svg>
   );
 }
@@ -121,27 +117,28 @@ function CashIcon() {
   );
 }
 
-function ShieldCheckIcon() {
+function TshirtIcon() {
   return (
     <Svg>
-      <path d="M12 21s-7-4.35-7-10V6l7-3 7 3v5c0 5.65-7 10-7 10z" />
-      <path d="M9 12l2 2 4-4" />
+      <path d="M9 3 6.5 5 4 7l1.5 3L8 9v11h8V9l2.5 1L20 7l-2.5-2L15 3" />
+      <path d="M9 3a3 3 0 0 0 6 0" />
     </Svg>
   );
 }
 
 const SECTOR_ICONS: Record<string, ComponentType> = {
-  shelter: HomeShelterIcon,
+  shelter: HouseIcon,
   education: BookIcon,
-  'food-security-agriculture': WheatIcon,
-  nutrition: NutritionIcon,
-  gbv: HeartShieldIcon,
+  'food-security-agriculture': ForkKnifeIcon,
+  nutrition: AppleIcon,
+  gbv: HeartCrossIcon,
   protection: ShieldIcon,
   'social-stability': PeopleIcon,
   livelihoods: BriefcaseIcon,
   wash: WaterDropIcon,
   cwg: CashIcon,
-  'child-protection': ShieldCheckIcon,
+  clothing: TshirtIcon,
+  'child-protection': HeartCrossIcon,
 };
 
 function slugifySector(value: string): string {

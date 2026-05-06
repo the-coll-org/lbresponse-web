@@ -130,6 +130,26 @@ function SunIcon() {
   );
 }
 
+function MapIcon() {
+  return (
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M3 6 9 4l6 2 6-2v14l-6 2-6-2-6 2z" />
+      <path d="M9 4v16" />
+      <path d="M15 6v16" />
+    </svg>
+  );
+}
+
 function MailIcon() {
   return (
     <svg
@@ -187,4 +207,5 @@ export const helpCenterIcons = {
   sun: SunIcon,
   moon: MoonIcon,
   mail: MailIcon,
+  map: MapIcon,
 } as const;

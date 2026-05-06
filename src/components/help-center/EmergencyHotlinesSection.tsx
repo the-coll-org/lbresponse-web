@@ -1,4 +1,6 @@
+import { useTranslation } from 'react-i18next';
 import { helpCenterIcons } from './helpCenter.icons';
+import { localizeDigits } from './helpCenter.utils';
 import type { HelpCenterHotline } from './helpCenter.types';
 
 interface EmergencyHotlinesSectionProps {
@@ -9,10 +11,12 @@ interface EmergencyHotlinesSectionProps {
 function EmergencyShortcut({
   label,
   number,
+  displayNumber,
   icon,
 }: {
   label: string;
   number: string;
+  displayNumber: string;
   icon: keyof typeof helpCenterIcons;
 }) {
   const Icon = helpCenterIcons[icon];
@@ -27,7 +31,9 @@ function EmergencyShortcut({
         <Icon />
       </div>
       <p className="text-2xs font-weight-medium text-text-black">{label}</p>
-      <p className="text-2xs font-weight-medium text-text-black">{number}</p>
+      <p className="text-2xs font-weight-medium text-text-black">
+        {displayNumber}
+      </p>
     </a>
   );
 }
@@ -36,6 +42,9 @@ export function EmergencyHotlinesSection({
   title,
   hotlines,
 }: EmergencyHotlinesSectionProps) {
+  const { i18n } = useTranslation();
+  const language = i18n.resolvedLanguage ?? i18n.language;
+
   return (
     <section className="flex flex-col gap-8">
       <h2 className="w-full text-start text-lg font-weight-medium text-text-black">
@@ -48,6 +57,7 @@ export function EmergencyHotlinesSection({
             key={item.id}
             label={item.label}
             number={item.number}
+            displayNumber={localizeDigits(item.number, language)}
             icon={item.icon}
           />
         ))}

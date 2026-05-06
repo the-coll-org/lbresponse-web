@@ -16,13 +16,13 @@
     "dashboard": "Dashboard"
   },
   "helpCenter": {
-    "title": "Help Center",
-    "subtitle": "Hello, how can we help you today?",
+    "title": "Get Help",
+    "subtitle": "Choose the type of help you need",
     "emergencyTitle": "Emergency Hotlines",
     "openFilters": "Open filters",
     "searchPlaceholder": "Search for an organization or area...",
     "resultsCountStatic": "20 / 30 organizations",
-    "organizationLabel": "organization",
+    "organizationLabel": "result",
     "loadMoreStatic": "Show more (10 remaining)",
     "loadMore_one": "Show more ({{count}} remaining)",
     "loadMore_other": "Show more ({{count}} remaining)",

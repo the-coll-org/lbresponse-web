@@ -178,6 +178,28 @@ export function filterOrganizations(
   });
 }
 
+const ARABIC_DIGIT_MAP: Record<string, string> = {
+  '0': '٠',
+  '1': '١',
+  '2': '٢',
+  '3': '٣',
+  '4': '٤',
+  '5': '٥',
+  '6': '٦',
+  '7': '٧',
+  '8': '٨',
+  '9': '٩',
+};
+
+export function localizeDigits(
+  value: string | number,
+  language: string
+): string {
+  const text = String(value);
+  if (!language.startsWith('ar')) return text;
+  return text.replace(/[0-9]/g, (d) => ARABIC_DIGIT_MAP[d] ?? d);
+}
+
 export function formatRelativeTime(
   iso: string | null,
   language: string
@@ -186,7 +208,11 @@ export function formatRelativeTime(
   const ts = new Date(iso).getTime();
   if (Number.isNaN(ts)) return '';
   const diffSec = Math.max(0, Math.floor((Date.now() - ts) / 1000));
-  const rtf = new Intl.RelativeTimeFormat(language, { numeric: 'auto' });
+  // nu-latn forces Latin (European) digits even in Arabic locales, matching
+  // the design where the relative-time number stays in 0-9.
+  const rtf = new Intl.RelativeTimeFormat(`${language}-u-nu-latn`, {
+    numeric: 'auto',
+  });
   if (diffSec < 60) return rtf.format(-diffSec, 'second');
   const diffMin = Math.floor(diffSec / 60);
   if (diffMin < 60) return rtf.format(-diffMin, 'minute');
@@ -240,12 +266,12 @@ export function mapOrganizationToViewModel(
   let primaryActionDisabled = true;
 
   if (whatsapp) {
-    primaryActionLabel = `${labels.whatsapp} ${whatsapp}`;
+    primaryActionLabel = `${labels.whatsapp} ${localizeDigits(whatsapp, language)}`;
     primaryActionType = 'whatsapp';
     primaryActionValue = whatsapp;
     primaryActionDisabled = false;
   } else if (phoneNumber) {
-    primaryActionLabel = `${labels.call} ${phoneNumber}`;
+    primaryActionLabel = `${labels.call} ${localizeDigits(phoneNumber, language)}`;
     primaryActionType = 'phone';
     primaryActionValue = phoneNumber;
     primaryActionDisabled = false;

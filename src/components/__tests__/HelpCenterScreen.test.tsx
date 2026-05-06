@@ -395,7 +395,7 @@ describe('HelpCenterScreen', () => {
 
     await flushPromises();
 
-    expect(document.body.textContent).toContain('1 / 1 organization');
+    expect(document.body.textContent).toContain('1 / 1 result');
     expect(globalThis.fetch).toHaveBeenCalledWith(
       expect.stringContaining('/api/organizations?')
     );
@@ -449,7 +449,7 @@ describe('HelpCenterScreen', () => {
 
     await flushPromises();
 
-    expect(document.body.textContent).toContain('25 / 25 organization');
+    expect(document.body.textContent).toContain('25 / 25 result');
     expect(globalThis.fetch).toHaveBeenCalledWith(
       expect.stringContaining('page=2')
     );

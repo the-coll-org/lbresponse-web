@@ -40,7 +40,7 @@ export interface ServiceCardProps extends Omit<
 }
 
 const CARD_BASE = [
-  'w-full rounded-lg border border-textfield-default-stroke',
+  'w-full rounded-xl border border-textfield-default-stroke',
   'bg-surface-primary p-12 overflow-hidden',
 ].join(' ');
 
@@ -152,55 +152,56 @@ export function ServiceCard({
 }: ServiceCardProps) {
   const actionClass = ACTION_VARIANTS[actionVariant];
 
-  const showTopRow = Boolean(
-    timeLabel || categoryIcon || primaryAction || secondaryAction
+  const showHeader = Boolean(
+    timeLabel ||
+    secondaryAction ||
+    primaryAction ||
+    categoryIcon ||
+    title ||
+    category
   );
-
-  const startSlot = secondaryAction ? (
-    <CardIconButton {...secondaryAction} />
-  ) : timeLabel ? (
-    <TimeBadge>{timeLabel}</TimeBadge>
-  ) : null;
-
-  const endSlot = primaryAction ? (
-    <CardIconButton {...primaryAction} />
-  ) : categoryIcon ? (
-    <CategoryIconBadge>{categoryIcon}</CategoryIconBadge>
-  ) : null;
 
   return (
     <article className={`${CARD_BASE} ${className}`.trim()} {...props}>
       <div className="flex h-full w-full flex-col items-start gap-12">
-        {showTopRow && (
-          <div className="flex w-full items-center justify-between gap-12">
-            <div className="flex min-w-0 items-center">{startSlot}</div>
-            <div className="shrink-0">{endSlot}</div>
+        {showHeader && (
+          <div dir="ltr" className="flex w-full items-center gap-12">
+            <div className="flex shrink-0 items-center gap-8">
+              {secondaryAction ? (
+                <CardIconButton {...secondaryAction} />
+              ) : timeLabel ? (
+                <TimeBadge>{timeLabel}</TimeBadge>
+              ) : null}
+            </div>
+
+            <div className="flex min-w-0 flex-1 items-center justify-end gap-8">
+              {category && <CategoryPill>{category}</CategoryPill>}
+              <p className="min-w-0 text-sm font-weight-bold text-text-black break-words">
+                {title}
+              </p>
+              {categoryIcon && (
+                <CategoryIconBadge>{categoryIcon}</CategoryIconBadge>
+              )}
+              {primaryAction && <CardIconButton {...primaryAction} />}
+            </div>
           </div>
         )}
 
-        <div className="flex w-full flex-col items-start gap-8 text-start">
-          <div className="flex w-full items-start justify-between gap-8">
-            <p className="min-w-0 flex-1 text-sm font-weight-bold text-text-black break-words">
-              {title}
-            </p>
-            {category && <CategoryPill>{category}</CategoryPill>}
-          </div>
-          {description && (
-            <p className="w-full text-2xs font-weight-regular text-textfield-default-text">
-              {description}
-            </p>
-          )}
-        </div>
+        {description && (
+          <p className="w-full text-2xs font-weight-regular text-textfield-default-text text-start">
+            {description}
+          </p>
+        )}
 
         {locations && (
           <div className="flex w-full items-start justify-start gap-4 text-start text-button font-weight-regular text-text-black">
             <div
-              className="mt-2 flex size-16 shrink-0 items-center justify-center"
+              className="flex h-[1.5em] shrink-0 items-center justify-center"
               aria-hidden="true"
             >
               <SvgIcon svg={locationSvg} className="size-16" />
             </div>
-            <p className="break-words">{locations}</p>
+            <p className="break-words leading-[1.5em]">{locations}</p>
           </div>
         )}
 

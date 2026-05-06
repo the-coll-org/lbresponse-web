@@ -35,7 +35,7 @@ export function HelpCenterFilterChips({
           onClick={chip.onClick}
           className={[
             'inline-flex shrink-0 items-center gap-8 rounded-md px-12 py-8',
-            'text-button font-weight-medium transition-colors',
+            'text-button font-weight-bold transition-colors',
             'focus-visible:outline-2 focus-visible:outline-offset-2',
             'focus-visible:outline-solid-primary-500',
             chip.isActive

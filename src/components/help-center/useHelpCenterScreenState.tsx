@@ -737,6 +737,7 @@ export function useHelpCenterScreenState() {
     visibleOrganizations,
     filterSections,
     appliedFilters,
+    activeLanguage,
     hotlines,
     pinnedOrganizations,
     appliedFiltersCount,
