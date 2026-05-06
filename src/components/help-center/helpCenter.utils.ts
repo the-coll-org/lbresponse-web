@@ -273,6 +273,51 @@ export function mapOrganizationToViewModel(
   };
 }
 
+export function mergeSameContactCards(
+  organizations: HelpCenterOrganizationViewModel[]
+): HelpCenterOrganizationViewModel[] {
+  const merged: HelpCenterOrganizationViewModel[] = [];
+  const indexByKey = new Map<string, number>();
+
+  for (const organization of organizations) {
+    const phone =
+      organization.primaryActionType === 'phone' ||
+      organization.primaryActionType === 'whatsapp'
+        ? organization.primaryActionValue.trim()
+        : '';
+    if (!phone) {
+      merged.push(organization);
+      continue;
+    }
+    const key = `${organization.title.toLowerCase().trim()}|${phone}`;
+    const existingIndex = indexByKey.get(key);
+    if (existingIndex === undefined) {
+      indexByKey.set(key, merged.length);
+      merged.push(organization);
+      continue;
+    }
+    const existing = merged[existingIndex];
+    const districts = new Set(
+      existing.locations
+        .split(',')
+        .map((d) => d.trim())
+        .filter(Boolean)
+    );
+    organization.locations
+      .split(',')
+      .map((d) => d.trim())
+      .filter(Boolean)
+      .forEach((d) => districts.add(d));
+    merged[existingIndex] = {
+      ...existing,
+      locations: [...districts].join(', '),
+      isPinned: existing.isPinned || organization.isPinned,
+    };
+  }
+
+  return merged;
+}
+
 export function buildPinnedOrganizationOptions(
   pinnedOrganizationIds: string[],
   organizations: HelpCenterOrganizationViewModel[]

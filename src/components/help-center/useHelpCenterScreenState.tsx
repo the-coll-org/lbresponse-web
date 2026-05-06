@@ -22,6 +22,7 @@ import {
   isValidRequestPhone,
   mapOrganizationToViewModel,
   mergeOrganizations,
+  mergeSameContactCards,
   normalizeRequestContactInput,
   sortPinnedOrganizations,
 } from './helpCenter.utils';
@@ -331,12 +332,14 @@ export function useHelpCenterScreenState() {
   const visibleOrganizations = useMemo(
     () =>
       sortPinnedOrganizations(
-        allOrganizations.map((organization) =>
-          mapOrganizationToViewModel(
-            organization,
-            activeLanguage,
-            pinnedOrganizationIds.includes(organization.id),
-            organizationLabels
+        mergeSameContactCards(
+          allOrganizations.map((organization) =>
+            mapOrganizationToViewModel(
+              organization,
+              activeLanguage,
+              pinnedOrganizationIds.includes(organization.id),
+              organizationLabels
+            )
           )
         ),
         pinnedOrganizationIds
