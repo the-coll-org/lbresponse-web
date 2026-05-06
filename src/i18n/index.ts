@@ -21,7 +21,7 @@ void i18n
       en: { translation: en },
       ar: { translation: ar },
     },
-    fallbackLng: 'en',
+    fallbackLng: 'ar',
     supportedLngs: [...SUPPORTED_LANGUAGES],
     interpolation: {
       escapeValue: false,
@@ -32,8 +32,8 @@ void i18n
     },
   });
 
-// Apply direction on init
-applyDirection(i18n.language?.startsWith('ar') ? 'ar' : 'en');
+// Apply direction on init — default to Arabic when language can't be inferred.
+applyDirection(i18n.language?.startsWith('en') ? 'en' : 'ar');
 
 // Apply direction on language change
 i18n.on('languageChanged', (lng) => {

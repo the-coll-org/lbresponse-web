@@ -403,7 +403,7 @@ describe('HelpCenterScreen', () => {
       expect.stringContaining('search=Organization+25')
     );
     expect(globalThis.fetch).toHaveBeenCalledWith(
-      expect.stringContaining('page=1&page_size=20')
+      expect.stringContaining('page=1&page_size=12')
     );
   });
 
@@ -449,12 +449,12 @@ describe('HelpCenterScreen', () => {
 
     await flushPromises();
 
-    expect(document.body.textContent).toContain('25 / 25 result');
+    expect(document.body.textContent).toContain('24 / 25 result');
     expect(globalThis.fetch).toHaveBeenCalledWith(
       expect.stringContaining('page=2')
     );
     expect(globalThis.fetch).toHaveBeenCalledWith(
-      expect.stringContaining('page_size=20')
+      expect.stringContaining('page_size=12')
     );
   });
 

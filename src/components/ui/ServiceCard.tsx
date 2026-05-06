@@ -117,16 +117,16 @@ function ClockIcon() {
 
 function TimeBadge({ children }: { children: ReactNode }) {
   return (
-    <div className="inline-flex items-center gap-4 text-2xs font-weight-regular text-solid-black-400">
+    <span className="inline-flex shrink-0 items-center gap-4 text-2xs font-weight-regular text-solid-black-400">
       <ClockIcon />
       <span>{children}</span>
-    </div>
+    </span>
   );
 }
 
 function CategoryPill({ children }: { children: ReactNode }) {
   return (
-    <span className="inline-flex shrink-0 items-center justify-center rounded-md border border-textfield-default-stroke px-8 py-4 text-2xs font-weight-regular text-text-black">
+    <span className="inline-flex min-w-0 max-w-[10rem] shrink items-center justify-center overflow-hidden truncate whitespace-nowrap rounded-md border border-textfield-default-stroke px-8 py-4 text-2xs font-weight-regular text-text-black">
       {children}
     </span>
   );
@@ -165,24 +165,21 @@ export function ServiceCard({
     <article className={`${CARD_BASE} ${className}`.trim()} {...props}>
       <div className="flex h-full w-full flex-col items-start gap-12">
         {showHeader && (
-          <div dir="ltr" className="flex w-full items-center gap-12">
-            <div className="flex shrink-0 items-center gap-8">
+          <div className="flex w-full flex-wrap items-center gap-8">
+            {categoryIcon && (
+              <CategoryIconBadge>{categoryIcon}</CategoryIconBadge>
+            )}
+            {primaryAction && <CardIconButton {...primaryAction} />}
+            <p className="min-w-0 text-sm font-weight-bold text-text-black break-words text-start">
+              {title}
+            </p>
+            {category && <CategoryPill>{category}</CategoryPill>}
+            <div className="ms-auto flex shrink-0 items-center gap-8">
               {secondaryAction ? (
                 <CardIconButton {...secondaryAction} />
               ) : timeLabel ? (
                 <TimeBadge>{timeLabel}</TimeBadge>
               ) : null}
-            </div>
-
-            <div className="flex min-w-0 flex-1 items-center justify-end gap-8">
-              {category && <CategoryPill>{category}</CategoryPill>}
-              <p className="min-w-0 text-sm font-weight-bold text-text-black break-words">
-                {title}
-              </p>
-              {categoryIcon && (
-                <CategoryIconBadge>{categoryIcon}</CategoryIconBadge>
-              )}
-              {primaryAction && <CardIconButton {...primaryAction} />}
             </div>
           </div>
         )}
@@ -241,6 +238,7 @@ export function ServiceCard({
                 'disabled:cursor-not-allowed disabled:opacity-50',
               ].join(' ')}
             >
+              <span>{secondaryButton.label}</span>
               {secondaryButton.icon && (
                 <span
                   className="flex size-16 shrink-0 items-center justify-center"
@@ -249,7 +247,6 @@ export function ServiceCard({
                   {secondaryButton.icon}
                 </span>
               )}
-              <span>{secondaryButton.label}</span>
             </button>
           )}
         </div>

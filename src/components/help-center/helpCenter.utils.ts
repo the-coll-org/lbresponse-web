@@ -200,29 +200,23 @@ export function localizeDigits(
   return text.replace(/[0-9]/g, (d) => ARABIC_DIGIT_MAP[d] ?? d);
 }
 
-export function formatRelativeTime(
-  iso: string | null,
-  language: string
-): string {
+export function formatRelativeTime(iso: string | null): string {
   if (!iso) return '';
   const ts = new Date(iso).getTime();
   if (Number.isNaN(ts)) return '';
   const diffSec = Math.max(0, Math.floor((Date.now() - ts) / 1000));
-  // nu-latn forces Latin (European) digits even in Arabic locales, matching
-  // the design where the relative-time number stays in 0-9.
-  const rtf = new Intl.RelativeTimeFormat(`${language}-u-nu-latn`, {
-    numeric: 'auto',
-  });
-  if (diffSec < 60) return rtf.format(-diffSec, 'second');
+  if (diffSec < 60) return `${diffSec}s`;
   const diffMin = Math.floor(diffSec / 60);
-  if (diffMin < 60) return rtf.format(-diffMin, 'minute');
+  if (diffMin < 60) return `${diffMin} min`;
   const diffHr = Math.floor(diffMin / 60);
-  if (diffHr < 24) return rtf.format(-diffHr, 'hour');
+  if (diffHr < 24) return `${diffHr} h`;
   const diffDay = Math.floor(diffHr / 24);
-  if (diffDay < 30) return rtf.format(-diffDay, 'day');
+  if (diffDay < 7) return `${diffDay} day`;
+  const diffWk = Math.floor(diffDay / 7);
+  if (diffWk < 5) return `${diffWk} wk`;
   const diffMo = Math.floor(diffDay / 30);
-  if (diffMo < 12) return rtf.format(-diffMo, 'month');
-  return rtf.format(-Math.floor(diffDay / 365), 'year');
+  if (diffMo < 12) return `${diffMo} mo`;
+  return `${Math.floor(diffDay / 365)} y`;
 }
 
 export function mapOrganizationToViewModel(
@@ -257,7 +251,7 @@ export function mapOrganizationToViewModel(
       .find((number) => number.length > 0) ?? '';
   const whatsapp = organization.whatsapp?.trim() ?? '';
   const email = organization.email?.trim() ?? '';
-  const timeLabel = formatRelativeTime(organization.updated_at, language);
+  const timeLabel = formatRelativeTime(organization.updated_at);
 
   let primaryActionLabel = labels.unavailable;
   let primaryActionType: HelpCenterOrganizationViewModel['primaryActionType'] =
@@ -266,12 +260,12 @@ export function mapOrganizationToViewModel(
   let primaryActionDisabled = true;
 
   if (whatsapp) {
-    primaryActionLabel = `${labels.whatsapp} ${localizeDigits(whatsapp, language)}`;
+    primaryActionLabel = `${labels.whatsapp} ${whatsapp}`;
     primaryActionType = 'whatsapp';
     primaryActionValue = whatsapp;
     primaryActionDisabled = false;
   } else if (phoneNumber) {
-    primaryActionLabel = `${labels.call} ${localizeDigits(phoneNumber, language)}`;
+    primaryActionLabel = `${labels.call} ${phoneNumber}`;
     primaryActionType = 'phone';
     primaryActionValue = phoneNumber;
     primaryActionDisabled = false;

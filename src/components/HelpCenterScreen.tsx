@@ -3,7 +3,6 @@ import { EmergencyHotlinesSection } from './help-center/EmergencyHotlinesSection
 import { HelpCenterFilterChips } from './help-center/HelpCenterFilterChips';
 import { HelpCenterHeaderActions } from './help-center/HelpCenterHeaderActions';
 import { SectorIcon } from './help-center/sectorIcons';
-import { localizeDigits } from './help-center/helpCenter.utils';
 import { HelpCenterSearchBar } from './help-center/HelpCenterSearchBar';
 import { OrganizationsListSection } from './help-center/OrganizationsListSection';
 import type { HelpCenterScreenProps } from './help-center/helpCenter.types';
@@ -25,7 +24,6 @@ export default function HelpCenterScreen({
     visibleOrganizations,
     filterSections,
     appliedFilters,
-    activeLanguage,
     hotlines,
     pinnedOrganizations,
     appliedFiltersCount,
@@ -75,11 +73,8 @@ export default function HelpCenterScreen({
 
   const resultsLabel =
     hasActiveQuery && !hasSearchResults
-      ? `${localizeDigits(0, activeLanguage)} ${t('helpCenter.organizationLabel')}`
-      : `${localizeDigits(visibleOrganizations.length, activeLanguage)} / ${localizeDigits(
-          totalOrganizations,
-          activeLanguage
-        )} ${t('helpCenter.organizationLabel')}`;
+      ? `0 ${t('helpCenter.organizationLabel')}`
+      : `${visibleOrganizations.length} / ${totalOrganizations} ${t('helpCenter.organizationLabel')}`;
 
   const requestOrganizationSheetCopy = {
     title: t('helpCenter.requestForm.title'),

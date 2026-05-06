@@ -22,7 +22,7 @@
     "openFilters": "افتح الفلاتر",
     "searchPlaceholder": "ابحث عن منظمة أو منطقة...",
     "resultsCountStatic": "20 / 30 منظمة",
-    "organizationLabel": "نتيجة",
+    "organizationLabel": "منظمة",
     "loadMoreStatic": "عرض المزيد (10 متبقية)",
     "loadMore_zero": "عرض المزيد ({{count}} متبقية)",
     "loadMore_one": "عرض المزيد ({{count}} متبقية)",
