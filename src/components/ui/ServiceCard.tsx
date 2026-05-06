@@ -119,12 +119,12 @@ function TimeBadge({ children }: { children: ReactNode }) {
   return (
     <span
       dir="ltr"
-      className="inline-flex shrink-0 items-center gap-4 text-2xs font-weight-regular leading-none text-solid-black-400"
+      className="inline-flex shrink-0 items-center gap-4 whitespace-nowrap text-2xs font-weight-regular leading-[1] text-solid-black-400"
     >
-      <span className="flex size-12 shrink-0 items-center justify-center">
+      <span className="flex size-12 shrink-0 items-center justify-center leading-[0]">
         <ClockIcon />
       </span>
-      <span className="leading-none">{children}</span>
+      <span className="leading-[1]">{children}</span>
     </span>
   );
 }
