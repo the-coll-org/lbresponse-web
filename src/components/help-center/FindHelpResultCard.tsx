@@ -47,24 +47,6 @@ function MapPinIcon() {
   );
 }
 
-function ClockIcon() {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.6"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className="size-12 shrink-0"
-      aria-hidden="true"
-    >
-      <circle cx="12" cy="12" r="8.5" />
-      <path d="M12 7v5l3 2" />
-    </svg>
-  );
-}
-
 function PhoneIcon() {
   return (
     <svg
@@ -153,7 +135,14 @@ export function FindHelpResultCard({
     onOpenDetail(item, event.currentTarget);
   };
 
-  const locationsText = item.locations.join(', ');
+  const visibleAreas = item.locations.slice(0, 2);
+  const extraAreaCount = Math.max(
+    item.locations.length - visibleAreas.length,
+    0
+  );
+  const locationsText =
+    visibleAreas.join(', ') +
+    (extraAreaCount > 0 ? ` +${extraAreaCount.toString()}` : '');
 
   return (
     <article
@@ -163,7 +152,7 @@ export function FindHelpResultCard({
       onClick={handleOpen}
       onKeyDown={handleKeyDown}
       className={[
-        'flex w-full cursor-pointer flex-col gap-12 rounded-xl border border-findhelp-border-subtle bg-surface-primary p-16',
+        'flex w-full cursor-pointer flex-col gap-12 rounded-xl border border-findhelp-border-subtle bg-surface-primary p-14 md:p-18',
         'transition-colors hover:border-findhelp-primary',
         'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid-primary-500',
       ].join(' ')}
@@ -187,28 +176,20 @@ export function FindHelpResultCard({
       </div>
 
       <div className="flex w-full flex-col gap-4 text-start">
-        <p className="text-sm font-weight-bold text-text-black">{item.title}</p>
-        {item.description && (
-          <p className="text-2xs font-weight-regular text-solid-black-500">
-            {item.description}
+        <p className="text-sm font-weight-bold leading-snug text-text-black md:text-md">
+          {item.serviceHeadline}
+        </p>
+        {item.orgSecondaryName && (
+          <p className="text-2xs font-weight-medium text-solid-black-500">
+            {item.orgSecondaryName}
           </p>
         )}
       </div>
 
-      {(locationsText || item.updatedRelative) && (
-        <div className="flex w-full flex-col gap-4 text-2xs font-weight-regular text-solid-black-500">
-          {locationsText && (
-            <div className="flex items-start gap-8">
-              <MapPinIcon />
-              <span className="leading-snug">{locationsText}</span>
-            </div>
-          )}
-          {item.updatedRelative && (
-            <div className="flex items-center gap-8">
-              <ClockIcon />
-              <span dir="ltr">{item.updatedRelative}</span>
-            </div>
-          )}
+      {locationsText && (
+        <div className="flex w-full items-start gap-8 text-2xs font-weight-regular text-solid-black-500">
+          <MapPinIcon />
+          <span className="leading-snug">{locationsText}</span>
         </div>
       )}
 

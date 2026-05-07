@@ -19,6 +19,10 @@ export interface FindHelpListingViewModel {
   id: string;
   title: string;
   description: string;
+  /** Service line shown as the dominant title on the card (description with humanitarian-code prefix stripped). */
+  serviceHeadline: string;
+  /** Org name shown beneath the service line; null when there is no service to show. */
+  orgSecondaryName: string | null;
   sectorId: string | null;
   sectorLabel: string;
   locations: string[];
@@ -90,6 +94,12 @@ function humanize(value: string | null | undefined): string {
     .replace(/\s+/g, ' ')
     .trim()
     .replace(/\b\w/g, (c) => c.toUpperCase());
+}
+
+const HUMANITARIAN_CODE_PREFIX = /^[A-Z]{1,4}\d{1,3}\s*[-–—:·]\s*/;
+
+function stripHumanitarianCodePrefix(text: string): string {
+  return text.replace(HUMANITARIAN_CODE_PREFIX, '').trim();
 }
 
 function findFilterOptionLabel(
@@ -242,10 +252,16 @@ export function buildFindHelpListingViewModel(
       organization.service_subtype !== undefined &&
       CONFIDENTIAL_SERVICE_SUBTYPE_IDS.has(organization.service_subtype));
 
+  const cleanedDescription = stripHumanitarianCodePrefix(description);
+  const serviceHeadline = cleanedDescription || title;
+  const orgSecondaryName = cleanedDescription && title ? title : null;
+
   return {
     id: organization.id,
     title,
-    description,
+    description: cleanedDescription,
+    serviceHeadline,
+    orgSecondaryName,
     sectorId,
     sectorLabel,
     locations: organization.locations.filter(

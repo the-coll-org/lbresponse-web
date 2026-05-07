@@ -251,4 +251,53 @@ describe('findHelpAdapter', () => {
     );
     expect(vm.title).toBe('Sample Org');
   });
+
+  it('strips humanitarian-code prefix from description', () => {
+    const catalog = buildFindHelpFilterCatalog(filtersResponse, 'en');
+    const vm = buildFindHelpListingViewModel(
+      makeOrg({
+        description: 'GBV01 - Case management for survivors',
+        description_ar: null,
+      }),
+      'en',
+      catalog,
+      labels
+    );
+    expect(vm.description).toBe('Case management for survivors');
+    expect(vm.serviceHeadline).toBe('Case management for survivors');
+  });
+
+  it('uses cleaned description as the service headline and title as secondary', () => {
+    const catalog = buildFindHelpFilterCatalog(filtersResponse, 'en');
+    const vm = buildFindHelpListingViewModel(
+      makeOrg({
+        title: 'ABAAD',
+        title_ar: null,
+        description: 'Survivor case management',
+        description_ar: null,
+      }),
+      'en',
+      catalog,
+      labels
+    );
+    expect(vm.serviceHeadline).toBe('Survivor case management');
+    expect(vm.orgSecondaryName).toBe('ABAAD');
+  });
+
+  it('falls back to title as the headline when description is missing', () => {
+    const catalog = buildFindHelpFilterCatalog(filtersResponse, 'en');
+    const vm = buildFindHelpListingViewModel(
+      makeOrg({
+        title: 'ABAAD',
+        title_ar: null,
+        description: null,
+        description_ar: null,
+      }),
+      'en',
+      catalog,
+      labels
+    );
+    expect(vm.serviceHeadline).toBe('ABAAD');
+    expect(vm.orgSecondaryName).toBeNull();
+  });
 });

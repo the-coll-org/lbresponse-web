@@ -48,8 +48,8 @@ export function FindHelpNeedChips({
             aria-pressed={isActive}
             onClick={() => onToggle(option.id)}
             className={[
-              'inline-flex h-36 shrink-0 items-center gap-8 rounded-full border px-16',
-              'text-button font-weight-medium transition-colors',
+              'inline-flex shrink-0 items-center gap-4 rounded-full border px-12 py-8',
+              'text-2xs font-weight-medium transition-colors md:text-button',
               'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid-primary-500',
               isActive
                 ? 'border-findhelp-primary bg-findhelp-primary text-solid-white-400'
@@ -58,7 +58,7 @@ export function FindHelpNeedChips({
           >
             <span
               className={[
-                'flex size-16 items-center justify-center',
+                'flex size-14 items-center justify-center',
                 isActive ? 'text-solid-white-400' : 'text-findhelp-primary',
               ].join(' ')}
               aria-hidden="true"
