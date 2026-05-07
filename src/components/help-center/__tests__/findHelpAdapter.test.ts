@@ -15,6 +15,7 @@ const labels: FindHelpAdapterLabels = {
   email: 'Email',
   unavailable: 'Contact unavailable',
   uncategorized: 'Uncategorized',
+  emailButton: 'Email',
   offeredSector: (v) => `Sector: ${v}`,
   offeredService: (v) => `Service: ${v}`,
   offeredShelter: (v) => `Shelter type: ${v}`,
@@ -161,6 +162,37 @@ describe('findHelpAdapter', () => {
     );
     expect(vm.primaryActionType).toBe('email');
     expect(vm.primaryActionValue).toBe('help@example.com');
+    expect(vm.contact.kind).toBe('email');
+    expect(vm.contact.href).toBe('mailto:help@example.com');
+    expect(vm.contact.label).toBe('Email');
+  });
+
+  it('builds a phone contact descriptor with tel: href', () => {
+    const catalog = buildFindHelpFilterCatalog(filtersResponse, 'en');
+    const vm = buildFindHelpListingViewModel(
+      makeOrg({ phone_numbers: ['01-234567'] }),
+      'en',
+      catalog,
+      labels
+    );
+    expect(vm.contact.kind).toBe('phone');
+    expect(vm.contact.href).toBe('tel:01234567');
+    expect(vm.contact.label).toBe('Call 01-234567');
+  });
+
+  it('strips a Title-cased humanitarian-code prefix like "Nut02:"', () => {
+    const catalog = buildFindHelpFilterCatalog(filtersResponse, 'en');
+    const vm = buildFindHelpListingViewModel(
+      makeOrg({
+        description:
+          'Nut02: Health System : SBC interventions including awareness',
+        description_ar: null,
+      }),
+      'en',
+      catalog,
+      labels
+    );
+    expect(vm.serviceHeadline.startsWith('Health System')).toBe(true);
   });
 
   it('marks unavailable when no contact channels exist', () => {

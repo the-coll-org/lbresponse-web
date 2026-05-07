@@ -10,6 +10,16 @@ export type FindHelpPrimaryActionType =
   | 'email'
   | 'unavailable';
 
+export type FindHelpContactKind = 'phone' | 'whatsapp' | 'email' | 'none';
+
+export interface FindHelpContactDescriptor {
+  kind: FindHelpContactKind;
+  value: string;
+  href: string;
+  label: string;
+  disabled: boolean;
+}
+
 export interface FindHelpOfferedItem {
   key: 'sector' | 'service' | 'shelter' | 'type';
   label: string;
@@ -26,6 +36,7 @@ export interface FindHelpListingViewModel {
   sectorId: string | null;
   sectorLabel: string;
   locations: string[];
+  contact: FindHelpContactDescriptor;
   primaryActionType: FindHelpPrimaryActionType;
   primaryActionValue: string;
   primaryActionLabel: string;
@@ -65,6 +76,7 @@ export interface FindHelpAdapterLabels {
   email: string;
   unavailable: string;
   uncategorized: string;
+  emailButton: string;
   offeredSector: (value: string) => string;
   offeredService: (value: string) => string;
   offeredShelter: (value: string) => string;
@@ -96,10 +108,64 @@ function humanize(value: string | null | undefined): string {
     .replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
-const HUMANITARIAN_CODE_PREFIX = /^[A-Z]{1,4}\d{1,3}\s*[-–—:·]\s*/;
+const HUMANITARIAN_CODE_PREFIX = /^[A-Z][A-Za-z0-9]{1,4}\s*[:\-–]\s*/;
 
 function stripHumanitarianCodePrefix(text: string): string {
   return text.replace(HUMANITARIAN_CODE_PREFIX, '').trim();
+}
+
+function looksLikeEmail(value: string): boolean {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+}
+
+function buildContactDescriptor(
+  organization: HelpCenterOrganizationApiItem,
+  labels: FindHelpAdapterLabels
+): FindHelpContactDescriptor {
+  const phone =
+    organization.phone_numbers.map((n) => n.trim()).find((n) => n.length > 0) ??
+    '';
+  const whatsapp = organization.whatsapp?.trim() ?? '';
+  const email = organization.email?.trim() ?? '';
+
+  if (phone) {
+    return {
+      kind: 'phone',
+      value: phone,
+      href: `tel:${phone.replace(/[^\d+]/g, '')}`,
+      label: `${labels.call} ${phone}`,
+      disabled: false,
+    };
+  }
+  if (whatsapp) {
+    const digits = whatsapp.replace(/\D/g, '');
+    const intl = digits.startsWith('961')
+      ? digits
+      : `961${digits.replace(/^0+/, '')}`;
+    return {
+      kind: 'whatsapp',
+      value: whatsapp,
+      href: `https://wa.me/${intl}`,
+      label: `${labels.whatsapp} ${whatsapp}`,
+      disabled: false,
+    };
+  }
+  if (email && looksLikeEmail(email)) {
+    return {
+      kind: 'email',
+      value: email,
+      href: `mailto:${email}`,
+      label: labels.emailButton,
+      disabled: false,
+    };
+  }
+  return {
+    kind: 'none',
+    value: '',
+    href: '',
+    label: labels.unavailable,
+    disabled: true,
+  };
 }
 
 function findFilterOptionLabel(
@@ -172,33 +238,18 @@ export function buildFindHelpListingViewModel(
     humanize(sectorId) ??
     labels.uncategorized;
 
+  const contact = buildContactDescriptor(organization, labels);
   const phone =
     organization.phone_numbers.map((n) => n.trim()).find((n) => n.length > 0) ??
     '';
   const whatsapp = organization.whatsapp?.trim() ?? '';
   const email = organization.email?.trim() ?? '';
 
-  let primaryActionType: FindHelpPrimaryActionType = 'unavailable';
-  let primaryActionValue = '';
-  let primaryActionLabel = labels.unavailable;
-  let primaryActionDisabled = true;
-
-  if (phone) {
-    primaryActionType = 'phone';
-    primaryActionValue = phone;
-    primaryActionLabel = `${labels.call} ${phone}`;
-    primaryActionDisabled = false;
-  } else if (whatsapp) {
-    primaryActionType = 'whatsapp';
-    primaryActionValue = whatsapp;
-    primaryActionLabel = `${labels.whatsapp} ${whatsapp}`;
-    primaryActionDisabled = false;
-  } else if (email) {
-    primaryActionType = 'email';
-    primaryActionValue = email;
-    primaryActionLabel = `${labels.email} ${email}`;
-    primaryActionDisabled = false;
-  }
+  const primaryActionType: FindHelpPrimaryActionType =
+    contact.kind === 'none' ? 'unavailable' : contact.kind;
+  const primaryActionValue = contact.value;
+  const primaryActionLabel = contact.label;
+  const primaryActionDisabled = contact.disabled;
 
   const offered: FindHelpOfferedItem[] = [];
   const sectorLabelForOffered = sectorId
@@ -267,6 +318,7 @@ export function buildFindHelpListingViewModel(
     locations: organization.locations.filter(
       (l): l is string => typeof l === 'string' && l.trim().length > 0
     ),
+    contact,
     primaryActionType,
     primaryActionValue,
     primaryActionLabel,

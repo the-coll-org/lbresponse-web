@@ -49,7 +49,7 @@ export function FindHelpSearchAndFilterButton({
 
   return (
     <div className="flex w-full items-center gap-8">
-      <div className="flex h-44 min-w-0 flex-1 items-center gap-8 rounded-md border border-findhelp-border-subtle bg-surface-primary ps-12 pe-8">
+      <div className="flex h-48 min-w-0 flex-1 items-center gap-8 rounded-lg border border-findhelp-border-subtle bg-surface-primary ps-12 pe-8">
         <span
           className="flex size-20 shrink-0 items-center justify-center text-textfield-icon"
           aria-hidden="true"
@@ -79,8 +79,8 @@ export function FindHelpSearchAndFilterButton({
         type="button"
         onClick={onOpenFilters}
         className={[
-          'relative inline-flex h-44 shrink-0 items-center gap-8 rounded-md border px-16',
-          'text-button font-weight-medium',
+          'relative inline-flex h-48 shrink-0 items-center gap-8 rounded-lg border px-16',
+          'text-button font-weight-bold',
           'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid-primary-500',
           filterButtonClass,
         ].join(' ')}
@@ -95,7 +95,7 @@ export function FindHelpSearchAndFilterButton({
         {appliedFiltersCount > 0 && (
           <span
             aria-label={filtersBadgeAriaLabel}
-            className="ms-4 inline-flex h-20 min-w-20 items-center justify-center rounded-full bg-findhelp-primary px-4 text-2xs font-weight-bold text-solid-white-400"
+            className="ms-2 inline-flex size-20 items-center justify-center rounded-full bg-findhelp-primary text-2xs font-weight-bold text-solid-white-400"
           >
             {appliedFiltersCount}
           </span>

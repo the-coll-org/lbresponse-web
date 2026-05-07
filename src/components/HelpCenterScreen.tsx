@@ -132,6 +132,7 @@ export default function HelpCenterScreen({
       email: t('helpCenter.contactEmail'),
       unavailable: t('helpCenter.contactUnavailable'),
       uncategorized: t('helpCenter.uncategorized'),
+      emailButton: t('helpCenter.findHelp.contactEmailButton'),
       offeredSector: (value: string) =>
         t('helpCenter.findHelp.detailOfferedSector', { value }),
       offeredService: (value: string) =>
@@ -337,6 +338,7 @@ export default function HelpCenterScreen({
         <FindHelpHeader
           brandName={t('helpCenter.findHelp.brandName')}
           brandTagline={t('helpCenter.findHelp.brandTagline')}
+          language={activeLanguage}
           theme={theme}
           languageToggleLabel={languageToggleLabel}
           languageToggleAriaLabel={t('common.toggleLanguage')}
@@ -346,12 +348,13 @@ export default function HelpCenterScreen({
         />
 
         <main className="flex-1 px-16 py-22 md:px-32 md:py-32">
-          <div className="mx-auto flex w-full max-w-[1100px] flex-col gap-22">
+          <div className="mx-auto flex w-full max-w-[1100px] flex-col">
             <FindHelpHero
               title={t('helpCenter.findHelp.heroTitle')}
               subtitle={t('helpCenter.findHelp.heroSubtitle')}
             />
 
+            <div className="mt-22" />
             <FindHelpSearchAndFilterButton
               query={query}
               placeholder={t('helpCenter.findHelp.searchPlaceholder')}
@@ -367,16 +370,20 @@ export default function HelpCenterScreen({
             />
 
             {catalog.needs && (
-              <FindHelpNeedChips
-                ariaLabel={t('helpCenter.findHelp.needsRowAriaLabel')}
-                options={catalog.needs.options}
-                selectedIds={appliedFilters[catalog.needs.id] ?? []}
-                onToggle={(id) =>
-                  handleToggleAppliedOption(catalog.needs!.id, id)
-                }
-              />
+              <>
+                <div className="mt-12" />
+                <FindHelpNeedChips
+                  ariaLabel={t('helpCenter.findHelp.needsRowAriaLabel')}
+                  options={catalog.needs.options}
+                  selectedIds={appliedFilters[catalog.needs.id] ?? []}
+                  onToggle={(id) =>
+                    handleToggleAppliedOption(catalog.needs!.id, id)
+                  }
+                />
+              </>
             )}
 
+            <div className="mt-12" />
             <FindHelpActiveFilters
               label={t('helpCenter.findHelp.activeFiltersLabel')}
               clearAllLabel={t('helpCenter.findHelp.activeFiltersClearAll')}
@@ -388,6 +395,7 @@ export default function HelpCenterScreen({
               onClearAll={handleClearFilters}
             />
 
+            <div className="mt-16" />
             <section className="flex w-full flex-col gap-16">
               <FindHelpResultsHeader
                 headline={resultsHeadline}

@@ -52,10 +52,12 @@ export function FindHelpActiveFilters({
           type="button"
           aria-label={removeAriaLabel(chip.label)}
           onClick={() => onRemove(chip.groupId, chip.optionId)}
-          className="inline-flex h-24 max-w-[180px] items-center gap-4 rounded-full bg-findhelp-primary-soft ps-8 pe-4 text-2xs font-weight-bold text-findhelp-primary-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid-primary-500"
+          className="inline-flex h-24 max-w-[200px] items-center gap-4 rounded-full bg-findhelp-primary-soft ps-12 pe-8 text-2xs font-weight-bold text-findhelp-primary-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid-primary-500"
         >
           <span className="truncate">{chip.label}</span>
-          <CloseSmallIcon />
+          <span className="opacity-70">
+            <CloseSmallIcon />
+          </span>
         </button>
       ))}
       <button

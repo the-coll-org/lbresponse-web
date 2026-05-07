@@ -215,6 +215,7 @@
       "cardOpenCardAriaLabel": "View details for {{title}}",
       "cardDetails": "Details",
       "cardConfidential": "Confidential — your call is private",
+      "contactEmailButton": "Email",
       "filtersSheetTitle": "Filter services",
       "filtersSheetClose": "Close filters",
       "filtersSheetReset": "Reset",

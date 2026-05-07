@@ -64,6 +64,58 @@ function PhoneIcon() {
   );
 }
 
+function MailIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className="size-14"
+      aria-hidden="true"
+    >
+      <rect x="3" y="5" width="18" height="14" rx="2" />
+      <path d="m3 7 9 7 9-7" />
+    </svg>
+  );
+}
+
+function WhatsappIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className="size-14"
+      aria-hidden="true"
+    >
+      <path d="M5 4h3l2 5-2 1a11 11 0 0 0 6 6l1-2 5 2v3a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2Z" />
+    </svg>
+  );
+}
+
+function ChevronEndIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className="size-14 shrink-0 rtl:-scale-x-100"
+      aria-hidden="true"
+    >
+      <path d="m9 6 6 6-6 6" />
+    </svg>
+  );
+}
+
 function LayersIcon() {
   return (
     <svg
@@ -173,6 +225,9 @@ export function FindHelpResultCard({
             <span>{verifiedLabel}</span>
           </span>
         )}
+        <span className="ms-auto text-solid-black-400">
+          <ChevronEndIcon />
+        </span>
       </div>
 
       <div className="flex w-full flex-col gap-4 text-start">
@@ -203,7 +258,7 @@ export function FindHelpResultCard({
       <div className="mt-auto flex w-full items-stretch gap-8" onClick={stop}>
         <button
           type="button"
-          disabled={item.primaryActionDisabled}
+          disabled={item.contact.disabled}
           onClick={handleCallClick}
           className={[
             'inline-flex h-44 flex-1 items-center justify-center gap-8 rounded-md bg-findhelp-primary px-12 text-button font-weight-bold text-solid-white-400',
@@ -211,8 +266,14 @@ export function FindHelpResultCard({
             'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid-primary-500',
           ].join(' ')}
         >
-          <PhoneIcon />
-          <span className="truncate">{item.primaryActionLabel}</span>
+          {item.contact.kind === 'email' ? (
+            <MailIcon />
+          ) : item.contact.kind === 'whatsapp' ? (
+            <WhatsappIcon />
+          ) : (
+            <PhoneIcon />
+          )}
+          <span className="truncate">{item.contact.label}</span>
         </button>
         <button
           type="button"

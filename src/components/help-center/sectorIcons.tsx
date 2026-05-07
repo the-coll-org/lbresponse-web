@@ -126,19 +126,39 @@ function TshirtIcon() {
   );
 }
 
+function LayersIcon() {
+  return (
+    <Svg>
+      <path d="M12 3 3 8l9 5 9-5z" />
+      <path d="m3 13 9 5 9-5" />
+    </Svg>
+  );
+}
+
 const SECTOR_ICONS: Record<string, ComponentType> = {
   shelter: HouseIcon,
   education: BookIcon,
+  food: ForkKnifeIcon,
+  'food-security': ForkKnifeIcon,
   'food-security-agriculture': ForkKnifeIcon,
   nutrition: AppleIcon,
   gbv: HeartCrossIcon,
   protection: ShieldIcon,
+  'child-protection': HeartCrossIcon,
   'social-stability': PeopleIcon,
   livelihoods: BriefcaseIcon,
   wash: WaterDropIcon,
+  water: WaterDropIcon,
   cwg: CashIcon,
   clothing: TshirtIcon,
-  'child-protection': HeartCrossIcon,
+  health: HeartCrossIcon,
+  'health-care': HeartCrossIcon,
+  medicine: HeartCrossIcon,
+  mhpss: PeopleIcon,
+  'mental-health': PeopleIcon,
+  transport: BriefcaseIcon,
+  documents: BookIcon,
+  docs: BookIcon,
 };
 
 function slugifySector(value: string): string {
@@ -151,6 +171,6 @@ function slugifySector(value: string): string {
 
 export function SectorIcon({ sector }: { sector: string | null | undefined }) {
   const key = sector ? slugifySector(sector) : '';
-  const Icon = SECTOR_ICONS[key] ?? ShieldIcon;
+  const Icon = SECTOR_ICONS[key] ?? LayersIcon;
   return <Icon />;
 }

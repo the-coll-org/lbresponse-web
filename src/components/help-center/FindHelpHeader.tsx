@@ -3,6 +3,7 @@ import { helpCenterIcons } from './helpCenter.icons';
 interface FindHelpHeaderProps {
   brandName: string;
   brandTagline: string;
+  language: string;
   theme: 'light' | 'dark';
   languageToggleLabel: string;
   languageToggleAriaLabel: string;
@@ -56,6 +57,7 @@ function NetworkIcon() {
 export function FindHelpHeader({
   brandName,
   brandTagline,
+  language,
   theme,
   languageToggleLabel,
   languageToggleAriaLabel,
@@ -65,6 +67,7 @@ export function FindHelpHeader({
 }: FindHelpHeaderProps) {
   const ThemeIcon =
     theme === 'light' ? helpCenterIcons.moon : helpCenterIcons.sun;
+  const isArabic = language.startsWith('ar');
 
   return (
     <header className="flex w-full items-center justify-between gap-12 border-b border-findhelp-border-subtle bg-surface-primary px-16 py-12 md:px-32">
@@ -79,7 +82,12 @@ export function FindHelpHeader({
           <span className="text-button font-weight-bold text-text-black">
             {brandName}
           </span>
-          <span className="text-2xs font-weight-regular text-solid-black-400">
+          <span
+            className={[
+              'text-[10.5px] font-weight-regular text-solid-black-400',
+              isArabic ? '' : 'uppercase tracking-[0.12em]',
+            ].join(' ')}
+          >
             {brandTagline}
           </span>
         </div>
@@ -89,7 +97,7 @@ export function FindHelpHeader({
           type="button"
           aria-label={languageToggleAriaLabel}
           onClick={onToggleLanguage}
-          className="inline-flex h-32 items-center gap-4 rounded-md border border-findhelp-border-subtle bg-surface-primary px-12 text-2xs font-weight-medium text-text-black focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid-primary-500"
+          className="inline-flex h-32 items-center gap-8 rounded-md border border-findhelp-border-subtle bg-surface-primary px-12 text-2xs font-weight-medium text-text-black focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid-primary-500"
         >
           <GlobeIcon />
           <span>{languageToggleLabel}</span>
