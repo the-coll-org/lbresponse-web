@@ -228,6 +228,19 @@
 
   /* ── Surface ───────────────────────────────────────────────────────────── */
   --surface-primary: var(--color-solid-white-400);
+  --surface-muted: #f1f3f5;
+  --surface-page: #f8fafa;
+
+  /* ── Find Help (semantic) ──────────────────────────────────────────────── */
+  --findhelp-primary: var(--color-solid-primary-600);
+  --findhelp-primary-soft: #e8eef9;
+  --findhelp-primary-ink: var(--color-solid-primary-700);
+  --findhelp-success: var(--color-solid-green-700);
+  --findhelp-success-soft: #e6f0e7;
+  --findhelp-danger: var(--color-solid-red-700);
+  --findhelp-danger-soft: #fbeaea;
+  --findhelp-border-subtle: #e3e6e8;
+  --findhelp-overlay: rgba(13, 14, 16, 0.45);
 
   /* ── Text ──────────────────────────────────────────────────────────────── */
   --text-black: var(--color-solid-black-600);
@@ -302,6 +315,19 @@
 
 [data-theme='dark'] {
   --surface-primary: #16171d;
+  --surface-muted: #1d2024;
+  --surface-page: #0d0e10;
+
+  --findhelp-primary: var(--color-solid-primary-500);
+  --findhelp-primary-soft: #1a2640;
+  --findhelp-primary-ink: var(--color-solid-primary-400);
+  --findhelp-success: var(--color-solid-green-500);
+  --findhelp-success-soft: #16301a;
+  --findhelp-danger: var(--color-solid-red-500);
+  --findhelp-danger-soft: #3a1c1e;
+  --findhelp-border-subtle: #2b2f33;
+  --findhelp-overlay: rgba(0, 0, 0, 0.6);
+
   --text-black: var(--color-solid-white-400);
   --icon-black: var(--color-solid-white-400);
 
@@ -351,6 +377,18 @@
 @theme inline {
   /* Surface */
   --color-surface-primary: var(--surface-primary);
+  --color-surface-muted: var(--surface-muted);
+  --color-surface-page: var(--surface-page);
+
+  /* Find Help */
+  --color-findhelp-primary: var(--findhelp-primary);
+  --color-findhelp-primary-soft: var(--findhelp-primary-soft);
+  --color-findhelp-primary-ink: var(--findhelp-primary-ink);
+  --color-findhelp-success: var(--findhelp-success);
+  --color-findhelp-success-soft: var(--findhelp-success-soft);
+  --color-findhelp-danger: var(--findhelp-danger);
+  --color-findhelp-danger-soft: var(--findhelp-danger-soft);
+  --color-findhelp-border-subtle: var(--findhelp-border-subtle);
 
   /* Text */
   --color-text-black: var(--text-black);

@@ -328,7 +328,7 @@ describe('HelpCenterScreen', () => {
     clickFirstPinButton();
 
     const searchInput = document.body.querySelector<HTMLInputElement>(
-      'input[placeholder="Search for an organization or area..."]'
+      'input[placeholder="Search services, orgs, or areas"]'
     );
 
     act(() => {
@@ -346,16 +346,16 @@ describe('HelpCenterScreen', () => {
   it('renders backend filter groups and updates the draft result count', async () => {
     await renderScreen();
 
-    const openFiltersButton = document.body.querySelector<HTMLButtonElement>(
-      'button[aria-label="Open filters"]'
-    );
+    const openFiltersButton = Array.from(
+      document.body.querySelectorAll<HTMLButtonElement>('button')
+    ).find((button) => button.textContent?.trim().startsWith('Filters'));
 
     act(() => {
       openFiltersButton?.click();
     });
 
     expect(document.body.textContent).toContain('Organization Type');
-    expect(document.body.textContent).toContain('Sector');
+    expect(document.body.textContent).toContain('What do you need?');
 
     const ngoChip = Array.from(
       document.body.querySelectorAll<HTMLButtonElement>('button')
@@ -367,7 +367,7 @@ describe('HelpCenterScreen', () => {
 
     await flushPromises();
 
-    expect(document.body.textContent).toContain('Apply (17 organizations)');
+    expect(document.body.textContent).toContain('Apply (17 results)');
 
     const resetButton = Array.from(
       document.body.querySelectorAll<HTMLButtonElement>('button')
@@ -379,14 +379,14 @@ describe('HelpCenterScreen', () => {
 
     await flushPromises();
 
-    expect(document.body.textContent).toContain('Apply (25 organizations)');
+    expect(document.body.textContent).toContain('Apply (25 results)');
   });
 
   it('searches organizations through the API', async () => {
     await renderScreen();
 
     const searchInput = document.body.querySelector<HTMLInputElement>(
-      'input[placeholder="Search for an organization or area..."]'
+      'input[placeholder="Search services, orgs, or areas"]'
     );
 
     act(() => {
@@ -395,7 +395,10 @@ describe('HelpCenterScreen', () => {
 
     await flushPromises();
 
-    expect(document.body.textContent).toContain('1 / 1 result');
+    expect(document.body.textContent).toContain('Organization 25');
+    expect(document.body.textContent).not.toContain(
+      'Organization 1Description'
+    );
     expect(globalThis.fetch).toHaveBeenCalledWith(
       expect.stringContaining('/api/organizations?')
     );
@@ -420,7 +423,7 @@ describe('HelpCenterScreen', () => {
     await renderScreen();
 
     const searchInput = document.body.querySelector<HTMLInputElement>(
-      'input[placeholder="Search for an organization or area..."]'
+      'input[placeholder="Search services, orgs, or areas"]'
     );
 
     act(() => {
@@ -449,7 +452,8 @@ describe('HelpCenterScreen', () => {
 
     await flushPromises();
 
-    expect(document.body.textContent).toContain('24 / 25 result');
+    expect(document.body.textContent).toContain('Organization 24');
+    expect(document.body.textContent).toContain('Show more (1 remaining)');
     expect(globalThis.fetch).toHaveBeenCalledWith(
       expect.stringContaining('page=2')
     );
@@ -462,7 +466,7 @@ describe('HelpCenterScreen', () => {
     await renderScreen();
 
     const searchInput = document.body.querySelector<HTMLInputElement>(
-      'input[placeholder="Search for an organization or area..."]'
+      'input[placeholder="Search services, orgs, or areas"]'
     );
 
     act(() => {
@@ -492,7 +496,7 @@ describe('HelpCenterScreen', () => {
     await renderScreen();
 
     const searchInput = document.body.querySelector<HTMLInputElement>(
-      'input[placeholder="Search for an organization or area..."]'
+      'input[placeholder="Search services, orgs, or areas"]'
     );
 
     act(() => {
@@ -551,7 +555,7 @@ describe('HelpCenterScreen', () => {
     await renderScreen();
 
     const searchInput = document.body.querySelector<HTMLInputElement>(
-      'input[placeholder="Search for an organization or area..."]'
+      'input[placeholder="Search services, orgs, or areas"]'
     );
 
     act(() => {
@@ -599,7 +603,7 @@ describe('HelpCenterScreen', () => {
     await renderScreen();
 
     const searchInput = document.body.querySelector<HTMLInputElement>(
-      'input[placeholder="Search for an organization or area..."]'
+      'input[placeholder="Search services, orgs, or areas"]'
     );
 
     act(() => {

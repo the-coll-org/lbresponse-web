@@ -472,12 +472,21 @@ export function useHelpCenterScreenState() {
   function handleToggleSectorChip(value: string) {
     setAppliedFilters((current) => {
       const currentValues = current.sector ?? [];
-      const isSelected =
-        currentValues.length === 1 && currentValues[0] === value;
-      return {
-        ...current,
-        sector: isSelected ? [] : [value],
-      };
+      const next = currentValues.includes(value)
+        ? currentValues.filter((v) => v !== value)
+        : [...currentValues, value];
+      return { ...current, sector: next };
+    });
+    setPage(1);
+  }
+
+  function handleToggleAppliedOption(groupId: string, optionId: string) {
+    setAppliedFilters((current) => {
+      const currentValues = current[groupId] ?? [];
+      const next = currentValues.includes(optionId)
+        ? currentValues.filter((v) => v !== optionId)
+        : [...currentValues, optionId];
+      return { ...current, [groupId]: next };
     });
     setPage(1);
   }
@@ -769,6 +778,7 @@ export function useHelpCenterScreenState() {
     handleApplyFilters,
     handleToggleFilterOption,
     handleToggleSectorChip,
+    handleToggleAppliedOption,
     handleTogglePinnedOrganization,
     handleReplacePinnedOrganization,
     handleClosePinnedOrganizationsSheet,
