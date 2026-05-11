@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import { Badge } from '../ui/Badge';
+import { Tag } from '../ui/Tag';
 import { helpCenterIcons } from './helpCenter.icons';
 
 export interface AppliedFilterChip {
@@ -22,25 +23,6 @@ interface HelpCenterSearchBarProps {
   onOpenFilters: () => void;
   onClearFilters: () => void;
   onRemoveFilter: (sectionId: string, value: string) => void;
-}
-
-function ChipRemoveIcon() {
-  return (
-    <svg
-      width="12"
-      height="12"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2.5"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <line x1="18" y1="6" x2="6" y2="18" />
-      <line x1="6" y1="6" x2="18" y2="18" />
-    </svg>
-  );
 }
 
 function TrashIcon() {
@@ -136,33 +118,22 @@ export function HelpCenterSearchBar({
             </button>
 
             {appliedFilterChips.map((chip) => (
-              <button
+              <Tag
                 key={`${chip.sectionId}-${chip.value}`}
-                type="button"
+                role="button"
+                tabIndex={0}
+                label={chip.label}
+                leadingIcon={chip.icon}
+                onClear={() => onRemoveFilter(chip.sectionId, chip.value)}
                 onClick={() => onRemoveFilter(chip.sectionId, chip.value)}
-                className="inline-flex h-32 w-auto shrink-0 items-center gap-4 rounded-md border border-solid-primary-400 bg-solid-primary-300 px-8 text-solid-black-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid-primary-500"
-              >
-                {chip.icon && (
-                  <span
-                    className="flex h-14 w-auto shrink-0 items-center justify-center"
-                    aria-hidden="true"
-                  >
-                    {chip.icon}
-                  </span>
-                )}
-                <span
-                  className="truncate text-2xs font-weight-regular"
-                  dir="auto"
-                >
-                  {chip.label}
-                </span>
-                <span
-                  className="flex h-14 w-auto shrink-0 items-center justify-center"
-                  aria-hidden="true"
-                >
-                  <ChipRemoveIcon />
-                </span>
-              </button>
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    onRemoveFilter(chip.sectionId, chip.value);
+                  }
+                }}
+                className="shrink-0 cursor-pointer border-solid-primary-400 bg-solid-primary-300 text-solid-black-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid-primary-500"
+              />
             ))}
           </div>
         </div>

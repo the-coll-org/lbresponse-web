@@ -12,17 +12,17 @@ export interface TagProps extends HTMLAttributes<HTMLSpanElement> {
 }
 
 const BASE =
-  'inline-flex items-center gap-4 h-[32px] px-[8px] rounded-md border ' +
+  'inline-flex items-center gap-4 p-8 rounded-md border ' +
   'border-solid-black-300 bg-transparent text-solid-black-600 ' +
   'text-button font-weight-medium whitespace-nowrap';
 
-const ICON_SLOT = 'shrink-0 size-[18px] flex items-center justify-center';
+const ICON_SLOT = 'shrink-0 size-16 flex items-center justify-center';
 
 function ClearIcon() {
   return (
     <svg
-      width="18"
-      height="18"
+      width="16"
+      height="16"
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
@@ -57,7 +57,10 @@ export function Tag({
     <span className={`${BASE} ${className}`.trim()} {...props}>
       {leadingIcon && <span className={ICON_SLOT}>{leadingIcon}</span>}
       {content && (
-        <span className="shrink-0 min-w-0" dir="auto">
+        <span
+          className="h-16 flex items-center min-w-0 leading-none"
+          dir="auto"
+        >
           {content}
         </span>
       )}
