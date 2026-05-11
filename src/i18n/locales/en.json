@@ -15,6 +15,13 @@
   "nav": {
     "dashboard": "Dashboard"
   },
+  "needHelp": {
+    "title": "Need Help",
+    "subtitle": "Choose the type of support you need"
+  },
+  "map": {
+    "title": "Map"
+  },
   "helpCenter": {
     "title": "Help Center",
     "subtitle": "Hello, how can we help you today?",

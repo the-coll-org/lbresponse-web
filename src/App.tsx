@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { useTheme } from './hooks/useTheme';
-import HelpCenterScreen from './components/HelpCenterScreen';
+import AppLayout from './components/AppLayout';
 import './App.css';
 
 function App() {
@@ -16,7 +16,7 @@ function App() {
   return (
     <div className="app-shell">
       <main className="app-stage">
-        <HelpCenterScreen
+        <AppLayout
           theme={theme}
           onToggleTheme={toggleTheme}
           onToggleLanguage={toggleLanguage}

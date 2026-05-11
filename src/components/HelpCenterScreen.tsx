@@ -1,20 +1,13 @@
 import { useToast } from '../hooks/useToast';
 import { EmergencyHotlinesSection } from './help-center/EmergencyHotlinesSection';
-import { HelpCenterHeaderActions } from './help-center/HelpCenterHeaderActions';
 import { HelpCenterSearchBar } from './help-center/HelpCenterSearchBar';
 import { OrganizationsListSection } from './help-center/OrganizationsListSection';
-import type { HelpCenterScreenProps } from './help-center/helpCenter.types';
 import { useHelpCenterScreenState } from './help-center/useHelpCenterScreenState';
 import { HelpCenterFiltersSheet } from './ui/HelpCenterFiltersSheet';
 import { PinnedOrganizationsSheet } from './ui/PinnedOrganizationsSheet';
 import { RequestOrganizationSheet } from './ui/RequestOrganizationSheet';
-import { ScreenHeader } from './ui/ScreenHeader';
 
-export default function HelpCenterScreen({
-  theme,
-  onToggleTheme,
-  onToggleLanguage,
-}: HelpCenterScreenProps) {
+export default function HelpCenterScreen() {
   const { addToast } = useToast();
   const {
     t,
@@ -36,7 +29,6 @@ export default function HelpCenterScreen({
     requestOrganizationErrors,
     isSubmittingOrganizationRequest,
     organizationTypeOptions,
-    languageToggleLabel,
     trimmedQuery,
     hasActiveQuery,
     hasSearchResults,
@@ -91,21 +83,6 @@ export default function HelpCenterScreen({
   return (
     <>
       <section className="relative min-h-screen w-full overflow-hidden bg-surface-primary pb-32">
-        <ScreenHeader
-          title={t('helpCenter.title')}
-          subtitle={t('helpCenter.subtitle')}
-          actions={
-            <HelpCenterHeaderActions
-              theme={theme}
-              languageToggleLabel={languageToggleLabel}
-              languageToggleAriaLabel={t('common.toggleLanguage')}
-              themeToggleAriaLabel={t('common.toggleTheme')}
-              onToggleLanguage={onToggleLanguage}
-              onToggleTheme={onToggleTheme}
-            />
-          }
-        />
-
         <div className="mx-auto flex w-full max-w-[1200px] flex-col gap-22 px-16 pt-12 md:px-32 lg:px-48">
           <EmergencyHotlinesSection
             title={t('helpCenter.emergencyTitle')}
