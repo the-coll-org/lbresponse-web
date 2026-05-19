@@ -5,6 +5,18 @@ export interface HelpCenterHotline {
   icon: 'cross' | 'siren' | 'shield' | 'water';
 }
 
+export interface HotlineApiItem {
+  id: string;
+  name_en: string;
+  name_ar: string | null;
+  category: string;
+  city: string;
+  phone: string;
+  hotline: string | null;
+  email: string | null;
+  source_url: string | null;
+}
+
 export interface HelpCenterOrganizationApiItem {
   id: string;
   title: string;
@@ -61,8 +73,6 @@ export interface HelpCenterOrganizationViewModel {
   actionDisabled: boolean;
   actionType: 'phone' | 'email';
   actionValue: string;
-  verified: boolean;
-  isPinned: boolean;
 }
 
 export type HelpCenterOrganizationType =

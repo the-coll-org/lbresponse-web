@@ -3,14 +3,6 @@ import { Button } from './Button';
 import { SvgIcon } from './SvgIcon';
 import locationSvg from '../../assets/help-center/location.svg?raw';
 
-export interface ServiceCardAction {
-  ariaLabel: string;
-  icon: ReactNode;
-  onClick?: MouseEventHandler<HTMLButtonElement>;
-  variant?: 'soft' | 'outline' | 'filled';
-  iconClassName?: string;
-}
-
 export interface ServiceCardProps extends Omit<
   HTMLAttributes<HTMLDivElement>,
   'title'
@@ -24,10 +16,9 @@ export interface ServiceCardProps extends Omit<
   actionVariant?: 'filled' | 'success';
   actionDisabled?: boolean;
   onActionClick?: MouseEventHandler<HTMLButtonElement>;
-  primaryAction?: ServiceCardAction;
-  secondaryAction?: ServiceCardAction;
 }
 
+// Matches Figma: border-radius: 16px; outline: 1px stroke-primary; outline-offset: -1px; padding: 12px
 const CARD_BASE = [
   'w-full rounded-lg border border-textfield-default-stroke',
   'bg-surface-primary p-12 overflow-hidden',
@@ -35,49 +26,41 @@ const CARD_BASE = [
 
 const ACTION_VARIANTS = {
   filled: 'bg-button-filled-bg text-button-filled-text',
-  success: 'bg-solid-green-600 text-button-filled-text',
+  success: 'bg-solid-green-whatsapp text-button-filled-text',
 } as const;
 
-function CardIconButton({
-  ariaLabel,
-  icon,
-  onClick,
-  variant = 'soft',
-  iconClassName = '',
-}: ServiceCardAction) {
-  const variantClass =
-    variant === 'filled'
-      ? 'size-32 bg-button-filled-bg p-8 text-button-filled-text'
-      : variant === 'outline'
-        ? 'w-[38px] h-[40px] border border-textfield-default-stroke bg-surface-primary p-4'
-        : 'size-32 bg-button-icon-bg p-8';
-
+// Matches Figma shield icon: width: 38px; height: 40px; padding: 4px; border-radius: 8px; outline: 1px stroke-primary
+function CardShieldIcon() {
   return (
-    <button
-      type="button"
-      aria-label={ariaLabel}
-      onClick={onClick}
-      className={[
-        'shrink-0 rounded-md text-button-icon-icon',
-        'flex items-center justify-center',
-        'focus-visible:outline-2 focus-visible:outline-offset-2',
-        'focus-visible:outline-solid-primary-500',
-        variantClass,
-      ].join(' ')}
+    <div
+      aria-hidden="true"
+      className="shrink-0 flex items-center justify-center w-[38px] h-[40px] border border-textfield-default-stroke bg-surface-primary p-4 rounded-md"
     >
-      <div
-        className={`size-[18px] flex items-center justify-center ${iconClassName}`.trim()}
-        aria-hidden="true"
-      >
-        {icon}
+      <div className="size-[18px] flex items-center justify-center">
+        <svg
+          width="18"
+          height="18"
+          viewBox="0 0 18 18"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M15 9.74997C15 13.5 12.375 15.375 9.255 16.4625C9.09162 16.5178 8.91415 16.5152 8.7525 16.455C5.625 15.375 3 13.5 3 9.74997V4.49997C3 4.30106 3.07902 4.11029 3.21967 3.96964C3.36032 3.82899 3.55109 3.74997 3.75 3.74997C5.25 3.74997 7.125 2.84997 8.43 1.70997C8.58889 1.57422 8.79102 1.49963 9 1.49963C9.20898 1.49963 9.41111 1.57422 9.57 1.70997C10.8825 2.85747 12.75 3.74997 14.25 3.74997C14.4489 3.74997 14.6397 3.82899 14.7803 3.96964C14.921 4.11029 15 4.30106 15 4.49997V9.74997Z"
+            stroke="#2B272B"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
       </div>
-    </button>
+    </div>
   );
 }
 
+// Matches Figma category pill: px-8 py-4; border-radius: 8px; outline: 1px rgba(0,0,0,0.10); font-size: 12px
 function CategoryPill({ children }: { children: ReactNode }) {
   return (
-    <span className="inline-flex items-center justify-center rounded-md border border-textfield-default-stroke px-8 py-4 text-2xs font-weight-regular text-text-black">
+    <span className="inline-flex shrink-0 items-center justify-center rounded-md border border-black/10 px-8 py-4 text-2xs font-weight-regular text-text-black">
       {children}
     </span>
   );
@@ -93,8 +76,6 @@ export function ServiceCard({
   actionVariant = 'filled',
   actionDisabled = false,
   onActionClick,
-  primaryAction,
-  secondaryAction,
   className = '',
   ...props
 }: ServiceCardProps) {
@@ -102,47 +83,66 @@ export function ServiceCard({
 
   return (
     <article className={`${CARD_BASE} ${className}`.trim()} {...props}>
-      <div className="flex h-full w-full flex-col items-start gap-12">
-        <header className="flex w-full items-start justify-start gap-12">
-          {secondaryAction && <CardIconButton {...secondaryAction} />}
+      {/*
+       * Figma inner column: flex-direction: column; gap: 12px; align-items: flex-end
+       * Flipped to LTR → flex-col gap-12 items-start
+       */}
+      <div className="flex h-full w-full flex-col gap-12">
+        {/*
+         * Figma header row (RTL): [text column] [shield icon]
+         * → LTR flip:            [shield icon]  [text column]
+         *
+         * Shield: 38×40px, border (outline style), p-4, rounded-md
+         * Text column: flex-1, flex-col, gap-8
+         */}
+        <div className="flex w-full items-start gap-12">
+          {/* Shield icon — left side in LTR */}
+          <CardShieldIcon />
 
-          <div className="flex flex-1 justify-start">
-            <div className="flex flex-1 flex-col items-start gap-8 text-start">
-              <div className="flex w-full flex-wrap items-center justify-start gap-8">
-                <p className="text-sm font-weight-bold text-text-black break-words">
-                  {title}
-                </p>
-                {category && <CategoryPill>{category}</CategoryPill>}
-              </div>
-              {description && (
-                <p className="w-full text-2xs font-weight-regular text-textfield-default-text">
-                  {description}
-                </p>
-              )}
+          {/* Text column: [org name + tag] then [description] */}
+          <div className="flex flex-1 flex-col gap-8">
+            {/* Name row: org name + category tag side by side */}
+            <div className="flex items-center gap-8">
+              <p className="text-sm font-weight-bold text-text-black break-words">
+                {title}
+              </p>
+              {category && <CategoryPill>{category}</CategoryPill>}
             </div>
-          </div>
-
-          <div className="shrink-0">
-            {primaryAction ? (
-              <CardIconButton {...primaryAction} />
-            ) : (
-              <div className="block size-32" aria-hidden="true" />
+            {/* Organization details / description */}
+            {description && (
+              <p className="text-2xs font-weight-regular text-textfield-default-text">
+                {description}
+              </p>
             )}
           </div>
-        </header>
+        </div>
 
+        {/*
+         * Figma location row (RTL): [location text] [location icon]
+         * → LTR flip:              [location icon] [location text]
+         *
+         * font-size: 14px (text-button); color: --text-primary (#2B272B)
+         */}
         {locations && (
-          <div className="flex w-full items-center justify-start gap-4 text-start text-button font-weight-regular text-text-black">
+          <div className="flex items-center gap-4">
             <div
-              className="flex size-16 items-center justify-center"
+              className="flex size-16 shrink-0 items-center justify-center"
               aria-hidden="true"
             >
               <SvgIcon svg={locationSvg} className="size-16" />
             </div>
-            <p className="break-words">{locations}</p>
+            <p className="text-button font-weight-regular text-text-black break-words">
+              {locations}
+            </p>
           </div>
         )}
 
+        {/*
+         * Action button: flex: 1; height: 44px; min-height: 37px; max-height: 48px
+         * padding: 8px 16px; border-radius: 8px; gap: 8px
+         * Phone → bg: --components-button-filled-bg (#2E4369)
+         * WhatsApp → bg: #00A63E
+         */}
         <Button
           onClick={actionDisabled ? undefined : onActionClick}
           disabled={actionDisabled}

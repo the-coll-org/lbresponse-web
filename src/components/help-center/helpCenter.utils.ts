@@ -6,6 +6,7 @@ import type {
   HelpCenterOrganizationRequestFormValues,
   HelpCenterOrganizationRequestPayload,
   HelpCenterOrganizationViewModel,
+  HotlineApiItem,
 } from './helpCenter.types';
 import { FILTER_SECTIONS } from './helpCenter.data';
 
@@ -100,7 +101,7 @@ export function buildOrganizationsUrl(
     params.set(parameterName, values.join(','));
   }
 
-  return `/api/organizations?${params.toString()}`;
+  return `/api/hotlines?${params.toString()}`;
 }
 
 function matchesSearchValue(
@@ -181,7 +182,6 @@ export function filterOrganizations(
 export function mapOrganizationToViewModel(
   organization: HelpCenterOrganizationApiItem,
   language: string,
-  isPinned: boolean,
   labels: {
     call: string;
     email: string;
@@ -202,7 +202,7 @@ export function mapOrganizationToViewModel(
     organization.provider_type ??
     organization.organization_type ??
     labels.uncategorized;
-  const locations = organization.locations.join(', ');
+  const locations = (organization.locations ?? []).join(', ');
   const phoneNumber = organization.phone_number?.trim() ?? '';
   const email = organization.email?.trim() ?? '';
 
@@ -217,8 +217,6 @@ export function mapOrganizationToViewModel(
       actionDisabled: false,
       actionType: 'phone',
       actionValue: phoneNumber,
-      verified: organization.verified,
-      isPinned,
     };
   }
 
@@ -233,8 +231,6 @@ export function mapOrganizationToViewModel(
       actionDisabled: false,
       actionType: 'email',
       actionValue: email,
-      verified: organization.verified,
-      isPinned,
     };
   }
 
@@ -248,8 +244,62 @@ export function mapOrganizationToViewModel(
     actionDisabled: true,
     actionType: 'email',
     actionValue: '',
-    verified: organization.verified,
-    isPinned,
+  };
+}
+
+export function mapHotlineToViewModel(
+  item: HotlineApiItem,
+  language: string,
+  labels: {
+    call: string;
+    email: string;
+    unavailable: string;
+    uncategorized: string;
+  }
+): HelpCenterOrganizationViewModel {
+  const isArabic = language.startsWith('ar');
+  const title = isArabic && item.name_ar ? item.name_ar : item.name_en;
+  const contactNumber = item.hotline ?? item.phone;
+  const location = item.city ?? '';
+
+  if (contactNumber) {
+    return {
+      id: item.id,
+      title,
+      category: item.category ?? labels.uncategorized,
+      description: '',
+      locations: location,
+      actionLabel: `${labels.call} ${contactNumber}`,
+      actionDisabled: false,
+      actionType: 'phone',
+      actionValue: contactNumber,
+    };
+  }
+
+  if (item.email) {
+    return {
+      id: item.id,
+      title,
+      category: item.category ?? labels.uncategorized,
+      description: '',
+      locations: location,
+      actionLabel: `${labels.email} ${item.email}`,
+      actionDisabled: false,
+      actionType: 'email',
+      actionValue: item.email,
+    };
+  }
+
+  return {
+    id: item.id,
+    title,
+    category: item.category ?? labels.uncategorized,
+    description: '',
+    locations: location,
+    actionLabel: labels.unavailable,
+    actionDisabled: true,
+    actionType: 'phone',
+    actionValue: '',
   };
 }
 
@@ -273,10 +323,10 @@ export function buildPinnedOrganizationOptions(
     }));
 }
 
-export function mergeOrganizations(
-  currentOrganizations: HelpCenterOrganizationApiItem[],
-  nextOrganizations: HelpCenterOrganizationApiItem[]
-) {
+export function mergeOrganizations<T extends { id: string }>(
+  currentOrganizations: T[],
+  nextOrganizations: T[]
+): T[] {
   const organizationsById = new Map(
     currentOrganizations.map((organization) => [organization.id, organization])
   );

@@ -14,8 +14,6 @@ interface OrganizationCardViewModel {
   actionDisabled: boolean;
   actionType: 'phone' | 'email';
   actionValue: string;
-  verified: boolean;
-  isPinned: boolean;
 }
 
 interface OrganizationsListSectionProps {
@@ -34,15 +32,11 @@ interface OrganizationsListSectionProps {
   emptyStateActionAriaLabel: string;
   loadMoreLabel: string;
   backToTopAriaLabel: string;
-  pinActionAriaLabel: string;
-  unpinActionAriaLabel: string;
-  verifyActionAriaLabel: string;
   showLoadMore: boolean;
   onEmptyStateAction: () => void;
   onRetry: () => void;
   onLoadMore: () => void;
   onActivateOrganizationAction: (organizationId: string) => void;
-  onTogglePinnedOrganization: (organizationId: string) => void;
 }
 
 export function OrganizationsListSection({
@@ -61,19 +55,14 @@ export function OrganizationsListSection({
   emptyStateActionAriaLabel,
   loadMoreLabel,
   backToTopAriaLabel,
-  pinActionAriaLabel,
-  unpinActionAriaLabel,
-  verifyActionAriaLabel,
   showLoadMore,
   onEmptyStateAction,
   onRetry,
   onLoadMore,
   onActivateOrganizationAction,
-  onTogglePinnedOrganization,
 }: OrganizationsListSectionProps) {
   const PhoneIcon = helpCenterIcons.phone;
   const WhatsappIcon = helpCenterIcons.whatsapp;
-  const VerifyIcon = helpCenterIcons.verify;
   const ChevronDownIcon = helpCenterIcons.chevronDown;
   const ArrowUpIcon = helpCenterIcons.arrowUp;
 
@@ -131,81 +120,56 @@ export function OrganizationsListSection({
   return (
     <section className="relative flex flex-col gap-12">
       <div className="grid grid-cols-1 gap-12 md:grid-cols-2 xl:grid-cols-3">
-        {organizations.map((item) => {
-          const PinIcon = item.isPinned
-            ? helpCenterIcons.pinFilled
-            : helpCenterIcons.pin;
-
-          return (
-            <ServiceCard
-              key={item.id}
-              title={item.title}
-              category={item.category}
-              description={item.description}
-              locations={item.locations}
-              actionLabel={item.actionLabel}
-              actionIcon={
-                item.actionDisabled ? undefined : item.actionType ===
-                  'phone' ? (
-                  <PhoneIcon />
-                ) : (
-                  <WhatsappIcon />
-                )
-              }
-              actionVariant={item.actionType === 'phone' ? 'filled' : 'success'}
-              actionDisabled={item.actionDisabled}
-              onActionClick={
-                item.actionDisabled
-                  ? undefined
-                  : () => onActivateOrganizationAction(item.id)
-              }
-              primaryAction={{
-                ariaLabel: item.isPinned
-                  ? unpinActionAriaLabel
-                  : pinActionAriaLabel,
-                icon: <PinIcon />,
-                onClick: () => onTogglePinnedOrganization(item.id),
-                variant: item.isPinned ? 'filled' : 'soft',
-                iconClassName: item.isPinned
-                  ? 'scale-110 rotate-12 text-button-filled-text transition-transform duration-200 ease-out'
-                  : 'text-button-icon-icon transition-transform duration-200 ease-out',
-              }}
-              secondaryAction={
-                item.verified
-                  ? {
-                      ariaLabel: verifyActionAriaLabel,
-                      icon: <VerifyIcon />,
-                      variant: 'outline',
-                    }
-                  : undefined
-              }
-            />
-          );
-        })}
+        {organizations.map((item) => (
+          <ServiceCard
+            key={item.id}
+            title={item.title}
+            category={item.category}
+            description={item.description}
+            locations={item.locations}
+            actionLabel={item.actionLabel}
+            actionIcon={
+              item.actionDisabled ? undefined : item.actionType === 'phone' ? (
+                <PhoneIcon />
+              ) : (
+                <WhatsappIcon />
+              )
+            }
+            actionVariant={item.actionType === 'phone' ? 'filled' : 'success'}
+            actionDisabled={item.actionDisabled}
+            onActionClick={
+              item.actionDisabled
+                ? undefined
+                : () => onActivateOrganizationAction(item.id)
+            }
+          />
+        ))}
       </div>
 
       {showLoadMore && (
         <div className="flex justify-center">
-          <button
-            type="button"
+          <Button
+            variant="text"
+            size="md"
             onClick={onLoadMore}
             disabled={isLoadingMore}
-            className="inline-flex h-44 items-center justify-center gap-8 rounded-md px-16 py-8 text-button font-weight-medium text-text-black disabled:opacity-40"
+            rightIcon={!isLoadingMore ? <ChevronDownIcon /> : undefined}
+            className="h-44 text-text-black"
           >
-            <span>{isLoadingMore ? loadingLabel : loadMoreLabel}</span>
-            {!isLoadingMore && <ChevronDownIcon />}
-          </button>
+            {isLoadingMore ? loadingLabel : loadMoreLabel}
+          </Button>
         </div>
       )}
 
-      <button
-        type="button"
+      <Button
+        variant="icon"
+        radius="full"
         aria-label={backToTopAriaLabel}
-        className="fixed bottom-24 end-24 z-10 flex size-48 items-center justify-center rounded-full border border-textfield-default-stroke bg-button-icon-bg text-button-icon-icon shadow-md"
         onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+        className="fixed bottom-24 end-24 z-10 size-48 border border-textfield-default-stroke shadow-md"
       >
         <ArrowUpIcon />
-      </button>
+      </Button>
     </section>
   );
 }
