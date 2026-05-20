@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import type {
   NeedHelpOrganizationViewModel,
@@ -125,6 +125,8 @@ function mapOrganizationToViewModel(
   };
 }
 
+const PAGE_SIZE = 10;
+
 export function useMapScreenState() {
   const { i18n } = useTranslation();
   const language = i18n.resolvedLanguage ?? i18n.language ?? 'ar';
@@ -142,6 +144,11 @@ export function useMapScreenState() {
   >([]);
   const [selectedOrgTotal, setSelectedOrgTotal] = useState(0);
   const [isLoadingOrgs, setIsLoadingOrgs] = useState(false);
+  const [isLoadingMoreOrgs, setIsLoadingMoreOrgs] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const loadingMoreRef = useRef(false);
+
+  const hasMoreOrgs = selectedOrgs.length < selectedOrgTotal;
 
   // Fetch region counts for the map
   useEffect(() => {
@@ -173,11 +180,12 @@ export function useMapScreenState() {
     };
   }, [activeFilter]);
 
-  // Fetch orgs for the selected governorate
+  // Fetch page 1 when the selected governorate or filter changes
   useEffect(() => {
     if (!activeGovId) {
       setSelectedOrgs([]);
       setSelectedOrgTotal(0);
+      setCurrentPage(1);
       return;
     }
 
@@ -185,6 +193,7 @@ export function useMapScreenState() {
     if (regionIds.length === 0) {
       setSelectedOrgs([]);
       setSelectedOrgTotal(0);
+      setCurrentPage(1);
       return;
     }
 
@@ -192,9 +201,13 @@ export function useMapScreenState() {
     setIsLoadingOrgs(true);
     setSelectedOrgs([]);
     setSelectedOrgTotal(0);
+    setCurrentPage(1);
 
     async function loadOrgs() {
-      const params = new URLSearchParams({ page: '1', page_size: '50' });
+      const params = new URLSearchParams({
+        page: '1',
+        page_size: String(PAGE_SIZE),
+      });
       params.set('region', regionIds.join(','));
       if (activeFilter && FILTER_TO_SECTOR[activeFilter]) {
         params.set('sector', FILTER_TO_SECTOR[activeFilter]);
@@ -225,6 +238,44 @@ export function useMapScreenState() {
     };
   }, [activeGovId, activeFilter, language]);
 
+  async function loadMoreOrgs() {
+    if (!activeGovId || !hasMoreOrgs || loadingMoreRef.current || isLoadingOrgs)
+      return;
+
+    const regionIds = CITY_MARKER_REGIONS[activeGovId] ?? [];
+    if (regionIds.length === 0) return;
+
+    const nextPage = currentPage + 1;
+    loadingMoreRef.current = true;
+    setIsLoadingMoreOrgs(true);
+
+    const params = new URLSearchParams({
+      page: String(nextPage),
+      page_size: String(PAGE_SIZE),
+    });
+    params.set('region', regionIds.join(','));
+    if (activeFilter && FILTER_TO_SECTOR[activeFilter]) {
+      params.set('sector', FILTER_TO_SECTOR[activeFilter]);
+    }
+
+    try {
+      const response = await fetch(`/api/organizations?${params.toString()}`);
+      if (!response.ok) throw new Error(`HTTP ${response.status.toString()}`);
+      const json = (await response.json()) as OrganizationsApiResponse;
+      setSelectedOrgs((prev) => [
+        ...prev,
+        ...json.data.map((org) => mapOrganizationToViewModel(org, language)),
+      ]);
+      setSelectedOrgTotal(json.total);
+      setCurrentPage(nextPage);
+    } catch {
+      // leave existing orgs intact; user can scroll again to retry
+    } finally {
+      loadingMoreRef.current = false;
+      setIsLoadingMoreOrgs(false);
+    }
+  }
+
   function handleToggleFilter(filterId: string) {
     if (filterId === 'nearby') return;
     setActiveFilter((prev) => (prev === filterId ? null : filterId));
@@ -245,6 +296,9 @@ export function useMapScreenState() {
     selectedOrgs,
     selectedOrgTotal,
     isLoadingOrgs,
+    isLoadingMoreOrgs,
+    hasMoreOrgs,
+    loadMoreOrgs,
     handleToggleFilter,
     handleGovClick,
   };

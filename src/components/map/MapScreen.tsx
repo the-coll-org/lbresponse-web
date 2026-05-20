@@ -10,6 +10,7 @@ import type {
   NeedHelpServiceIcon,
 } from '../need-help/needHelp.types';
 import { ServiceCardSkeleton } from '../ui/ServiceCardSkeleton';
+import { Skeleton } from '../ui/skeleton';
 import { SvgIcon } from '../ui/SvgIcon';
 import searchSvg from '../../assets/help-center/search.svg?raw';
 import closeSvg from '../../assets/help-center/close.svg?raw';
@@ -163,13 +164,13 @@ const GOV_BOUNDS: Record<
   GovernorateId,
   { x1: number; y1: number; x2: number; y2: number }
 > = {
-  akkar: { x1: 120, y1: 10, x2: 220, y2: 52 },
-  north: { x1: 70, y1: 35, x2: 175, y2: 108 },
-  baalbek: { x1: 128, y1: 33, x2: 250, y2: 170 },
-  bekaa: { x1: 84, y1: 150, x2: 166, y2: 254 },
-  beirut: { x1: 47, y1: 141, x2: 132, y2: 238 },
-  nabatieh: { x1: 32, y1: 236, x2: 122, y2: 325 },
-  south: { x1: 1, y1: 219, x2: 86, y2: 317 },
+  akkar: { x1: 130, y1: 12, x2: 210, y2: 48 },
+  north: { x1: 75, y1: 40, x2: 160, y2: 102 },
+  baalbek: { x1: 138, y1: 38, x2: 240, y2: 162 },
+  bekaa: { x1: 90, y1: 155, x2: 155, y2: 248 },
+  beirut: { x1: 50, y1: 148, x2: 118, y2: 228 },
+  nabatieh: { x1: 38, y1: 240, x2: 110, y2: 318 },
+  south: { x1: 8, y1: 224, x2: 72, y2: 310 },
 };
 
 function hashString(s: string): number {
@@ -437,6 +438,9 @@ function MapPeekSheet({
   orgCount,
   organizations,
   isLoading,
+  isLoadingMore,
+  hasMore,
+  onLoadMore,
   isAr,
   onClose,
 }: {
@@ -445,6 +449,9 @@ function MapPeekSheet({
   orgCount: number;
   organizations: NeedHelpOrganizationViewModel[];
   isLoading: boolean;
+  isLoadingMore: boolean;
+  hasMore: boolean;
+  onLoadMore: () => void;
   isAr: boolean;
   onClose: () => void;
 }) {
@@ -626,6 +633,13 @@ function MapPeekSheet({
           overscrollBehavior: 'contain',
           display: mode === 'collapsed' ? 'none' : undefined,
         }}
+        onScroll={(e) => {
+          if (!hasMore || isLoadingMore) return;
+          const el = e.currentTarget;
+          if (el.scrollHeight - el.scrollTop - el.clientHeight < 120) {
+            onLoadMore();
+          }
+        }}
       >
         <div className="flex flex-col gap-12 px-16 py-16">
           {isLoading ? (
@@ -641,38 +655,73 @@ function MapPeekSheet({
                 : 'No organizations in this area'}
             </p>
           ) : (
-            organizations.map((org) => (
-              <ServiceCard
-                key={org.id}
-                title={org.title}
-                category={org.category}
-                description={org.description}
-                locationsArray={org.locations}
-                moreLocationsLabel={(count) =>
-                  isAr ? `+${count} أخرى` : `+${count} more`
-                }
-                locationsDialogTitle={org.title}
-                locationsDialogCloseLabel={isAr ? 'إغلاق' : 'Close'}
-                actionLabel={org.actionLabel}
-                actionIcon={
-                  org.actionType === 'phone' ? <PhoneIcon /> : <WhatsappIcon />
-                }
-                actionVariant={
-                  org.actionType === 'phone' ? 'filled' : 'success'
-                }
-                actionDisabled={org.actionDisabled}
-                onActionClick={() => {
-                  if (!org.actionDisabled && org.actionHref) {
-                    window.location.href = org.actionHref;
+            <>
+              {organizations.map((org) => (
+                <ServiceCard
+                  key={org.id}
+                  title={org.title}
+                  category={org.category}
+                  description={org.description}
+                  locationsArray={org.locations}
+                  moreLocationsLabel={(count) =>
+                    isAr ? `+${count} أخرى` : `+${count} more`
                   }
-                }}
-              />
-            ))
+                  locationsDialogTitle={org.title}
+                  locationsDialogCloseLabel={isAr ? 'إغلاق' : 'Close'}
+                  actionLabel={org.actionLabel}
+                  actionIcon={
+                    org.actionType === 'phone' ? (
+                      <PhoneIcon />
+                    ) : (
+                      <WhatsappIcon />
+                    )
+                  }
+                  actionVariant={
+                    org.actionType === 'phone' ? 'filled' : 'success'
+                  }
+                  actionDisabled={org.actionDisabled}
+                  onActionClick={() => {
+                    if (!org.actionDisabled && org.actionHref) {
+                      window.location.href = org.actionHref;
+                    }
+                  }}
+                />
+              ))}
+              {isLoadingMore && (
+                <>
+                  {Array.from({ length: 2 }).map((_, i) => (
+                    <ServiceCardSkeleton key={`more-${i}`} />
+                  ))}
+                </>
+              )}
+            </>
           )}
         </div>
       </div>
     </div>,
     document.body
+  );
+}
+
+function MapScreenSkeleton() {
+  return (
+    <section className="flex flex-col gap-16 px-16 pt-20">
+      {/* Search bar */}
+      <Skeleton className="h-40 w-full rounded-md" />
+
+      {/* Filter chips */}
+      <div className="flex items-center gap-8">
+        {Array.from({ length: 5 }).map((_, i) => (
+          <Skeleton key={i} className="h-32 w-72 shrink-0 rounded-full" />
+        ))}
+      </div>
+
+      {/* Map area */}
+      <Skeleton
+        className="w-full rounded-md"
+        style={{ height: 'max(280px, calc(100dvh - 340px))' }}
+      />
+    </section>
   );
 }
 
@@ -687,9 +736,12 @@ export default function MapScreen() {
     activeFilter,
     activeGovId,
     regionCounts,
+    isLoading,
     selectedOrgs,
-    selectedOrgTotal,
     isLoadingOrgs,
+    isLoadingMoreOrgs,
+    hasMoreOrgs,
+    loadMoreOrgs,
     handleToggleFilter,
     handleGovClick,
   } = useMapScreenState();
@@ -700,21 +752,21 @@ export default function MapScreen() {
   }, []);
   const handleZoomChange = () => {};
 
+  const handleZoomIn = useCallback(() => panZoom?.zoomIn(), [panZoom]);
+  const handleZoomOut = useCallback(() => panZoom?.zoomOut(), [panZoom]);
+
+  if (isLoading) return <MapScreenSkeleton />;
+
   // Find city name for the active governorate
   const activeMarker = CITY_MARKERS.find((m) => m.govId === activeGovId);
   const cityName = activeMarker ? t(`map.cities.${activeMarker.id}`) : '';
 
-  const handleZoomIn = useCallback(() => panZoom?.zoomIn(), [panZoom]);
-  const handleZoomOut = useCallback(() => panZoom?.zoomOut(), [panZoom]);
-
-  // Org count: prefer API total (selectedOrgTotal), fallback to regionCounts sum
+  // Org count: always use regionCounts sum to match the pin number
   const orgCount =
-    selectedOrgTotal > 0
-      ? selectedOrgTotal
-      : (activeMarker?.apiRegionIds.reduce(
-          (sum, id) => sum + (regionCounts[id] ?? 0),
-          0
-        ) ?? 0);
+    activeMarker?.apiRegionIds.reduce(
+      (sum, id) => sum + (regionCounts[id] ?? 0),
+      0
+    ) ?? 0;
 
   return (
     <section className="flex flex-col gap-16 px-16 pt-20">
@@ -828,6 +880,11 @@ export default function MapScreen() {
         orgCount={orgCount}
         organizations={selectedOrgs}
         isLoading={isLoadingOrgs}
+        isLoadingMore={isLoadingMoreOrgs}
+        hasMore={hasMoreOrgs}
+        onLoadMore={() => {
+          void loadMoreOrgs();
+        }}
         isAr={isAr}
         onClose={() => handleGovClick(activeGovId!)}
       />
