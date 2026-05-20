@@ -1,5 +1,12 @@
-import type { HTMLAttributes, MouseEventHandler, ReactNode } from 'react';
+import {
+  useState,
+  type HTMLAttributes,
+  type MouseEventHandler,
+  type ReactNode,
+} from 'react';
+import { BottomSheet } from './BottomSheet';
 import { Button } from './Button';
+import { LocationsRow } from './LocationsRow';
 import { SvgIcon } from './SvgIcon';
 import locationSvg from '../../assets/help-center/location.svg?raw';
 
@@ -10,7 +17,16 @@ export interface ServiceCardProps extends Omit<
   title: ReactNode;
   category?: ReactNode;
   description?: ReactNode;
+  /** Legacy: renders the value directly as ReactNode. Ignored when `locationsArray` is set. */
   locations?: ReactNode;
+  /** When provided, renders locations with overflow tooltip / bottom-drawer behaviour. */
+  locationsArray?: string[];
+  /** Formats the "+N more" overflow badge label. Receives the overflow count. */
+  moreLocationsLabel?: (count: number) => string;
+  /** Title shown in the bottom drawer (typically the org name). */
+  locationsDialogTitle?: string;
+  /** Label for the drawer close button. */
+  locationsDialogCloseLabel?: string;
   actionLabel: ReactNode;
   actionIcon?: ReactNode;
   actionVariant?: 'filled' | 'success';
@@ -71,6 +87,10 @@ export function ServiceCard({
   category,
   description,
   locations,
+  locationsArray,
+  moreLocationsLabel = (n) => `+${n}`,
+  locationsDialogTitle = '',
+  locationsDialogCloseLabel = 'Close',
   actionLabel,
   actionIcon,
   actionVariant = 'filled',
@@ -79,91 +99,155 @@ export function ServiceCard({
   className = '',
   ...props
 }: ServiceCardProps) {
+  const [drawerOpen, setDrawerOpen] = useState(false);
   const actionClass = ACTION_VARIANTS[actionVariant];
 
-  return (
-    <article className={`${CARD_BASE} ${className}`.trim()} {...props}>
-      {/*
-       * Figma inner column: flex-direction: column; gap: 12px; align-items: flex-end
-       * Flipped to LTR → flex-col gap-12 items-start
-       */}
-      <div className="flex h-full w-full flex-col gap-12">
-        {/*
-         * Figma header row (RTL): [text column] [shield icon]
-         * → LTR flip:            [shield icon]  [text column]
-         *
-         * Shield: 38×40px, border (outline style), p-4, rounded-md
-         * Text column: flex-1, flex-col, gap-8
-         */}
-        <div className="flex w-full items-start gap-12">
-          {/* Shield icon — left side in LTR */}
-          <CardShieldIcon />
-
-          {/* Text column: [org name + tag] then [description] */}
-          <div className="flex flex-1 flex-col gap-8">
-            {/* Name row: org name + category tag side by side */}
-            <div className="flex items-center gap-8">
-              <p className="text-sm font-weight-bold text-text-black break-words">
-                {title}
-              </p>
-              {category && <CategoryPill>{category}</CategoryPill>}
-            </div>
-            {/* Organization details / description */}
-            {description && (
-              <p className="text-2xs font-weight-regular text-textfield-default-text">
-                {description}
-              </p>
-            )}
-          </div>
+  const locationRow =
+    locationsArray && locationsArray.length > 0 ? (
+      <LocationsRow
+        locations={locationsArray}
+        moreLocationsLabel={moreLocationsLabel}
+        onShowAll={() => setDrawerOpen(true)}
+      />
+    ) : locations ? (
+      <div className="flex items-center gap-4">
+        <div
+          className="flex size-16 shrink-0 items-center justify-center"
+          aria-hidden="true"
+        >
+          <SvgIcon svg={locationSvg} className="size-16" />
         </div>
+        <p className="text-button font-weight-regular text-text-black break-words">
+          {locations}
+        </p>
+      </div>
+    ) : null;
 
-        {/*
-         * Figma location row (RTL): [location text] [location icon]
-         * → LTR flip:              [location icon] [location text]
-         *
-         * font-size: 14px (text-button); color: --text-primary (#2B272B)
-         */}
-        {locations && (
-          <div className="flex items-center gap-4">
-            <div
-              className="flex size-16 shrink-0 items-center justify-center"
-              aria-hidden="true"
-            >
-              <SvgIcon svg={locationSvg} className="size-16" />
-            </div>
-            <p className="text-button font-weight-regular text-text-black break-words">
-              {locations}
-            </p>
-          </div>
-        )}
-
-        {/*
-         * Action button: flex: 1; height: 44px; min-height: 37px; max-height: 48px
-         * padding: 8px 16px; border-radius: 8px; gap: 8px
-         * Phone → bg: --components-button-filled-bg (#2E4369)
-         * WhatsApp → bg: #00A63E
-         */}
-        <Button
-          onClick={actionDisabled ? undefined : onActionClick}
-          disabled={actionDisabled}
-          className={[
-            'mt-auto h-[44px] w-full min-h-[37px] max-h-[48px] overflow-hidden',
-            actionClass,
-          ].join(' ')}
-          rightIcon={
-            actionIcon ? (
-              <div
-                className="flex size-16 shrink-0 items-center justify-center"
-                aria-hidden="true"
-              >
-                {actionIcon}
+  return (
+    <>
+      <article className={`${CARD_BASE} ${className}`.trim()} {...props}>
+        <div className="flex h-full w-full flex-col gap-12">
+          <div className="flex w-full items-start gap-12">
+            <CardShieldIcon />
+            <div className="flex flex-1 flex-col gap-8">
+              <div className="flex items-center gap-8">
+                <p className="text-sm font-weight-bold text-text-black break-words">
+                  {title}
+                </p>
+                {category && <CategoryPill>{category}</CategoryPill>}
               </div>
-            ) : undefined
+              {description && (
+                <p className="text-2xs font-weight-regular text-textfield-default-text">
+                  {description}
+                </p>
+              )}
+            </div>
+          </div>
+
+          {locationRow}
+
+          <Button
+            onClick={actionDisabled ? undefined : onActionClick}
+            disabled={actionDisabled}
+            className={[
+              'mt-auto h-[44px] w-full min-h-[37px] max-h-[48px] overflow-hidden',
+              actionClass,
+            ].join(' ')}
+            rightIcon={
+              actionIcon ? (
+                <div
+                  className="flex size-16 shrink-0 items-center justify-center"
+                  aria-hidden="true"
+                >
+                  {actionIcon}
+                </div>
+              ) : undefined
+            }
+          >
+            {actionLabel}
+          </Button>
+        </div>
+      </article>
+
+      {drawerOpen && locationsArray && locationsArray.length > 0 && (
+        <BottomSheet
+          open={drawerOpen}
+          title={locationsDialogTitle}
+          onOpenChange={setDrawerOpen}
+          closeAriaLabel={locationsDialogCloseLabel}
+          footer={
+            <div className="flex w-full flex-col pt-16">
+              <div className="w-full border-t border-solid-black-300" />
+              <div className="px-16 pb-24 pt-12">
+                <Button
+                  variant="tonal"
+                  className="h-48 w-full justify-center"
+                  onClick={() => setDrawerOpen(false)}
+                >
+                  {locationsDialogCloseLabel}
+                </Button>
+              </div>
+            </div>
           }
         >
-          {actionLabel}
-        </Button>
-      </div>
-    </article>
+          <div className="pb-24 pt-4">
+            <div className={CARD_BASE}>
+              <div className="flex h-full w-full flex-col gap-12">
+                <div className="flex w-full items-start gap-12">
+                  <CardShieldIcon />
+                  <div className="flex flex-1 flex-col gap-8">
+                    <div className="flex items-center gap-8">
+                      <p className="text-sm font-weight-bold text-text-black break-words">
+                        {title}
+                      </p>
+                      {category && <CategoryPill>{category}</CategoryPill>}
+                    </div>
+                    {description && (
+                      <p className="text-2xs font-weight-regular text-textfield-default-text">
+                        {description}
+                      </p>
+                    )}
+                  </div>
+                </div>
+
+                {/* All locations side by side */}
+                <div className="flex flex-wrap items-center gap-4">
+                  <div
+                    className="flex size-16 shrink-0 items-center justify-center"
+                    aria-hidden="true"
+                  >
+                    <SvgIcon svg={locationSvg} className="size-16" />
+                  </div>
+                  <p className="text-button font-weight-regular text-text-black">
+                    {locationsArray.join('، ')}
+                  </p>
+                </div>
+
+                <Button
+                  onClick={actionDisabled ? undefined : onActionClick}
+                  disabled={actionDisabled}
+                  className={[
+                    'mt-auto h-[44px] w-full min-h-[37px] max-h-[48px] overflow-hidden',
+                    actionClass,
+                  ].join(' ')}
+                  rightIcon={
+                    actionIcon ? (
+                      <div
+                        className="flex size-16 shrink-0 items-center justify-center"
+                        aria-hidden="true"
+                      >
+                        {actionIcon}
+                      </div>
+                    ) : undefined
+                  }
+                >
+                  {actionLabel}
+                </Button>
+              </div>
+            </div>
+          </div>
+        </BottomSheet>
+      )}
+    </>
   );
 }

@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import MobileNavbar, { type NavbarTab } from './ui/MobileNavbar';
 import HelpCenterScreen from './HelpCenterScreen';
 import NeedHelpScreen from './need-help/NeedHelpScreen';
+import MapScreen from './map/MapScreen';
 import { ScreenHeader } from './ui/ScreenHeader';
 import { HelpCenterHeaderActions } from './help-center/HelpCenterHeaderActions';
 
@@ -10,14 +11,6 @@ interface AppLayoutProps {
   theme: 'light' | 'dark';
   onToggleTheme: () => void;
   onToggleLanguage: () => void;
-}
-
-function MapScreen() {
-  return (
-    <div className="flex min-h-screen items-center justify-center bg-surface-primary">
-      <p className="text-sm text-solid-black-400">Map coming soon</p>
-    </div>
-  );
 }
 
 export default function AppLayout({
@@ -39,7 +32,7 @@ export default function AppLayout({
   const headerSubtitles: Record<NavbarTab, string | undefined> = {
     main: t('needHelp.subtitle'),
     hotlines: t('helpCenter.subtitle'),
-    map: undefined,
+    map: t('map.subtitle'),
   };
 
   return (
