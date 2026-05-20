@@ -20,12 +20,34 @@
     "subtitle": "اختر نوع المساعدة التي تحتاجها"
   },
   "map": {
-    "title": "الخريطة"
+    "title": "خريطة الموارد",
+    "subtitle": "عرض مباشر للمنظمات النشطة على الأرض",
+    "searchPlaceholder": "ابحث عن منظمة أو منطقة...",
+    "filters": {
+      "clothes": "ملابس وبطانيات",
+      "shelter": "مأوى وسكن",
+      "medical": "طبي وصحي",
+      "food": "طعام ومياه",
+      "nearby": "الأقرب لموقعي"
+    },
+    "cities": {
+      "akkar": "عكار",
+      "tripoli": "طرابلس",
+      "beirut": "بيروت",
+      "bekaa": "البقاع",
+      "baalbek": "بعلبك",
+      "south": "الجنوب",
+      "nabatieh": "النبطية"
+    },
+    "zoomIn": "تكبير",
+    "zoomOut": "تصغير",
+    "zoomHint": "اضغط أو استخدم التمرير للتكبير ورؤية المزيد"
   },
   "helpCenter": {
     "title": "مركز المساعدة",
     "subtitle": "مرحباً، كيف يمكننا مساعدتك اليوم؟",
     "emergencyTitle": "خطوط الطوارئ",
+    "hotlinesListTitle": "جميع الخطوط الساخنة",
     "openFilters": "افتح الفلاتر",
     "searchPlaceholder": "ابحث عن منظمة أو منطقة...",
     "resultsCountStatic": "20 / 30 منظمة",
@@ -55,6 +77,8 @@
     "filtersReset": "إعادة تعيين",
     "filtersApply": "تطبيق",
     "filtersShowMore": "عرض المزيد",
+    "moreLocations": "+{{count}} أخرى",
+    "locationsClose": "إغلاق",
     "filtersApply_zero": "عرض {{count}} منظمة",
     "filtersApply_one": "عرض {{count}} منظمة",
     "filtersApply_two": "عرض {{count}} منظمتين",

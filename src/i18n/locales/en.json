@@ -20,12 +20,34 @@
     "subtitle": "Choose the type of support you need"
   },
   "map": {
-    "title": "Map"
+    "title": "Resource Map",
+    "subtitle": "Live view of active organizations on the ground",
+    "searchPlaceholder": "Search for an organization or area...",
+    "filters": {
+      "clothes": "Clothes & Blankets",
+      "shelter": "Shelter",
+      "medical": "Medical",
+      "food": "Food & Water",
+      "nearby": "Near me"
+    },
+    "cities": {
+      "akkar": "Akkar",
+      "tripoli": "Tripoli",
+      "beirut": "Beirut",
+      "bekaa": "Bekaa",
+      "baalbek": "Baalbek",
+      "south": "South",
+      "nabatieh": "Nabatieh"
+    },
+    "zoomIn": "Zoom in",
+    "zoomOut": "Zoom out",
+    "zoomHint": "Pinch or scroll to zoom for more pins"
   },
   "helpCenter": {
     "title": "Help Center",
     "subtitle": "Hello, how can we help you today?",
     "emergencyTitle": "Emergency Hotlines",
+    "hotlinesListTitle": "All Hotlines",
     "openFilters": "Open filters",
     "searchPlaceholder": "Search for an organization or area...",
     "resultsCountStatic": "20 / 30 organizations",
@@ -51,6 +73,8 @@
     "filtersReset": "Reset",
     "filtersApply": "Apply",
     "filtersShowMore": "Show more",
+    "moreLocations": "+{{count}} more",
+    "locationsClose": "Close",
     "filtersApply_one": "Show {{count}} organization",
     "filtersApply_other": "Show {{count}} organizations",
     "filtersApplyCount_one": "Apply ({{count}} organization)",
