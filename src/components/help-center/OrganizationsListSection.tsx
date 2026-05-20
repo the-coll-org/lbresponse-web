@@ -9,7 +9,7 @@ interface OrganizationCardViewModel {
   title: string;
   category: string;
   description: string;
-  locations: string;
+  locations: string[];
   actionLabel: string;
   actionDisabled: boolean;
   actionType: 'phone' | 'email';
@@ -33,6 +33,8 @@ interface OrganizationsListSectionProps {
   loadMoreLabel: string;
   backToTopAriaLabel: string;
   showLoadMore: boolean;
+  moreLocationsLabel: (count: number) => string;
+  locationsDialogCloseLabel: string;
   onEmptyStateAction: () => void;
   onRetry: () => void;
   onLoadMore: () => void;
@@ -56,6 +58,8 @@ export function OrganizationsListSection({
   loadMoreLabel,
   backToTopAriaLabel,
   showLoadMore,
+  moreLocationsLabel,
+  locationsDialogCloseLabel,
   onEmptyStateAction,
   onRetry,
   onLoadMore,
@@ -126,7 +130,10 @@ export function OrganizationsListSection({
             title={item.title}
             category={item.category}
             description={item.description}
-            locations={item.locations}
+            locationsArray={item.locations}
+            moreLocationsLabel={moreLocationsLabel}
+            locationsDialogTitle={item.title}
+            locationsDialogCloseLabel={locationsDialogCloseLabel}
             actionLabel={item.actionLabel}
             actionIcon={
               item.actionDisabled ? undefined : item.actionType === 'phone' ? (

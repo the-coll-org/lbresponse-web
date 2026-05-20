@@ -1,3 +1,4 @@
+import { Button } from '../ui/Button';
 import { helpCenterIcons } from './helpCenter.icons';
 
 interface HelpCenterHeaderActionsProps {
@@ -9,11 +10,8 @@ interface HelpCenterHeaderActionsProps {
   onToggleTheme: () => void;
 }
 
-const ACTION_CLASS = [
-  'flex size-24 items-center justify-center rounded-md border',
-  'border-solid-white-400/35 bg-solid-white-400/10 text-solid-white-400',
-  'text-2xs font-weight-bold backdrop-blur-sm',
-].join(' ');
+const ACTION_CLASS =
+  'size-24 border border-solid-white-400/35 bg-solid-white-400/10 text-solid-white-400 text-2xs font-weight-bold backdrop-blur-sm';
 
 export function HelpCenterHeaderActions({
   theme,
@@ -28,23 +26,25 @@ export function HelpCenterHeaderActions({
 
   return (
     <>
-      <button
-        type="button"
+      <Button
+        variant="icon"
+        size="sm"
         aria-label={languageToggleAriaLabel}
         onClick={onToggleLanguage}
         className={ACTION_CLASS}
       >
         <span aria-hidden="true">{languageToggleLabel}</span>
-      </button>
+      </Button>
 
-      <button
-        type="button"
+      <Button
+        variant="icon"
+        size="sm"
         aria-label={themeToggleAriaLabel}
         onClick={onToggleTheme}
         className={ACTION_CLASS}
       >
         <ThemeIcon />
-      </button>
+      </Button>
     </>
   );
 }

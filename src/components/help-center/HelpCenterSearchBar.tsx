@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import { Badge } from '../ui/Badge';
+import { Button } from '../ui/Button';
 import { Tag } from '../ui/Tag';
 import { helpCenterIcons } from './helpCenter.icons';
 
@@ -84,14 +85,13 @@ export function HelpCenterSearchBar({
           />
         </div>
 
-        <button
-          type="button"
+        <Button
+          variant="icon"
           aria-label={filterAriaLabel}
           onClick={onOpenFilters}
-          className="relative flex size-40 shrink-0 items-center justify-center rounded-md border border-textfield-default-stroke bg-surface-primary text-text-black"
+          className="relative size-40 shrink-0 border border-textfield-default-stroke bg-surface-primary text-text-black"
         >
           <FilterIcon />
-
           {appliedFiltersCount > 0 && (
             <Badge
               variant="destructive"
@@ -101,21 +101,22 @@ export function HelpCenterSearchBar({
               {appliedFiltersCount}
             </Badge>
           )}
-        </button>
+        </Button>
       </div>
 
       {appliedFiltersCount > 0 && appliedFilterChips.length > 0 && (
         <div className="overflow-x-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
           <div className="flex w-max items-center gap-8">
-            <button
-              type="button"
+            <Button
+              variant="destructive"
+              size="sm"
               aria-label={clearFiltersAriaLabel}
               onClick={onClearFilters}
-              className="inline-flex h-32 shrink-0 items-center gap-4 rounded-md bg-badge-destructive px-8 text-2xs font-weight-medium text-badge-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid-primary-500"
+              leftIcon={<TrashIcon />}
+              className="h-32 shrink-0 bg-badge-destructive text-badge-text text-2xs"
             >
-              <TrashIcon />
-              <span>{clearFiltersLabel}</span>
-            </button>
+              {clearFiltersLabel}
+            </Button>
 
             {appliedFilterChips.map((chip) => (
               <Tag

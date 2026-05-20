@@ -68,7 +68,7 @@ export interface HelpCenterOrganizationViewModel {
   title: string;
   category: string;
   description: string;
-  locations: string;
+  locations: string[];
   actionLabel: string;
   actionDisabled: boolean;
   actionType: 'phone' | 'email';

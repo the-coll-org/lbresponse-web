@@ -131,6 +131,10 @@ export default function HelpCenterScreen() {
             })}
             backToTopAriaLabel={t('helpCenter.backToTop')}
             showLoadMore={canLoadMore}
+            moreLocationsLabel={(count) =>
+              t('helpCenter.moreLocations', { count })
+            }
+            locationsDialogCloseLabel={t('helpCenter.locationsClose')}
             onEmptyStateAction={handleOpenRequestOrganizationSheet}
             onRetry={handleRetryOrganizations}
             onLoadMore={handleLoadMore}
