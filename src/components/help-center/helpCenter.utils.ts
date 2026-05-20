@@ -96,7 +96,13 @@ export function buildOrganizationsUrl(
     }
 
     const parameterName =
-      groupId === 'provider_type' ? 'organization_type' : groupId;
+      groupId === 'provider_type'
+        ? 'organization_type'
+        : groupId === 'district'
+          ? 'city'
+          : groupId === 'sector'
+            ? 'category'
+            : groupId;
 
     params.set(parameterName, values.join(','));
   }
@@ -202,7 +208,7 @@ export function mapOrganizationToViewModel(
     organization.provider_type ??
     organization.organization_type ??
     labels.uncategorized;
-  const locations = (organization.locations ?? []).join(', ');
+  const locations = organization.locations ?? [];
   const phoneNumber = organization.phone_number?.trim() ?? '';
   const email = organization.email?.trim() ?? '';
 
@@ -260,7 +266,7 @@ export function mapHotlineToViewModel(
   const isArabic = language.startsWith('ar');
   const title = isArabic && item.name_ar ? item.name_ar : item.name_en;
   const contactNumber = item.hotline ?? item.phone;
-  const location = item.city ?? '';
+  const location = item.city ? [item.city] : [];
 
   if (contactNumber) {
     return {
