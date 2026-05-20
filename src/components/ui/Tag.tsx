@@ -13,7 +13,7 @@ export interface TagProps extends HTMLAttributes<HTMLSpanElement> {
 
 const BASE =
   'inline-flex items-center gap-4 p-8 rounded-md border ' +
-  'border-solid-black-300 bg-transparent text-solid-black-600 ' +
+  'border-textfield-default-stroke bg-transparent text-text-black ' +
   'text-button font-weight-medium whitespace-nowrap';
 
 const ICON_SLOT = 'shrink-0 size-16 flex items-center justify-center';

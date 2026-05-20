@@ -217,15 +217,17 @@ function OrgPins({
               height={22}
               rx={5}
               ry={5}
-              fill="white"
-              stroke="#d1d5db"
+              style={{
+                fill: 'var(--components-text-bg)',
+                stroke: 'var(--components-text-default-stroke)',
+              }}
               strokeWidth={0.9}
               filter="url(#pin-shadow)"
             />
             <g
               transform="translate(-6,-6) scale(0.5)"
               fill="none"
-              stroke="#374151"
+              style={{ stroke: 'var(--components-text-default-text)' }}
               strokeWidth="1.8"
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -236,8 +238,10 @@ function OrgPins({
             </g>
             <polygon
               points="0,13 -4,9 4,9"
-              fill="white"
-              stroke="#d1d5db"
+              style={{
+                fill: 'var(--components-text-bg)',
+                stroke: 'var(--components-text-default-stroke)',
+              }}
               strokeWidth={0.7}
             />
           </g>
@@ -385,8 +389,10 @@ function LebanonSvgMap({
                       cx={marker.x}
                       cy={marker.y}
                       r="20"
-                      fill="white"
-                      stroke="#9ca3af"
+                      style={{
+                        fill: 'var(--components-text-bg)',
+                        stroke: 'var(--components-text-default-stroke)',
+                      }}
                       strokeWidth={1.5}
                     />
                     <text
@@ -396,7 +402,7 @@ function LebanonSvgMap({
                       dominantBaseline="middle"
                       fontSize="12"
                       fontWeight="700"
-                      fill="#111827"
+                      style={{ fill: 'var(--text-black)' }}
                     >
                       {count}
                     </text>
@@ -407,7 +413,7 @@ function LebanonSvgMap({
                       dominantBaseline="middle"
                       fontSize="6.5"
                       fontWeight="500"
-                      fill="#374151"
+                      style={{ fill: 'var(--components-text-default-text)' }}
                     >
                       {name}
                     </text>
@@ -804,7 +810,7 @@ export default function MapScreen() {
                 className={[
                   'shrink-0 cursor-pointer',
                   activeFilter === id
-                    ? 'border-solid-primary-400 bg-solid-primary-300 text-solid-black-600'
+                    ? 'border-solid-primary-400 bg-solid-primary-300 text-solid-black-600 dark:bg-solid-primary-700 dark:border-solid-primary-500 dark:text-solid-white-400'
                     : '',
                 ].join(' ')}
                 onClick={() => handleToggleFilter(id)}
@@ -855,8 +861,8 @@ export default function MapScreen() {
                 width: 32,
                 height: 32,
                 borderRadius: 6,
-                border: '1.5px solid #d1d5db',
-                background: 'white',
+                border: '1.5px solid var(--components-text-default-stroke)',
+                background: 'var(--components-text-bg)',
                 fontSize: 18,
                 fontWeight: 600,
                 lineHeight: 1,
@@ -865,7 +871,7 @@ export default function MapScreen() {
                 alignItems: 'center',
                 justifyContent: 'center',
                 boxShadow: '0 1px 4px #00000022',
-                color: '#374151',
+                color: 'var(--text-black)',
               }}
             >
               {label}
