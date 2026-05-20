@@ -1,0 +1,14 @@
+<svg width="20" height="14" viewBox="0 0 20 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Red top band (25%) -->
+  <rect width="20" height="3.5" fill="#EF2B2D"/>
+  <!-- White middle band (50%) -->
+  <rect y="3.5" width="20" height="7" fill="white"/>
+  <!-- Red bottom band (25%) -->
+  <rect y="10.5" width="20" height="3.5" fill="#EF2B2D"/>
+  <!-- Cedar tree trunk -->
+  <rect x="9.5" y="9" width="1" height="1.5" fill="#009A44"/>
+  <!-- Cedar tree — lower wide spread -->
+  <path d="M10 4.5L6 9.5H14L10 4.5Z" fill="#009A44"/>
+  <!-- Cedar tree — upper narrower overlap to suggest branches -->
+  <path d="M10 4.5L7.5 7.5H12.5L10 4.5Z" fill="#009A44"/>
+</svg>
