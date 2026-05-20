@@ -1,4 +1,5 @@
 import { OrganizationCard } from '../ui/OrganizationCard';
+import { ServiceCardSkeleton } from '../ui/ServiceCardSkeleton';
 import { Tag } from '../ui/Tag';
 import { needHelpResponse } from './needHelp.data';
 import { needHelpIcons } from './needHelp.icons';
@@ -115,16 +116,6 @@ function NeedHelpBackToTop({ label }: { label: string }) {
   );
 }
 
-function LoadingSkeletonCard() {
-  return (
-    <div className="w-full animate-pulse rounded-lg border border-textfield-default-stroke bg-surface-primary p-12">
-      <div className="mb-8 h-16 w-2/3 rounded bg-solid-black-100" />
-      <div className="mb-4 h-12 w-1/3 rounded bg-solid-black-100" />
-      <div className="h-12 w-1/2 rounded bg-solid-black-100" />
-    </div>
-  );
-}
-
 export default function NeedHelpScreen() {
   const {
     language,
@@ -219,8 +210,8 @@ export default function NeedHelpScreen() {
 
         {isLoading ? (
           <div className="grid grid-cols-1 gap-12 md:grid-cols-2 xl:grid-cols-3">
-            {Array.from({ length: 4 }).map((_, i) => (
-              <LoadingSkeletonCard key={i} />
+            {Array.from({ length: 6 }).map((_, i) => (
+              <ServiceCardSkeleton key={i} />
             ))}
           </div>
         ) : (

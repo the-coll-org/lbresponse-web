@@ -9,6 +9,7 @@ import type {
   NeedHelpOrganizationViewModel,
   NeedHelpServiceIcon,
 } from '../need-help/needHelp.types';
+import { ServiceCardSkeleton } from '../ui/ServiceCardSkeleton';
 import { SvgIcon } from '../ui/SvgIcon';
 import searchSvg from '../../assets/help-center/search.svg?raw';
 import closeSvg from '../../assets/help-center/close.svg?raw';
@@ -630,14 +631,7 @@ function MapPeekSheet({
           {isLoading ? (
             <>
               {Array.from({ length: 3 }).map((_, i) => (
-                <div
-                  key={i}
-                  className="w-full animate-pulse rounded-lg border border-textfield-default-stroke bg-surface-primary p-12"
-                >
-                  <div className="mb-8 h-16 w-2/3 rounded bg-solid-black-100" />
-                  <div className="mb-4 h-12 w-1/3 rounded bg-solid-black-100" />
-                  <div className="h-12 w-1/2 rounded bg-solid-black-100" />
-                </div>
+                <ServiceCardSkeleton key={i} />
               ))}
             </>
           ) : organizations.length === 0 ? (

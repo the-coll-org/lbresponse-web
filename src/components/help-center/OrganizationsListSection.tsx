@@ -2,6 +2,7 @@ import { Alert } from '../ui/Alert';
 import { Button } from '../ui/Button';
 import { SearchEmptyState } from '../ui/SearchEmptyState';
 import { ServiceCard } from '../ui/ServiceCard';
+import { ServiceCardSkeleton } from '../ui/ServiceCardSkeleton';
 import { helpCenterIcons } from './helpCenter.icons';
 
 interface OrganizationCardViewModel {
@@ -73,8 +74,10 @@ export function OrganizationsListSection({
   if (isLoading) {
     return (
       <section className="relative flex flex-col gap-12">
-        <div className="flex min-h-160 items-center justify-center rounded-lg border border-textfield-default-stroke bg-surface-primary p-16 text-sm font-weight-medium text-text-black">
-          {loadingLabel}
+        <div className="grid grid-cols-1 gap-12 md:grid-cols-2 xl:grid-cols-3">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <ServiceCardSkeleton key={i} />
+          ))}
         </div>
       </section>
     );
