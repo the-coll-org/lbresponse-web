@@ -50,3 +50,49 @@ export interface NeedHelpResponse {
   filters: NeedHelpFilter[];
   services: NeedHelpService[];
 }
+
+export interface OrganizationApiItem {
+  id: string;
+  title: string;
+  title_ar: string | null;
+  description: string | null;
+  description_ar: string | null;
+  email: string | null;
+  verified: boolean;
+  phone_numbers: string[];
+  whatsapp: string | null;
+  social_media: unknown[];
+  type: string | null;
+  locations: string[];
+  sectors: string[];
+  services: unknown[];
+  service_count: number;
+  primary_contact_name: string | null;
+  secondary_contact: string | null;
+  map_url: string | null;
+  organization_type: string | null;
+  updated_at: string | null;
+}
+
+export interface OrganizationsApiResponse {
+  data: OrganizationApiItem[];
+  total: number;
+  page: number;
+  page_size: number;
+}
+
+export interface NeedHelpOrganizationViewModel {
+  id: string;
+  icon: NeedHelpServiceIcon;
+  title: string;
+  category: string;
+  description: string;
+  locations: string[];
+  mapUrl: string | null;
+  mapLabel: string;
+  updatedAtLabel: string | null;
+  actionType: 'phone' | 'whatsapp';
+  actionLabel: string;
+  actionHref: string;
+  actionDisabled: boolean;
+}

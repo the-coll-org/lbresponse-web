@@ -138,6 +138,24 @@ function PersonIcon() {
   );
 }
 
+function LocationPinIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      className="size-16"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M12 21c0 0-7-6.75-7-11a7 7 0 1 1 14 0c0 4.25-7 11-7 11Z" />
+      <circle cx="12" cy="10" r="2.5" />
+    </svg>
+  );
+}
+
 export const needHelpIcons = {
   search: SearchIcon,
   map: MapIcon,
@@ -150,4 +168,5 @@ export const needHelpIcons = {
   clothes: ClothesIcon,
   clock: ClockIcon,
   person: PersonIcon,
+  locationPin: LocationPinIcon,
 } as const;
