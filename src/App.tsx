@@ -1,6 +1,10 @@
+import { Navigate, Route, Routes } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from './hooks/useTheme';
 import AppLayout from './components/AppLayout';
+import NeedHelpScreen from './components/need-help/NeedHelpScreen';
+import HelpCenterScreen from './components/HelpCenterScreen';
+import MapScreen from './components/map/MapScreen';
 import './App.css';
 
 function App() {
@@ -16,11 +20,22 @@ function App() {
   return (
     <div className="app-shell">
       <main className="app-stage">
-        <AppLayout
-          theme={theme}
-          onToggleTheme={toggleTheme}
-          onToggleLanguage={toggleLanguage}
-        />
+        <Routes>
+          <Route
+            element={
+              <AppLayout
+                theme={theme}
+                onToggleTheme={toggleTheme}
+                onToggleLanguage={toggleLanguage}
+              />
+            }
+          >
+            <Route index element={<Navigate to="/need-help" replace />} />
+            <Route path="/need-help" element={<NeedHelpScreen />} />
+            <Route path="/help-center" element={<HelpCenterScreen />} />
+            <Route path="/map" element={<MapScreen />} />
+          </Route>
+        </Routes>
       </main>
     </div>
   );

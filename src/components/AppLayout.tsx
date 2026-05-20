@@ -1,9 +1,6 @@
-import { useState } from 'react';
+import { Outlet, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import MobileNavbar, { type NavbarTab } from './ui/MobileNavbar';
-import HelpCenterScreen from './HelpCenterScreen';
-import NeedHelpScreen from './need-help/NeedHelpScreen';
-import MapScreen from './map/MapScreen';
 import { ScreenHeader } from './ui/ScreenHeader';
 import { HelpCenterHeaderActions } from './help-center/HelpCenterHeaderActions';
 
@@ -13,15 +10,23 @@ interface AppLayoutProps {
   onToggleLanguage: () => void;
 }
 
+const pathToTab: Record<string, NavbarTab> = {
+  '/need-help': 'main',
+  '/help-center': 'hotlines',
+  '/map': 'map',
+};
+
 export default function AppLayout({
   theme,
   onToggleTheme,
   onToggleLanguage,
 }: AppLayoutProps) {
-  const [activeTab, setActiveTab] = useState<NavbarTab>('main');
+  const { pathname } = useLocation();
   const { t, i18n } = useTranslation();
   const language = i18n.resolvedLanguage ?? i18n.language ?? 'ar';
   const languageToggleLabel = language.startsWith('ar') ? 'EN' : 'AR';
+
+  const activeTab: NavbarTab = pathToTab[pathname] ?? 'main';
 
   const headerTitles: Record<NavbarTab, string> = {
     main: t('needHelp.title'),
@@ -52,14 +57,11 @@ export default function AppLayout({
         }
       />
       <main className="pb-[calc(72px+env(safe-area-inset-bottom)+24px)]">
-        {activeTab === 'main' && <NeedHelpScreen />}
-        {activeTab === 'hotlines' && <HelpCenterScreen />}
-        {activeTab === 'map' && <MapScreen />}
+        <Outlet />
       </main>
 
       <MobileNavbar
         selected={activeTab}
-        onSelect={setActiveTab}
         className="fixed bottom-0 inset-x-0 z-50 flex justify-center px-16 pb-[calc(env(safe-area-inset-bottom)+12px)]"
       />
     </div>

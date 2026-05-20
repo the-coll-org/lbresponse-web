@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 
 export type NavbarTab = 'main' | 'hotlines' | 'map';
@@ -69,6 +70,12 @@ function ReliefIcon() {
   );
 }
 
+const tabPaths: Record<NavbarTab, string> = {
+  main: '/need-help',
+  hotlines: '/help-center',
+  map: '/map',
+};
+
 // DOM order: main → hotlines → map.
 // With dir="rtl" the browser visually reverses flex-row so "main" (Need Help)
 // appears on the right (RTL start) and "map" on the left — matching the Figma.
@@ -80,15 +87,14 @@ const tabs: { id: NavbarTab; icon: () => JSX.Element }[] = [
 
 interface MobileNavbarProps {
   selected?: NavbarTab;
-  onSelect?: (tab: NavbarTab) => void;
   className?: string;
 }
 
 export default function MobileNavbar({
   selected = 'main',
-  onSelect,
   className,
 }: MobileNavbarProps) {
+  const navigate = useNavigate();
   const { i18n } = useTranslation();
   const language = i18n.resolvedLanguage ?? i18n.language ?? 'ar';
   const isAr = language.startsWith('ar');
@@ -109,7 +115,9 @@ export default function MobileNavbar({
               key={id}
               type="button"
               data-testid={`navbar-tab-${id}`}
-              onClick={() => onSelect?.(id)}
+              onClick={() => {
+                void navigate(tabPaths[id]);
+              }}
               className={[
                 'relative flex flex-1 flex-col items-center justify-center gap-4 h-full transition-colors',
                 active ? 'text-solid-black-600' : 'text-solid-black-400',
