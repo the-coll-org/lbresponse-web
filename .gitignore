@@ -34,3 +34,5 @@ screenshots/
 
 # PWA
 dev-dist/
+.gstack/
+docs/
