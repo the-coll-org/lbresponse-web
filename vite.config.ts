@@ -68,11 +68,11 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'http://localhost:3000',
+        target: 'https://lbresponse-api.onrender.com',
         changeOrigin: true,
       },
       '/health': {
-        target: 'http://localhost:3000',
+        target: 'https://lbresponse-api.onrender.com',
         changeOrigin: true,
       },
     },
