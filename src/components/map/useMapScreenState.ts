@@ -137,6 +137,7 @@ export function useMapScreenState() {
 
   const [regionCounts, setRegionCounts] = useState<Record<string, number>>({});
   const [isLoading, setIsLoading] = useState(true);
+  const hasLoadedOnce = useRef(false);
   const [error, setError] = useState(false);
 
   const [selectedOrgs, setSelectedOrgs] = useState<
@@ -170,7 +171,10 @@ export function useMapScreenState() {
       } catch {
         if (!cancelled) setError(true);
       } finally {
-        if (!cancelled) setIsLoading(false);
+        if (!cancelled) {
+          hasLoadedOnce.current = true;
+          setIsLoading(false);
+        }
       }
     }
 
@@ -292,6 +296,7 @@ export function useMapScreenState() {
     activeGovId,
     regionCounts,
     isLoading,
+    isInitialLoading: isLoading && !hasLoadedOnce.current,
     error,
     selectedOrgs,
     selectedOrgTotal,

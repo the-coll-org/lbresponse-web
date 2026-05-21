@@ -32,7 +32,6 @@ interface OrganizationsListSectionProps {
   emptyStateActionLabel: string;
   emptyStateActionAriaLabel: string;
   loadMoreLabel: string;
-  backToTopAriaLabel: string;
   showLoadMore: boolean;
   moreLocationsLabel: (count: number) => string;
   locationsDialogCloseLabel: string;
@@ -57,7 +56,6 @@ export function OrganizationsListSection({
   emptyStateActionLabel,
   emptyStateActionAriaLabel,
   loadMoreLabel,
-  backToTopAriaLabel,
   showLoadMore,
   moreLocationsLabel,
   locationsDialogCloseLabel,
@@ -69,7 +67,6 @@ export function OrganizationsListSection({
   const PhoneIcon = helpCenterIcons.phone;
   const WhatsappIcon = helpCenterIcons.whatsapp;
   const ChevronDownIcon = helpCenterIcons.chevronDown;
-  const ArrowUpIcon = helpCenterIcons.arrowUp;
 
   if (isLoading) {
     return (
@@ -170,16 +167,6 @@ export function OrganizationsListSection({
           </Button>
         </div>
       )}
-
-      <Button
-        variant="icon"
-        radius="full"
-        aria-label={backToTopAriaLabel}
-        onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-        className="fixed bottom-24 end-24 z-10 size-48 border border-textfield-default-stroke shadow-md"
-      >
-        <ArrowUpIcon />
-      </Button>
     </section>
   );
 }

@@ -1,4 +1,6 @@
+import { useEffect, useState } from 'react';
 import { useToast } from '../hooks/useToast';
+import { helpCenterIcons } from './help-center/helpCenter.icons';
 import { EmergencyHotlinesSection } from './help-center/EmergencyHotlinesSection';
 import { HelpCenterSearchBar } from './help-center/HelpCenterSearchBar';
 import { OrganizationsListSection } from './help-center/OrganizationsListSection';
@@ -8,6 +10,14 @@ import { RequestOrganizationSheet } from './ui/RequestOrganizationSheet';
 
 export default function HelpCenterScreen() {
   const { addToast } = useToast();
+  const [showFab, setShowFab] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => setShowFab(window.scrollY > 300);
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   const {
     t,
     query,
@@ -129,7 +139,6 @@ export default function HelpCenterScreen() {
                 0
               ),
             })}
-            backToTopAriaLabel={t('helpCenter.backToTop')}
             showLoadMore={canLoadMore}
             moreLocationsLabel={(count) =>
               t('helpCenter.moreLocations', { count })
@@ -167,6 +176,26 @@ export default function HelpCenterScreen() {
         onSecondaryAction={handleClearFilters}
         onPrimaryAction={handleApplyFilters}
       />
+
+      <button
+        type="button"
+        aria-label={t('helpCenter.backToTop')}
+        aria-hidden={showFab ? undefined : 'true'}
+        tabIndex={showFab ? 0 : -1}
+        onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+        className={[
+          'fixed bottom-[calc(100px+env(safe-area-inset-bottom))] end-16 z-[51]',
+          'flex size-48 items-center justify-center rounded-full',
+          'border border-textfield-default-stroke bg-button-icon-bg text-button-icon-icon shadow-md',
+          'transition-[opacity,transform] duration-200',
+          'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid-primary-500',
+          showFab
+            ? 'visible opacity-100 scale-100 cursor-pointer'
+            : 'invisible opacity-0 scale-[0.8] pointer-events-none',
+        ].join(' ')}
+      >
+        <helpCenterIcons.arrowUp />
+      </button>
 
       <RequestOrganizationSheet
         open={isRequestOrganizationSheetOpen}

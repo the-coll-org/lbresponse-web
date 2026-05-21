@@ -603,12 +603,12 @@ function MapPeekSheet({
         <div className="h-1.5 w-48 rounded-full bg-solid-black-400" />
       </div>
 
-      {/* Header — also draggable */}
-      <div
-        className="flex items-start justify-between gap-12 px-16 pb-12 touch-none select-none"
-        {...dragHandlers(true)}
-      >
-        <div className="flex flex-col gap-1">
+      {/* Header — title area is draggable; close button is separate */}
+      <div className="flex items-start justify-between gap-12 px-16 pb-12">
+        <div
+          className="flex min-w-0 flex-1 flex-col gap-1 touch-none select-none"
+          {...dragHandlers(true)}
+        >
           <p className="text-xl font-weight-medium text-text-black">
             {cityName}
           </p>
@@ -620,7 +620,6 @@ function MapPeekSheet({
           type="button"
           aria-label={isAr ? 'إغلاق' : 'Close'}
           onClick={triggerClose}
-          onPointerDown={(e) => e.stopPropagation()}
           className="flex size-24 shrink-0 items-center justify-center text-solid-black-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid-primary-500"
         >
           <SvgIcon svg={closeSvg} className="size-16" />
@@ -743,6 +742,7 @@ export default function MapScreen() {
     activeGovId,
     regionCounts,
     isLoading,
+    isInitialLoading,
     selectedOrgs,
     isLoadingOrgs,
     isLoadingMoreOrgs,
@@ -761,7 +761,7 @@ export default function MapScreen() {
   const handleZoomIn = useCallback(() => panZoom?.zoomIn(), [panZoom]);
   const handleZoomOut = useCallback(() => panZoom?.zoomOut(), [panZoom]);
 
-  if (isLoading) return <MapScreenSkeleton />;
+  if (isInitialLoading) return <MapScreenSkeleton />;
 
   // Find city name for the active governorate
   const activeMarker = CITY_MARKERS.find((m) => m.govId === activeGovId);
@@ -807,12 +807,8 @@ export default function MapScreen() {
               <Tag
                 key={id}
                 leadingIcon={<Icon />}
-                className={[
-                  'shrink-0 cursor-pointer',
-                  activeFilter === id
-                    ? 'border-solid-primary-400 bg-solid-primary-300 text-solid-black-600 dark:bg-solid-primary-700 dark:border-solid-primary-500 dark:text-solid-white-400'
-                    : '',
-                ].join(' ')}
+                active={activeFilter === id}
+                className="shrink-0 cursor-pointer"
                 onClick={() => handleToggleFilter(id)}
               >
                 {t(`map.filters.${id}`)}
@@ -826,6 +822,12 @@ export default function MapScreen() {
         className="relative overflow-hidden rounded-md"
         style={{ height: 'max(280px, calc(100dvh - 340px))' }}
       >
+        {isLoading && (
+          <div
+            className="absolute inset-0 z-10 animate-pulse rounded-md bg-solid-black-200/60 dark:bg-solid-black-700/60"
+            aria-hidden="true"
+          />
+        )}
         <LebanonSvgMap
           activeGovId={activeGovId as GovernorateId | null}
           onGovClick={handleGovClick as (id: GovernorateId) => void}
@@ -880,20 +882,23 @@ export default function MapScreen() {
         </div>
       </div>
 
-      <MapPeekSheet
-        open={activeGovId !== null}
-        cityName={cityName}
-        orgCount={orgCount}
-        organizations={selectedOrgs}
-        isLoading={isLoadingOrgs}
-        isLoadingMore={isLoadingMoreOrgs}
-        hasMore={hasMoreOrgs}
-        onLoadMore={() => {
-          void loadMoreOrgs();
-        }}
-        isAr={isAr}
-        onClose={() => handleGovClick(activeGovId!)}
-      />
+      {activeGovId !== null && (
+        <MapPeekSheet
+          key={activeGovId}
+          open={true}
+          cityName={cityName}
+          orgCount={orgCount}
+          organizations={selectedOrgs}
+          isLoading={isLoadingOrgs}
+          isLoadingMore={isLoadingMoreOrgs}
+          hasMore={hasMoreOrgs}
+          onLoadMore={() => {
+            void loadMoreOrgs();
+          }}
+          isAr={isAr}
+          onClose={() => handleGovClick(activeGovId)}
+        />
+      )}
     </section>
   );
 }

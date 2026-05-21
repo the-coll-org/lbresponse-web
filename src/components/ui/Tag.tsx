@@ -9,12 +9,30 @@ export interface TagProps extends HTMLAttributes<HTMLSpanElement> {
   trailingIcon?: ReactNode;
   /** Renders the built-in clear button when provided. */
   onClear?: () => void;
+  /** Renders the tag in its active/selected state. */
+  active?: boolean;
+  /**
+   * Controls how the active state is displayed.
+   * - `"filled"` (default): border + background fill
+   * - `"outline"`: border color only, no background change
+   */
+  activeVariant?: 'filled' | 'outline';
 }
 
 const BASE =
   'inline-flex items-center gap-4 p-8 rounded-md border ' +
-  'border-textfield-default-stroke bg-transparent text-text-black ' +
   'text-button font-weight-medium whitespace-nowrap';
+
+const INACTIVE =
+  'border-textfield-default-stroke bg-transparent text-text-black';
+
+const ACTIVE_FILLED =
+  'border-solid-primary-500 bg-solid-primary-300 text-solid-black-600 ' +
+  'dark:bg-solid-primary-700 dark:border-solid-primary-400 dark:text-solid-white-400';
+
+const ACTIVE_OUTLINE =
+  'border-solid-primary-500 bg-transparent text-text-black ' +
+  'dark:border-solid-primary-400';
 
 const ICON_SLOT = 'shrink-0 size-16 flex items-center justify-center';
 
@@ -42,6 +60,8 @@ export function Tag({
   leadingIcon,
   trailingIcon,
   onClear,
+  active = false,
+  activeVariant = 'filled',
   className = '',
   children,
   ...props
@@ -53,8 +73,16 @@ export function Tag({
     onClear?.();
   };
 
+  const activeClass =
+    activeVariant === 'outline' ? ACTIVE_OUTLINE : ACTIVE_FILLED;
+
   return (
-    <span className={`${BASE} ${className}`.trim()} {...props}>
+    <span
+      className={[BASE, active ? activeClass : INACTIVE, className]
+        .filter(Boolean)
+        .join(' ')}
+      {...props}
+    >
       {leadingIcon && <span className={ICON_SLOT}>{leadingIcon}</span>}
       {content && (
         <span

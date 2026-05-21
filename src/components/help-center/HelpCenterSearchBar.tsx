@@ -125,6 +125,8 @@ export function HelpCenterSearchBar({
                 tabIndex={0}
                 label={chip.label}
                 leadingIcon={chip.icon}
+                active
+                activeVariant="outline"
                 onClear={() => onRemoveFilter(chip.sectionId, chip.value)}
                 onClick={() => onRemoveFilter(chip.sectionId, chip.value)}
                 onKeyDown={(e) => {
@@ -133,7 +135,7 @@ export function HelpCenterSearchBar({
                     onRemoveFilter(chip.sectionId, chip.value);
                   }
                 }}
-                className="shrink-0 cursor-pointer border-solid-primary-400 bg-solid-primary-300 text-solid-black-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid-primary-500"
+                className="shrink-0 cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid-primary-500"
               />
             ))}
           </div>

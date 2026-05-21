@@ -170,12 +170,8 @@ export default function NeedHelpScreen() {
                 <Tag
                   key={filter.id}
                   leadingIcon={<FilterIcon icon={filter.icon} />}
-                  className={[
-                    'shrink-0 cursor-pointer',
-                    filter.active
-                      ? 'border-solid-primary-400 bg-solid-primary-300 text-solid-black-600'
-                      : '',
-                  ].join(' ')}
+                  active={filter.active}
+                  className="shrink-0 cursor-pointer"
                   onClick={() => handleToggleFilter(filter.id)}
                 >
                   {copyForLanguage(filter.label, language)}
