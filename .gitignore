@@ -36,3 +36,4 @@ screenshots/
 dev-dist/
 .gstack/
 docs/
+.vercel

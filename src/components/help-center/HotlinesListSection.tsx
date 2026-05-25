@@ -1,4 +1,12 @@
-import type { HotlineApiItem } from './helpCenter.types';
+export interface HotlineApiItem {
+  id: string;
+  name_en: string;
+  name_ar: string | null;
+  category: string;
+  city: string | null;
+  hotline: string | null;
+  phone: string;
+}
 
 interface HotlinesListSectionProps {
   title: string;

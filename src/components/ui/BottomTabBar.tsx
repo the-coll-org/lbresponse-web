@@ -1,3 +1,4 @@
+import type { JSX } from 'react';
 import { useTranslation } from 'react-i18next';
 
 export type Tab = 'need-help' | 'help-center';

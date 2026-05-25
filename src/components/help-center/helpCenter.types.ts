@@ -1,9 +1,3 @@
-export interface HelpCenterScreenProps {
-  theme: 'light' | 'dark';
-  onToggleTheme: () => void;
-  onToggleLanguage: () => void;
-}
-
 export interface HelpCenterHotline {
   id: string;
   labelKey: string;

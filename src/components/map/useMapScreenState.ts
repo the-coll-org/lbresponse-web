@@ -45,6 +45,31 @@ function buildMapUrl(activeFilter: string | null): string {
   return `/api/organizations/map${qs ? `?${qs}` : ''}`;
 }
 
+function formatRelativeTime(
+  isoDate: string | null,
+  isArabic: boolean
+): string | null {
+  if (!isoDate) return null;
+  try {
+    const diff = Date.now() - new Date(isoDate).getTime();
+    const minutes = Math.floor(diff / 60000);
+    const hours = Math.floor(minutes / 60);
+    const days = Math.floor(hours / 24);
+    if (isArabic) {
+      if (minutes < 1) return 'الآن';
+      if (minutes < 60) return `منذ ${minutes.toString()} دق`;
+      if (hours < 24) return `منذ ${hours.toString()} ساعة`;
+      return `منذ ${days.toString()} يوم`;
+    }
+    if (minutes < 1) return 'Just now';
+    if (minutes < 60) return `${minutes.toString()}m ago`;
+    if (hours < 24) return `${hours.toString()}h ago`;
+    return `${days.toString()}d ago`;
+  } catch {
+    return null;
+  }
+}
+
 function deriveIcon(sectors: string[] | null | undefined): NeedHelpServiceIcon {
   const normalized = (sectors ?? []).map((s) => s?.toLowerCase() ?? '');
   if (
@@ -75,6 +100,8 @@ function mapOrganizationToViewModel(
   const locations = org.locations ?? [];
   const icon = deriveIcon(sectors);
   const callPrefix = isArabic ? 'اتصل' : 'Call';
+  const mapLabel = isArabic ? 'خريطة' : 'Map';
+  const updatedAtLabel = formatRelativeTime(org.updated_at, isArabic);
 
   if (org.whatsapp) {
     const cleaned = org.whatsapp.replace(/\D/g, '');
@@ -86,6 +113,8 @@ function mapOrganizationToViewModel(
       description,
       locations,
       mapUrl: org.map_url,
+      mapLabel,
+      updatedAtLabel,
       actionType: 'whatsapp',
       actionLabel: `WhatsApp ${org.whatsapp}`,
       actionHref: `https://wa.me/${cleaned}`,
@@ -103,6 +132,8 @@ function mapOrganizationToViewModel(
       description,
       locations,
       mapUrl: org.map_url,
+      mapLabel,
+      updatedAtLabel,
       actionType: 'phone',
       actionLabel: `${callPrefix} ${phone}`,
       actionHref: `tel:${phone.replace(/\s/g, '')}`,
@@ -118,6 +149,8 @@ function mapOrganizationToViewModel(
     description,
     locations,
     mapUrl: org.map_url,
+    mapLabel,
+    updatedAtLabel,
     actionType: 'phone',
     actionLabel: isArabic ? 'غير متاح' : 'Unavailable',
     actionHref: '',

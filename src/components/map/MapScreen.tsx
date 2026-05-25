@@ -667,12 +667,7 @@ function MapPeekSheet({
                   title={org.title}
                   category={org.category}
                   description={org.description}
-                  locationsArray={org.locations}
-                  moreLocationsLabel={(count) =>
-                    isAr ? `+${count} أخرى` : `+${count} more`
-                  }
-                  locationsDialogTitle={org.title}
-                  locationsDialogCloseLabel={isAr ? 'إغلاق' : 'Close'}
+                  locations={org.locations.join(isAr ? '، ' : ', ')}
                   actionLabel={org.actionLabel}
                   actionIcon={
                     org.actionType === 'phone' ? (

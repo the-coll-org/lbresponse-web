@@ -293,11 +293,7 @@ describe('HelpCenterScreen', () => {
     await act(async () => {
       root.render(
         <ToastProvider>
-          <HelpCenterScreen
-            theme="light"
-            onToggleTheme={() => undefined}
-            onToggleLanguage={() => undefined}
-          />
+          <HelpCenterScreen />
         </ToastProvider>
       );
       await Promise.resolve();
