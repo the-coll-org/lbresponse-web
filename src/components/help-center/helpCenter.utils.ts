@@ -244,7 +244,9 @@ export function mapOrganizationToViewModel(
     organization.provider_type ??
     organization.organization_type ??
     labels.uncategorized;
-  const locations = organization.locations.join(', ');
+  const locations = organization.locations
+    .map((location) => location.trim())
+    .filter((location) => location.length > 0);
   const phoneNumber =
     organization.phone_numbers
       .map((number) => number.trim())
@@ -317,20 +319,13 @@ export function mergeSameContactCards(
       continue;
     }
     const existing = merged[existingIndex];
-    const districts = new Set(
-      existing.locations
-        .split(',')
-        .map((d) => d.trim())
-        .filter(Boolean)
-    );
-    organization.locations
-      .split(',')
-      .map((d) => d.trim())
-      .filter(Boolean)
-      .forEach((d) => districts.add(d));
+    const districts = new Set(existing.locations);
+    for (const district of organization.locations) {
+      districts.add(district);
+    }
     merged[existingIndex] = {
       ...existing,
-      locations: [...districts].join(', '),
+      locations: [...districts],
       isPinned: existing.isPinned || organization.isPinned,
     };
   }

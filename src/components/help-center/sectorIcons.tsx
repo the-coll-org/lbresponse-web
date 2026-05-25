@@ -10,7 +10,13 @@ const STROKE: SVGProps<SVGSVGElement> = {
 
 function Svg({ children }: { children: React.ReactNode }) {
   return (
-    <svg viewBox="0 0 24 24" {...STROKE} aria-hidden="true">
+    <svg
+      viewBox="0 0 24 24"
+      width="100%"
+      height="100%"
+      {...STROKE}
+      aria-hidden="true"
+    >
       {children}
     </svg>
   );

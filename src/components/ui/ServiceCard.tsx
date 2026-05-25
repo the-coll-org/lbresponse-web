@@ -1,5 +1,12 @@
-import type { HTMLAttributes, MouseEventHandler, ReactNode } from 'react';
+import {
+  useState,
+  type HTMLAttributes,
+  type MouseEventHandler,
+  type ReactNode,
+} from 'react';
+import { BottomSheet } from './BottomSheet';
 import { Button } from './Button';
+import { LocationsRow } from './LocationsRow';
 import { SvgIcon } from './SvgIcon';
 import locationSvg from '../../assets/help-center/location.svg?raw';
 
@@ -26,7 +33,13 @@ export interface ServiceCardProps extends Omit<
   title: ReactNode;
   category?: ReactNode;
   description?: ReactNode;
+  /** Legacy: renders the value directly as ReactNode. Ignored when `locationsArray` is set. */
   locations?: ReactNode;
+  /** When provided, renders locations with overflow tooltip / bottom-drawer behaviour. */
+  locationsArray?: string[];
+  moreLocationsLabel?: (count: number) => string;
+  locationsDialogTitle?: string;
+  locationsDialogCloseLabel?: string;
   actionLabel: ReactNode;
   actionIcon?: ReactNode;
   actionVariant?: 'filled' | 'success';
@@ -142,6 +155,10 @@ export function ServiceCard({
   category,
   description,
   locations,
+  locationsArray,
+  moreLocationsLabel = (n) => `+${n}`,
+  locationsDialogTitle = '',
+  locationsDialogCloseLabel = 'Close',
   actionLabel,
   actionIcon,
   actionVariant = 'filled',
@@ -156,6 +173,10 @@ export function ServiceCard({
   ...props
 }: ServiceCardProps) {
   const actionClass = ACTION_VARIANTS[actionVariant];
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const hasLocationsArray = Boolean(
+    locationsArray && locationsArray.length > 0
+  );
 
   const showHeader = Boolean(
     timeLabel ||
@@ -167,95 +188,140 @@ export function ServiceCard({
   );
 
   return (
-    <article className={`${CARD_BASE} ${className}`.trim()} {...props}>
-      <div className="flex h-full w-full flex-col items-start gap-12">
-        {showHeader && (
-          <div className="flex w-full flex-wrap items-center gap-8">
-            {categoryIcon && (
-              <CategoryIconBadge>{categoryIcon}</CategoryIconBadge>
-            )}
-            {primaryAction && <CardIconButton {...primaryAction} />}
-            <p className="min-w-0 text-sm font-weight-bold text-text-black break-words text-start">
-              {title}
-            </p>
-            {category && <CategoryPill>{category}</CategoryPill>}
-            <div className="ms-auto flex shrink-0 items-center gap-8">
-              {secondaryAction ? (
-                <CardIconButton {...secondaryAction} />
-              ) : timeLabel ? (
-                <TimeBadge>{timeLabel}</TimeBadge>
-              ) : null}
-            </div>
-          </div>
-        )}
-
-        {description && (
-          <p className="w-full text-2xs font-weight-regular text-textfield-default-text text-start">
-            {description}
-          </p>
-        )}
-
-        {locations && (
-          <div className="flex w-full items-start justify-start gap-4 text-start text-button font-weight-regular text-text-black">
-            <div
-              className="flex h-[1.5em] shrink-0 items-center justify-center"
-              aria-hidden="true"
-            >
-              <SvgIcon svg={locationSvg} className="size-16" />
-            </div>
-            <p className="break-words leading-[1.5em]">{locations}</p>
-          </div>
-        )}
-
-        <div className="mt-auto flex w-full items-stretch gap-8">
-          <Button
-            onClick={actionDisabled ? undefined : onActionClick}
-            disabled={actionDisabled}
-            className={[
-              'h-[44px] flex-1 min-h-[37px] max-h-[48px] overflow-hidden',
-              actionClass,
-            ].join(' ')}
-            rightIcon={
-              actionIcon ? (
-                <div
-                  className="flex size-16 shrink-0 items-center justify-center"
-                  aria-hidden="true"
-                >
-                  {actionIcon}
-                </div>
-              ) : undefined
-            }
-          >
-            {actionLabel}
-          </Button>
-          {secondaryButton && (
-            <button
-              type="button"
-              aria-label={secondaryButton.ariaLabel}
-              onClick={secondaryButton.onClick}
-              disabled={secondaryButton.disabled}
-              className={[
-                'inline-flex h-[44px] shrink-0 items-center justify-center gap-4 rounded-md',
-                'border border-textfield-default-stroke bg-surface-secondary px-12',
-                'text-button font-weight-medium text-text-black',
-                'focus-visible:outline-2 focus-visible:outline-offset-2',
-                'focus-visible:outline-solid-primary-500',
-                'disabled:cursor-not-allowed disabled:opacity-50',
-              ].join(' ')}
-            >
-              <span>{secondaryButton.label}</span>
-              {secondaryButton.icon && (
-                <span
-                  className="flex size-16 shrink-0 items-center justify-center"
-                  aria-hidden="true"
-                >
-                  {secondaryButton.icon}
-                </span>
+    <>
+      <article className={`${CARD_BASE} ${className}`.trim()} {...props}>
+        <div className="flex h-full w-full flex-col items-start gap-12">
+          {showHeader && (
+            <div className="flex w-full flex-wrap items-center gap-8">
+              {categoryIcon && (
+                <CategoryIconBadge>{categoryIcon}</CategoryIconBadge>
               )}
-            </button>
+              {primaryAction && <CardIconButton {...primaryAction} />}
+              <p className="min-w-0 text-sm font-weight-bold text-text-black break-words text-start">
+                {title}
+              </p>
+              {category && <CategoryPill>{category}</CategoryPill>}
+              <div className="ms-auto flex shrink-0 items-center gap-8">
+                {secondaryAction ? (
+                  <CardIconButton {...secondaryAction} />
+                ) : timeLabel ? (
+                  <TimeBadge>{timeLabel}</TimeBadge>
+                ) : null}
+              </div>
+            </div>
           )}
+
+          {description && (
+            <p className="w-full text-2xs font-weight-regular text-textfield-default-text text-start">
+              {description}
+            </p>
+          )}
+
+          {hasLocationsArray ? (
+            <LocationsRow
+              locations={locationsArray!}
+              moreLocationsLabel={moreLocationsLabel}
+              onShowAll={() => setDrawerOpen(true)}
+            />
+          ) : locations ? (
+            <div className="flex w-full items-start justify-start gap-4 text-start text-button font-weight-regular text-text-black">
+              <div
+                className="flex h-[1.5em] shrink-0 items-center justify-center"
+                aria-hidden="true"
+              >
+                <SvgIcon svg={locationSvg} className="size-16" />
+              </div>
+              <p className="break-words leading-[1.5em]">{locations}</p>
+            </div>
+          ) : null}
+
+          <div className="mt-auto flex w-full items-stretch gap-8">
+            <Button
+              onClick={actionDisabled ? undefined : onActionClick}
+              disabled={actionDisabled}
+              className={[
+                'h-[44px] flex-1 min-h-[37px] max-h-[48px] overflow-hidden',
+                actionClass,
+              ].join(' ')}
+              rightIcon={
+                actionIcon ? (
+                  <div
+                    className="flex size-16 shrink-0 items-center justify-center"
+                    aria-hidden="true"
+                  >
+                    {actionIcon}
+                  </div>
+                ) : undefined
+              }
+            >
+              {actionLabel}
+            </Button>
+            {secondaryButton && (
+              <button
+                type="button"
+                aria-label={secondaryButton.ariaLabel}
+                onClick={secondaryButton.onClick}
+                disabled={secondaryButton.disabled}
+                className={[
+                  'inline-flex h-[44px] shrink-0 items-center justify-center gap-4 rounded-md',
+                  'border border-textfield-default-stroke bg-surface-secondary px-12',
+                  'text-button font-weight-medium text-text-black',
+                  'focus-visible:outline-2 focus-visible:outline-offset-2',
+                  'focus-visible:outline-solid-primary-500',
+                  'disabled:cursor-not-allowed disabled:opacity-50',
+                ].join(' ')}
+              >
+                <span>{secondaryButton.label}</span>
+                {secondaryButton.icon && (
+                  <span
+                    className="flex size-16 shrink-0 items-center justify-center"
+                    aria-hidden="true"
+                  >
+                    {secondaryButton.icon}
+                  </span>
+                )}
+              </button>
+            )}
+          </div>
         </div>
-      </div>
-    </article>
+      </article>
+
+      {drawerOpen && hasLocationsArray && (
+        <BottomSheet
+          open={drawerOpen}
+          title={locationsDialogTitle}
+          onOpenChange={setDrawerOpen}
+          closeAriaLabel={locationsDialogCloseLabel}
+          footer={
+            <div className="flex w-full flex-col pt-16">
+              <div className="w-full border-t border-solid-black-300" />
+              <div className="px-16 pb-24 pt-12">
+                <Button
+                  variant="tonal"
+                  className="h-48 w-full justify-center"
+                  onClick={() => setDrawerOpen(false)}
+                >
+                  {locationsDialogCloseLabel}
+                </Button>
+              </div>
+            </div>
+          }
+        >
+          <div className="pb-24 pt-4">
+            <div className="flex flex-wrap items-center gap-4">
+              <div
+                className="flex size-16 shrink-0 items-center justify-center"
+                aria-hidden="true"
+              >
+                <SvgIcon svg={locationSvg} className="size-16" />
+              </div>
+              <p className="text-button font-weight-regular text-text-black">
+                {locationsArray!.join('، ')}
+              </p>
+            </div>
+          </div>
+        </BottomSheet>
+      )}
+    </>
   );
 }

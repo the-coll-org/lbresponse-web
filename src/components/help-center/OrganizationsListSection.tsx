@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { Button } from '../ui/Button';
 import { SearchEmptyState } from '../ui/SearchEmptyState';
 import { ServiceCard } from '../ui/ServiceCard';
@@ -66,6 +67,10 @@ export function OrganizationsListSection({
   onOpenMap,
   onTogglePinnedOrganization,
 }: OrganizationsListSectionProps) {
+  const { i18n } = useTranslation();
+  const isArabic = (i18n.resolvedLanguage ?? i18n.language ?? 'ar').startsWith(
+    'ar'
+  );
   const PhoneIcon = helpCenterIcons.phone;
   const WhatsappIcon = helpCenterIcons.whatsapp;
   const MailIcon = helpCenterIcons.mail;
@@ -148,7 +153,12 @@ export function OrganizationsListSection({
               title={item.title}
               category={item.category}
               description={item.description}
-              locations={item.locations}
+              locationsArray={item.locations}
+              moreLocationsLabel={(count: number) =>
+                isArabic ? `+${count} أخرى` : `+${count} more`
+              }
+              locationsDialogTitle={item.title}
+              locationsDialogCloseLabel={isArabic ? 'إغلاق' : 'Close'}
               actionLabel={item.primaryActionLabel}
               actionIcon={
                 item.primaryActionDisabled ? undefined : <ActionIcon />

@@ -58,7 +58,7 @@ export interface HelpCenterOrganizationViewModel {
   title: string;
   category: string;
   description: string;
-  locations: string;
+  locations: string[];
   primaryActionLabel: string;
   primaryActionType: 'phone' | 'whatsapp' | 'email' | 'unavailable';
   primaryActionValue: string;
