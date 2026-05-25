@@ -9,11 +9,11 @@ interface HelpCenterHeaderActionsProps {
   onToggleTheme: () => void;
 }
 
-const ACTION_CLASS = [
-  'flex size-24 items-center justify-center rounded-md border',
-  'border-solid-white-400/35 bg-solid-white-400/10 text-solid-white-400',
-  'text-2xs font-weight-bold backdrop-blur-sm',
-].join(' ');
+const ACTION_CLASS =
+  'inline-flex items-center justify-center min-h-32 min-w-32 p-8 rounded-md gap-2 ' +
+  'bg-button-tonal-bg text-button-tonal-text ' +
+  'cursor-pointer select-none transition-opacity ' +
+  'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid-primary-500';
 
 export function HelpCenterHeaderActions({
   theme,
@@ -34,7 +34,13 @@ export function HelpCenterHeaderActions({
         onClick={onToggleLanguage}
         className={ACTION_CLASS}
       >
-        <span aria-hidden="true">{languageToggleLabel}</span>
+        <span
+          className="text-button font-weight-medium leading-none"
+          aria-hidden="true"
+        >
+          {languageToggleLabel}
+        </span>
+        <helpCenterIcons.globe />
       </button>
 
       <button

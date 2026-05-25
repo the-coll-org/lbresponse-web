@@ -1,5 +1,6 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
+import { BrowserRouter } from 'react-router-dom';
 import './i18n';
 import './styles/themes.css';
 import './index.css';
@@ -25,13 +26,15 @@ installGlobalErrorHandlers();
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <ErrorBoundary>
-      <ThemeProvider>
-        <ToastProvider>
-          <App />
-          <ToastContainer />
-        </ToastProvider>
-      </ThemeProvider>
-    </ErrorBoundary>
+    <BrowserRouter>
+      <ErrorBoundary>
+        <ThemeProvider>
+          <ToastProvider>
+            <App />
+            <ToastContainer />
+          </ToastProvider>
+        </ThemeProvider>
+      </ErrorBoundary>
+    </BrowserRouter>
   </StrictMode>
 );

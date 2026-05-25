@@ -104,28 +104,46 @@ function SmallPhoneIcon() {
   return <SvgIcon svg={filterCategorySvg} className="size-16" />;
 }
 
-function SunIcon() {
+function GlobeIcon() {
   return (
     <svg
-      width="16"
-      height="16"
-      viewBox="0 0 24 24"
+      width="18"
+      height="18"
+      viewBox="0 0 18 18"
       fill="none"
       stroke="currentColor"
-      strokeWidth="1.8"
+      strokeWidth="1.5"
       strokeLinecap="round"
       strokeLinejoin="round"
       aria-hidden="true"
     >
-      <circle cx="12" cy="12" r="4" />
-      <path d="M12 2v2" />
-      <path d="M12 20v2" />
-      <path d="m4.93 4.93 1.41 1.41" />
-      <path d="m17.66 17.66 1.41 1.41" />
-      <path d="M2 12h2" />
-      <path d="M20 12h2" />
-      <path d="m6.34 17.66-1.41 1.41" />
-      <path d="m19.07 4.93-1.41 1.41" />
+      <path d="M9 15.75C9.88642 15.75 10.7642 15.5754 11.5831 15.2362C12.4021 14.897 13.1462 14.3998 13.773 13.773C14.3998 13.1462 14.897 12.4021 15.2362 11.5831C15.5754 10.7642 15.75 9.88642 15.75 9C15.75 8.11358 15.5754 7.23583 15.2362 6.41689C14.897 5.59794 14.3998 4.85382 13.773 4.22703C13.1462 3.60023 12.4021 3.10303 11.5831 2.76381C10.7642 2.42459 9.88642 2.25 9 2.25M9 15.75C8.11358 15.75 7.23583 15.5754 6.41689 15.2362C5.59794 14.897 4.85382 14.3998 4.22703 13.773C3.60023 13.1462 3.10303 12.4021 2.76381 11.5831C2.42459 10.7642 2.25 9.88642 2.25 9C2.25 8.11358 2.42459 7.23583 2.76381 6.41689C3.10303 5.59794 3.60023 4.85382 4.22703 4.22703C4.85382 3.60023 5.59794 3.10303 6.41689 2.76381C7.23583 2.42459 8.11358 2.25 9 2.25M9 15.75C11.0707 15.75 11.9557 11.8777 11.9557 9C11.9557 6.12225 11.0707 2.25 9 2.25M9 15.75C6.92925 15.75 6.04425 11.8777 6.04425 9C6.04425 6.12225 6.92925 2.25 9 2.25M2.625 6.75H15.375M2.625 11.25H15.375" />
+    </svg>
+  );
+}
+
+function SunIcon() {
+  return (
+    <svg
+      width="18"
+      height="18"
+      viewBox="0 0 18 18"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <circle cx="9" cy="9" r="3" />
+      <path d="M9 1.5V3" />
+      <path d="M9 15V16.5" />
+      <path d="M3.697 3.697L4.757 4.757" />
+      <path d="M13.243 13.243L14.303 14.303" />
+      <path d="M1.5 9H3" />
+      <path d="M15 9H16.5" />
+      <path d="M4.757 13.243L3.697 14.303" />
+      <path d="M14.303 3.697L13.243 4.757" />
     </svg>
   );
 }
@@ -172,17 +190,17 @@ function MailIcon() {
 function MoonIcon() {
   return (
     <svg
-      width="16"
-      height="16"
-      viewBox="0 0 24 24"
+      width="18"
+      height="18"
+      viewBox="0 0 18 18"
       fill="none"
       stroke="currentColor"
-      strokeWidth="1.8"
+      strokeWidth="1.5"
       strokeLinecap="round"
       strokeLinejoin="round"
       aria-hidden="true"
     >
-      <path d="M21 12.79A9 9 0 1 1 11.21 3c0 5.21 4.23 9.44 9.44 9.79z" />
+      <path d="M9.00001 2.25H9.29476C8.33126 3.14528 7.71195 4.34989 7.54447 5.65442C7.377 6.95895 7.67195 8.28093 8.37806 9.39055C9.08416 10.5002 10.1568 11.3273 11.4095 11.7281C12.6621 12.1289 14.0157 12.0781 15.2348 11.5845C14.7658 12.7129 13.9993 13.6928 13.0171 14.4197C12.0349 15.1466 10.8738 15.5933 9.65769 15.712C8.44153 15.8308 7.21595 15.6172 6.11167 15.0941C5.00739 14.5709 4.06584 13.7578 3.38745 12.7415C2.70905 11.7251 2.31927 10.5437 2.25967 9.32323C2.20007 8.10275 2.47289 6.88898 3.04903 5.81139C3.62517 4.7338 4.48302 3.83282 5.53108 3.20455C6.57913 2.57629 7.77807 2.2443 9.00001 2.244V2.25Z" />
     </svg>
   );
 }
@@ -204,6 +222,7 @@ export const helpCenterIcons = {
   smallPin: SmallPinIcon,
   smallShield: SmallShieldIcon,
   smallPhone: SmallPhoneIcon,
+  globe: GlobeIcon,
   sun: SunIcon,
   moon: MoonIcon,
   mail: MailIcon,

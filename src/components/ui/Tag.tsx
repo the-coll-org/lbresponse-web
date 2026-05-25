@@ -9,20 +9,38 @@ export interface TagProps extends HTMLAttributes<HTMLSpanElement> {
   trailingIcon?: ReactNode;
   /** Renders the built-in clear button when provided. */
   onClear?: () => void;
+  /** Renders the tag in its active/selected state. */
+  active?: boolean;
+  /**
+   * Controls how the active state is displayed.
+   * - `"filled"` (default): border + background fill
+   * - `"outline"`: border color only, no background change
+   */
+  activeVariant?: 'filled' | 'outline';
 }
 
 const BASE =
-  'inline-flex items-center gap-4 h-[32px] px-[8px] rounded-md border ' +
-  'border-solid-black-300 bg-transparent text-solid-black-600 ' +
+  'inline-flex items-center gap-4 p-8 rounded-md border ' +
   'text-button font-weight-medium whitespace-nowrap';
 
-const ICON_SLOT = 'shrink-0 size-[18px] flex items-center justify-center';
+const INACTIVE =
+  'border-textfield-default-stroke bg-transparent text-text-black';
+
+const ACTIVE_FILLED =
+  'border-solid-primary-500 bg-solid-primary-300 text-solid-black-600 ' +
+  'dark:bg-solid-primary-700 dark:border-solid-primary-400 dark:text-solid-white-400';
+
+const ACTIVE_OUTLINE =
+  'border-solid-primary-500 bg-transparent text-text-black ' +
+  'dark:border-solid-primary-400';
+
+const ICON_SLOT = 'shrink-0 size-16 flex items-center justify-center';
 
 function ClearIcon() {
   return (
     <svg
-      width="18"
-      height="18"
+      width="16"
+      height="16"
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
@@ -42,6 +60,8 @@ export function Tag({
   leadingIcon,
   trailingIcon,
   onClear,
+  active = false,
+  activeVariant = 'filled',
   className = '',
   children,
   ...props
@@ -53,11 +73,22 @@ export function Tag({
     onClear?.();
   };
 
+  const activeClass =
+    activeVariant === 'outline' ? ACTIVE_OUTLINE : ACTIVE_FILLED;
+
   return (
-    <span className={`${BASE} ${className}`.trim()} {...props}>
+    <span
+      className={[BASE, active ? activeClass : INACTIVE, className]
+        .filter(Boolean)
+        .join(' ')}
+      {...props}
+    >
       {leadingIcon && <span className={ICON_SLOT}>{leadingIcon}</span>}
       {content && (
-        <span className="shrink-0 min-w-0" dir="auto">
+        <span
+          className="h-16 flex items-center min-w-0 leading-none"
+          dir="auto"
+        >
           {content}
         </span>
       )}
