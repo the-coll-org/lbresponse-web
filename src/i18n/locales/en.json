@@ -44,14 +44,14 @@
     "zoomHint": "Pinch or scroll to zoom for more pins"
   },
   "helpCenter": {
-    "title": "Help Center",
-    "subtitle": "Hello, how can we help you today?",
+    "title": "Get Help",
+    "subtitle": "Choose the type of help you need",
     "emergencyTitle": "Emergency Hotlines",
     "hotlinesListTitle": "All Hotlines",
     "openFilters": "Open filters",
     "searchPlaceholder": "Search for an organization or area...",
     "resultsCountStatic": "20 / 30 organizations",
-    "organizationLabel": "organization",
+    "organizationLabel": "result",
     "loadMoreStatic": "Show more (10 remaining)",
     "loadMore_one": "Show more ({{count}} remaining)",
     "loadMore_other": "Show more ({{count}} remaining)",
@@ -83,6 +83,8 @@
     "emptyStateDescription": "We couldn't find \"{{query}}\"",
     "emptyStateNoDataTitle": "No organizations available",
     "emptyStateNoDataDescription": "There are no organizations to show right now.",
+    "errorStateTitle": "We couldn't load the list",
+    "errorStateDescription": "Please check your connection and try again.",
     "emptyStateAction": "Request this organization",
     "emptyStateActionAriaLabel": "Request this organization",
     "emptyStateToastHeading": "Request received",
@@ -123,8 +125,11 @@
       }
     },
     "contactCall": "Call",
+    "contactWhatsapp": "WhatsApp",
     "contactEmail": "Email",
     "contactUnavailable": "Contact unavailable",
+    "mapAction": "Map",
+    "mapActionAriaLabel": "Open location on Google Maps",
     "uncategorized": "Uncategorized",
     "hotlines": {
       "marineRescue": "Marine rescue",

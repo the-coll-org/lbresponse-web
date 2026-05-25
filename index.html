@@ -9,10 +9,37 @@
     <link rel="apple-touch-icon" href="/favicon.svg" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Tajawal:wght@400;500;700&display=swap"
-    />
+    <script>
+      // Load only the active language's font family on initial paint.
+      // Saves one full font CSS + WOFF2 download on low-bandwidth devices.
+      // The other family is lazy-loaded when the user toggles language.
+      (function () {
+        try {
+          var saved = localStorage.getItem('i18nextLng');
+          var lang = (saved || 'ar').toLowerCase();
+          // Default to Arabic when nothing is saved; only switch to Roboto for
+          // an explicit English preference.
+          var family = lang.indexOf('en') === 0 ? 'Roboto' : 'Tajawal';
+          var link = document.createElement('link');
+          link.rel = 'stylesheet';
+          link.href =
+            'https://fonts.googleapis.com/css2?family=' +
+            family +
+            ':wght@400;500;700&display=swap';
+          document.head.appendChild(link);
+          window.__lbResponseLoadedFonts = { Roboto: false, Tajawal: false };
+          window.__lbResponseLoadedFonts[family] = true;
+        } catch (e) {
+          /* fall through to noscript */
+        }
+      })();
+    </script>
+    <noscript>
+      <link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Tajawal:wght@400;500;700&display=swap"
+      />
+    </noscript>
     <title>LB Response — Lebanon Crisis Response Platform</title>
   </head>
   <body>

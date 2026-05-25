@@ -44,8 +44,8 @@
     "zoomHint": "اضغط أو استخدم التمرير للتكبير ورؤية المزيد"
   },
   "helpCenter": {
-    "title": "مركز المساعدة",
-    "subtitle": "مرحباً، كيف يمكننا مساعدتك اليوم؟",
+    "title": "أحتاج مساعدة",
+    "subtitle": "اختر نوع المساعدة التي تحتاجها",
     "emergencyTitle": "خطوط الطوارئ",
     "hotlinesListTitle": "جميع الخطوط الساخنة",
     "openFilters": "افتح الفلاتر",
@@ -95,6 +95,8 @@
     "emptyStateDescription": "لم نتمكن من العثور على \"{{query}}\"",
     "emptyStateNoDataTitle": "لا توجد منظمات متاحة",
     "emptyStateNoDataDescription": "لا توجد منظمات لعرضها حالياً.",
+    "errorStateTitle": "تعذّر تحميل القائمة",
+    "errorStateDescription": "يرجى التحقق من الاتصال والمحاولة مرة أخرى.",
     "emptyStateAction": "طلب إضافة هذه المنظمة",
     "emptyStateActionAriaLabel": "طلب إضافة هذه المنظمة",
     "emptyStateToastHeading": "تم استلام الطلب",
@@ -135,8 +137,11 @@
       }
     },
     "contactCall": "اتصل",
+    "contactWhatsapp": "واتساب",
     "contactEmail": "راسل",
     "contactUnavailable": "بيانات التواصل غير متاحة",
+    "mapAction": "خريطة",
+    "mapActionAriaLabel": "فتح الموقع على خرائط جوجل",
     "uncategorized": "غير مصنفة",
     "hotlines": {
       "marineRescue": "الإنقاذ البحري",

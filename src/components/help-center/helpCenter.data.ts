@@ -54,4 +54,4 @@ export const FILTER_SECTIONS: HelpCenterFilterSectionConfig[] = [
 ];
 
 export const MAX_PINNED_ORGANIZATIONS = 5;
-export const ORGANIZATIONS_PAGE_SIZE = 20;
+export const ORGANIZATIONS_PAGE_SIZE = 12;

@@ -1,33 +1,36 @@
-import { useEffect, useState } from 'react';
 import { useToast } from '../hooks/useToast';
-import { helpCenterIcons } from './help-center/helpCenter.icons';
 import { EmergencyHotlinesSection } from './help-center/EmergencyHotlinesSection';
+import { HelpCenterFilterChips } from './help-center/HelpCenterFilterChips';
+import { HelpCenterHeaderActions } from './help-center/HelpCenterHeaderActions';
+import { SectorIcon } from './help-center/sectorIcons';
 import { HelpCenterSearchBar } from './help-center/HelpCenterSearchBar';
 import { OrganizationsListSection } from './help-center/OrganizationsListSection';
+import type { HelpCenterScreenProps } from './help-center/helpCenter.types';
 import { useHelpCenterScreenState } from './help-center/useHelpCenterScreenState';
 import { HelpCenterFiltersSheet } from './ui/HelpCenterFiltersSheet';
+import { PinnedOrganizationsSheet } from './ui/PinnedOrganizationsSheet';
 import { RequestOrganizationSheet } from './ui/RequestOrganizationSheet';
+import { ScreenHeader } from './ui/ScreenHeader';
 
-export default function HelpCenterScreen() {
+export default function HelpCenterScreen({
+  theme,
+  onToggleTheme,
+  onToggleLanguage,
+}: HelpCenterScreenProps) {
   const { addToast } = useToast();
-  const [showFab, setShowFab] = useState(false);
-
-  useEffect(() => {
-    const handleScroll = () => setShowFab(window.scrollY > 300);
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
   const {
     t,
     query,
     visibleOrganizations,
     filterSections,
+    appliedFilters,
     hotlines,
+    pinnedOrganizations,
     appliedFiltersCount,
     appliedFilterChips,
     draftFilters,
     isFilterOpen,
+    isPinnedOrganizationsSheetOpen,
     isRequestOrganizationSheetOpen,
     isOrganizationsLoading,
     isLoadingMore,
@@ -36,12 +39,14 @@ export default function HelpCenterScreen() {
     requestOrganizationErrors,
     isSubmittingOrganizationRequest,
     organizationTypeOptions,
+    languageToggleLabel,
     trimmedQuery,
     hasActiveQuery,
     hasSearchResults,
     totalOrganizations,
     draftOrganizationsCount,
     canLoadMore,
+    maxPinnedOrganizations,
     handleQueryChange,
     handleRemoveFilter,
     handleOpenFilters,
@@ -49,6 +54,10 @@ export default function HelpCenterScreen() {
     handleClearFilters,
     handleApplyFilters,
     handleToggleFilterOption,
+    handleToggleSectorChip,
+    handleTogglePinnedOrganization,
+    handleReplacePinnedOrganization,
+    handleClosePinnedOrganizationsSheet,
     handleOpenRequestOrganizationSheet,
     handleCloseRequestOrganizationSheet,
     handleRequestOrganizationFieldChange,
@@ -57,15 +66,15 @@ export default function HelpCenterScreen() {
     handleLoadMore,
     handleRetryOrganizations,
     handleActivateOrganizationAction,
+    handleOpenMap,
     setIsFilterOpen,
+    setIsPinnedOrganizationsSheetOpen,
   } = useHelpCenterScreenState();
 
   const resultsLabel =
     hasActiveQuery && !hasSearchResults
       ? `0 ${t('helpCenter.organizationLabel')}`
-      : `${visibleOrganizations.length} / ${totalOrganizations} ${t(
-          'helpCenter.organizationLabel'
-        )}`;
+      : `${visibleOrganizations.length} / ${totalOrganizations} ${t('helpCenter.organizationLabel')}`;
 
   const requestOrganizationSheetCopy = {
     title: t('helpCenter.requestForm.title'),
@@ -85,6 +94,21 @@ export default function HelpCenterScreen() {
   return (
     <>
       <section className="relative min-h-screen w-full overflow-hidden bg-surface-primary pb-32">
+        <ScreenHeader
+          title={t('helpCenter.title')}
+          subtitle={t('helpCenter.subtitle')}
+          actions={
+            <HelpCenterHeaderActions
+              theme={theme}
+              languageToggleLabel={languageToggleLabel}
+              languageToggleAriaLabel={t('common.toggleLanguage')}
+              themeToggleAriaLabel={t('common.toggleTheme')}
+              onToggleLanguage={onToggleLanguage}
+              onToggleTheme={onToggleTheme}
+            />
+          }
+        />
+
         <div className="mx-auto flex w-full max-w-[1200px] flex-col gap-22 px-16 pt-12 md:px-32 lg:px-48">
           <EmergencyHotlinesSection
             title={t('helpCenter.emergencyTitle')}
@@ -106,13 +130,33 @@ export default function HelpCenterScreen() {
             onRemoveFilter={handleRemoveFilter}
           />
 
+          {(() => {
+            const sectorSection = filterSections.find((s) => s.id === 'sector');
+            if (!sectorSection || sectorSection.options.length === 0)
+              return null;
+            const activeSector = appliedFilters.sector?.[0] ?? null;
+            return (
+              <HelpCenterFilterChips
+                ariaLabel={t('helpCenter.filtersTitle')}
+                chips={sectorSection.options.map((option) => ({
+                  id: option.value,
+                  label: option.label,
+                  icon: <SectorIcon sector={option.value} />,
+                  isActive: option.value === activeSector,
+                  onClick: () => handleToggleSectorChip(option.value),
+                }))}
+              />
+            );
+          })()}
+
           <OrganizationsListSection
             organizations={visibleOrganizations}
             isLoading={isOrganizationsLoading}
             isLoadingMore={isLoadingMore}
             hasError={organizationsError}
             loadingLabel={t('common.loading')}
-            errorLabel={t('common.fetchError')}
+            errorTitle={t('helpCenter.errorStateTitle')}
+            errorDescription={t('helpCenter.errorStateDescription')}
             retryLabel={t('showcase.alert.retry')}
             hasActiveQuery={hasActiveQuery}
             hasSearchResults={hasSearchResults}
@@ -139,15 +183,19 @@ export default function HelpCenterScreen() {
                 0
               ),
             })}
+            backToTopAriaLabel={t('helpCenter.backToTop')}
+            pinActionAriaLabel={t('helpCenter.pinAction')}
+            unpinActionAriaLabel={t('helpCenter.unpinAction')}
+            verifyActionAriaLabel={t('helpCenter.verifyAction')}
+            mapActionLabel={t('helpCenter.mapAction')}
+            mapActionAriaLabel={t('helpCenter.mapActionAriaLabel')}
             showLoadMore={canLoadMore}
-            moreLocationsLabel={(count) =>
-              t('helpCenter.moreLocations', { count })
-            }
-            locationsDialogCloseLabel={t('helpCenter.locationsClose')}
             onEmptyStateAction={handleOpenRequestOrganizationSheet}
             onRetry={handleRetryOrganizations}
             onLoadMore={handleLoadMore}
             onActivateOrganizationAction={handleActivateOrganizationAction}
+            onOpenMap={handleOpenMap}
+            onTogglePinnedOrganization={handleTogglePinnedOrganization}
           />
         </div>
       </section>
@@ -177,25 +225,32 @@ export default function HelpCenterScreen() {
         onPrimaryAction={handleApplyFilters}
       />
 
-      <button
-        type="button"
-        aria-label={t('helpCenter.backToTop')}
-        aria-hidden={showFab ? undefined : 'true'}
-        tabIndex={showFab ? 0 : -1}
-        onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-        className={[
-          'fixed bottom-[calc(100px+env(safe-area-inset-bottom))] end-16 z-[51]',
-          'flex size-48 items-center justify-center rounded-full',
-          'border border-textfield-default-stroke bg-button-icon-bg text-button-icon-icon shadow-md',
-          'transition-[opacity,transform] duration-200',
-          'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid-primary-500',
-          showFab
-            ? 'visible opacity-100 scale-100 cursor-pointer'
-            : 'invisible opacity-0 scale-[0.8] pointer-events-none',
-        ].join(' ')}
-      >
-        <helpCenterIcons.arrowUp />
-      </button>
+      <PinnedOrganizationsSheet
+        open={isPinnedOrganizationsSheetOpen}
+        title={t('helpCenter.pinnedOrganizationsTitle')}
+        description={t('helpCenter.pinnedOrganizationsDescription', {
+          count: maxPinnedOrganizations,
+        })}
+        closeAriaLabel={t('helpCenter.pinnedOrganizationsClose')}
+        cancelLabel={t('helpCenter.pinnedOrganizationsCancel')}
+        replaceLabel={t('helpCenter.pinnedOrganizationsReplace')}
+        replaceAriaLabel={(organizationTitle) =>
+          t('helpCenter.pinnedOrganizationsReplaceAriaLabel', {
+            organization: organizationTitle,
+          })
+        }
+        pinnedOrganizations={pinnedOrganizations}
+        onOpenChange={(open) => {
+          if (!open) {
+            handleClosePinnedOrganizationsSheet();
+            return;
+          }
+
+          setIsPinnedOrganizationsSheetOpen(true);
+        }}
+        onCancel={handleClosePinnedOrganizationsSheet}
+        onReplace={handleReplacePinnedOrganization}
+      />
 
       <RequestOrganizationSheet
         open={isRequestOrganizationSheetOpen}

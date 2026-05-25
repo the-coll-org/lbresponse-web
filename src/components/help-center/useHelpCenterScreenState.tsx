@@ -1,13 +1,15 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { type HelpCenterFilterSection } from '../ui/HelpCenterFiltersSheet';
 import {
   FILTER_SECTIONS,
   HOTLINES,
+  MAX_PINNED_ORGANIZATIONS,
   ORGANIZATIONS_PAGE_SIZE,
 } from './helpCenter.data';
 import { helpCenterIcons } from './helpCenter.icons';
 import {
+  buildPinnedOrganizationOptions,
   buildOrganizationRequestPayload,
   buildOrganizationsUrl,
   cloneFilterSelection,
@@ -18,26 +20,21 @@ import {
   findOrganizationById,
   isValidRequestEmail,
   isValidRequestPhone,
-  mapHotlineToViewModel,
+  mapOrganizationToViewModel,
   mergeOrganizations,
   normalizeRequestContactInput,
+  sortPinnedOrganizations,
 } from './helpCenter.utils';
 import type {
   HelpCenterFiltersResponse,
   HelpCenterFilterSelection,
+  HelpCenterOrganizationsResponse,
+  HelpCenterOrganizationApiItem,
   HelpCenterOrganizationRequestErrors,
   HelpCenterOrganizationRequestField,
   HelpCenterOrganizationRequestFormValues,
   HelpCenterOrganizationType,
-  HotlineApiItem,
 } from './helpCenter.types';
-
-interface HotlinesPagedResponse {
-  data: HotlineApiItem[];
-  total: number;
-  page: number;
-  page_size: number;
-}
 
 function mapSectionIcon(icon: 'pin' | 'shield' | 'phone') {
   if (icon === 'pin') {
@@ -55,17 +52,29 @@ export function useHelpCenterScreenState() {
   const { t, i18n } = useTranslation();
   const [query, setQuery] = useState('');
   const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [isPinnedOrganizationsSheetOpen, setIsPinnedOrganizationsSheetOpen] =
+    useState(false);
   const [isRequestOrganizationSheetOpen, setIsRequestOrganizationSheetOpen] =
     useState(false);
+  const [
+    organizationPendingReplacementId,
+    setOrganizationPendingReplacementId,
+  ] = useState<string | null>(null);
+  const [pinnedOrganizationIds, setPinnedOrganizationIds] = useState<string[]>(
+    []
+  );
   const [appliedFilters, setAppliedFilters] =
     useState<HelpCenterFilterSelection>(() => createEmptyFilterSelection());
   const [draftFilters, setDraftFilters] = useState<HelpCenterFilterSelection>(
     () => createEmptyFilterSelection()
   );
   const [page, setPage] = useState(1);
-  const [allOrganizations, setAllOrganizations] = useState<HotlineApiItem[]>(
-    []
-  );
+  const [allOrganizations, setAllOrganizations] = useState<
+    HelpCenterOrganizationApiItem[]
+  >([]);
+  const [organizationDirectory, setOrganizationDirectory] = useState<
+    HelpCenterOrganizationApiItem[]
+  >([]);
   const [totalOrganizations, setTotalOrganizations] = useState(0);
   const [filtersResponse, setFiltersResponse] =
     useState<HelpCenterFiltersResponse | null>(null);
@@ -74,6 +83,7 @@ export function useHelpCenterScreenState() {
   const [organizationsError, setOrganizationsError] = useState(false);
   const [draftOrganizationsCount, setDraftOrganizationsCount] = useState(0);
   const [reloadKey, setReloadKey] = useState(0);
+  const [pinOverrides, setPinOverrides] = useState<Record<string, boolean>>({});
   const [requestOrganizationForm, setRequestOrganizationForm] =
     useState<HelpCenterOrganizationRequestFormValues>(() =>
       createEmptyOrganizationRequestForm(i18n.resolvedLanguage ?? i18n.language)
@@ -82,9 +92,14 @@ export function useHelpCenterScreenState() {
     useState<HelpCenterOrganizationRequestErrors>({});
   const [isSubmittingOrganizationRequest, setIsSubmittingOrganizationRequest] =
     useState(false);
+  const pinOverridesRef = useRef(pinOverrides);
 
   const activeLanguage = i18n.resolvedLanguage ?? i18n.language;
   const languageToggleLabel = activeLanguage?.startsWith('ar') ? 'EN' : 'AR';
+
+  useEffect(() => {
+    pinOverridesRef.current = pinOverrides;
+  }, [pinOverrides]);
 
   const filterOptions = useMemo(
     () =>
@@ -209,7 +224,7 @@ export function useHelpCenterScreenState() {
           throw new Error(`HTTP ${response.status.toString()}`);
         }
 
-        const json = (await response.json()) as HotlinesPagedResponse;
+        const json = (await response.json()) as HelpCenterOrganizationsResponse;
 
         if (cancelled) {
           return;
@@ -220,6 +235,26 @@ export function useHelpCenterScreenState() {
             ? json.data
             : mergeOrganizations(currentOrganizations, json.data)
         );
+        setOrganizationDirectory((currentOrganizations) =>
+          mergeOrganizations(currentOrganizations, json.data)
+        );
+        setPinnedOrganizationIds((currentIds) => {
+          const nextIds = new Set(currentIds);
+
+          for (const organization of json.data) {
+            if (pinOverridesRef.current[organization.id] !== undefined) {
+              continue;
+            }
+
+            if (organization.pinned) {
+              nextIds.add(organization.id);
+            } else {
+              nextIds.delete(organization.id);
+            }
+          }
+
+          return [...nextIds];
+        });
         setTotalOrganizations(json.total);
         setOrganizationsError(false);
       } catch {
@@ -263,7 +298,7 @@ export function useHelpCenterScreenState() {
           throw new Error(`HTTP ${response.status.toString()}`);
         }
 
-        const json = (await response.json()) as HotlinesPagedResponse;
+        const json = (await response.json()) as HelpCenterOrganizationsResponse;
 
         if (!cancelled) {
           setDraftOrganizationsCount(json.total);
@@ -285,6 +320,7 @@ export function useHelpCenterScreenState() {
   const organizationLabels = useMemo(
     () => ({
       call: t('helpCenter.contactCall'),
+      whatsapp: t('helpCenter.contactWhatsapp'),
       email: t('helpCenter.contactEmail'),
       unavailable: t('helpCenter.contactUnavailable'),
       uncategorized: t('helpCenter.uncategorized'),
@@ -294,10 +330,23 @@ export function useHelpCenterScreenState() {
 
   const visibleOrganizations = useMemo(
     () =>
-      allOrganizations.map((hotline) =>
-        mapHotlineToViewModel(hotline, activeLanguage, organizationLabels)
+      sortPinnedOrganizations(
+        allOrganizations.map((organization) =>
+          mapOrganizationToViewModel(
+            organization,
+            activeLanguage,
+            pinnedOrganizationIds.includes(organization.id),
+            organizationLabels
+          )
+        ),
+        pinnedOrganizationIds
       ),
-    [activeLanguage, allOrganizations, organizationLabels]
+    [
+      activeLanguage,
+      allOrganizations,
+      organizationLabels,
+      pinnedOrganizationIds,
+    ]
   );
 
   const appliedFiltersCount = useMemo(
@@ -321,6 +370,30 @@ export function useHelpCenterScreenState() {
         })
       ),
     [appliedFilters, filterOptions, filterSections]
+  );
+
+  const pinnedOrganizations = useMemo(
+    () =>
+      buildPinnedOrganizationOptions(
+        pinnedOrganizationIds,
+        sortPinnedOrganizations(
+          organizationDirectory.map((organization) =>
+            mapOrganizationToViewModel(
+              organization,
+              activeLanguage,
+              pinnedOrganizationIds.includes(organization.id),
+              organizationLabels
+            )
+          ),
+          pinnedOrganizationIds
+        )
+      ),
+    [
+      activeLanguage,
+      organizationDirectory,
+      organizationLabels,
+      pinnedOrganizationIds,
+    ]
   );
 
   const trimmedQuery = query.trim();
@@ -394,6 +467,19 @@ export function useHelpCenterScreenState() {
           : [...currentValues, optionValue],
       };
     });
+  }
+
+  function handleToggleSectorChip(value: string) {
+    setAppliedFilters((current) => {
+      const currentValues = current.sector ?? [];
+      const isSelected =
+        currentValues.length === 1 && currentValues[0] === value;
+      return {
+        ...current,
+        sector: isSelected ? [] : [value],
+      };
+    });
+    setPage(1);
   }
 
   function handleOpenRequestOrganizationSheet() {
@@ -486,6 +572,57 @@ export function useHelpCenterScreenState() {
     setIsFilterOpen(false);
   }
 
+  function handleClosePinnedOrganizationsSheet() {
+    setOrganizationPendingReplacementId(null);
+    setIsPinnedOrganizationsSheetOpen(false);
+  }
+
+  function handleTogglePinnedOrganization(organizationId: string) {
+    if (pinnedOrganizationIds.includes(organizationId)) {
+      setPinOverrides((currentOverrides) => ({
+        ...currentOverrides,
+        [organizationId]: false,
+      }));
+      setPinnedOrganizationIds((currentIds) =>
+        currentIds.filter((currentId) => currentId !== organizationId)
+      );
+      return;
+    }
+
+    if (pinnedOrganizationIds.length >= MAX_PINNED_ORGANIZATIONS) {
+      setOrganizationPendingReplacementId(organizationId);
+      setIsPinnedOrganizationsSheetOpen(true);
+      return;
+    }
+
+    setPinOverrides((currentOverrides) => ({
+      ...currentOverrides,
+      [organizationId]: true,
+    }));
+    setPinnedOrganizationIds((currentIds) => [...currentIds, organizationId]);
+  }
+
+  function handleReplacePinnedOrganization(organizationIdToReplace: string) {
+    if (!organizationPendingReplacementId) {
+      return;
+    }
+
+    setPinnedOrganizationIds((currentIds) => [
+      ...currentIds.filter(
+        (currentId) =>
+          currentId !== organizationIdToReplace &&
+          currentId !== organizationPendingReplacementId
+      ),
+      organizationPendingReplacementId,
+    ]);
+    setPinOverrides((currentOverrides) => ({
+      ...currentOverrides,
+      [organizationIdToReplace]: false,
+      [organizationPendingReplacementId]: true,
+    }));
+    handleClosePinnedOrganizationsSheet();
+  }
+
   function handleLoadMore() {
     if (canLoadMore) {
       setPage((currentPage) => currentPage + 1);
@@ -536,6 +673,12 @@ export function useHelpCenterScreenState() {
         return false;
       }
 
+      const createdOrganization =
+        (await response.json()) as HelpCenterOrganizationApiItem;
+
+      setOrganizationDirectory((currentOrganizations) =>
+        mergeOrganizations(currentOrganizations, [createdOrganization])
+      );
       setIsRequestOrganizationSheetOpen(false);
       resetRequestOrganizationForm();
       return true;
@@ -557,32 +700,51 @@ export function useHelpCenterScreenState() {
 
     if (
       !organization ||
-      organization.actionDisabled ||
+      organization.primaryActionDisabled ||
       typeof window === 'undefined'
     ) {
       return;
     }
 
-    if (organization.actionType === 'phone') {
-      window.location.href = `tel:${organization.actionValue}`;
+    if (organization.primaryActionType === 'phone') {
+      window.location.href = `tel:${organization.primaryActionValue}`;
       return;
     }
 
-    window.location.href = `mailto:${organization.actionValue}`;
+    if (organization.primaryActionType === 'whatsapp') {
+      const digits = organization.primaryActionValue.replace(/\D/g, '');
+      const intl = digits.startsWith('961')
+        ? digits
+        : `961${digits.replace(/^0+/, '')}`;
+      window.open(`https://wa.me/${intl}`, '_blank', 'noopener,noreferrer');
+      return;
+    }
+
+    if (organization.primaryActionType === 'email') {
+      window.location.href = `mailto:${organization.primaryActionValue}`;
+    }
+  }
+
+  function handleOpenMap(mapUrl: string) {
+    if (typeof window === 'undefined') return;
+    window.open(mapUrl, '_blank', 'noopener,noreferrer');
   }
 
   return {
     t,
     query,
-    activeLanguage,
     organizations: allOrganizations,
     visibleOrganizations,
     filterSections,
+    appliedFilters,
+    activeLanguage,
     hotlines,
+    pinnedOrganizations,
     appliedFiltersCount,
     appliedFilterChips,
     draftFilters,
     isFilterOpen,
+    isPinnedOrganizationsSheetOpen,
     isRequestOrganizationSheetOpen,
     isOrganizationsLoading,
     isLoadingMore,
@@ -598,6 +760,7 @@ export function useHelpCenterScreenState() {
     totalOrganizations,
     draftOrganizationsCount,
     canLoadMore,
+    maxPinnedOrganizations: MAX_PINNED_ORGANIZATIONS,
     handleQueryChange,
     handleRemoveFilter,
     handleOpenFilters,
@@ -605,6 +768,10 @@ export function useHelpCenterScreenState() {
     handleClearFilters,
     handleApplyFilters,
     handleToggleFilterOption,
+    handleToggleSectorChip,
+    handleTogglePinnedOrganization,
+    handleReplacePinnedOrganization,
+    handleClosePinnedOrganizationsSheet,
     handleOpenRequestOrganizationSheet,
     handleCloseRequestOrganizationSheet,
     handleRequestOrganizationFieldChange,
@@ -613,7 +780,9 @@ export function useHelpCenterScreenState() {
     handleLoadMore,
     handleRetryOrganizations,
     handleActivateOrganizationAction,
+    handleOpenMap,
     setIsFilterOpen,
+    setIsPinnedOrganizationsSheetOpen,
     setIsRequestOrganizationSheetOpen,
   };
 }

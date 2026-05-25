@@ -1,20 +1,14 @@
+export interface HelpCenterScreenProps {
+  theme: 'light' | 'dark';
+  onToggleTheme: () => void;
+  onToggleLanguage: () => void;
+}
+
 export interface HelpCenterHotline {
   id: string;
   labelKey: string;
   number: string;
   icon: 'cross' | 'siren' | 'shield' | 'water';
-}
-
-export interface HotlineApiItem {
-  id: string;
-  name_en: string;
-  name_ar: string | null;
-  category: string;
-  city: string;
-  phone: string;
-  hotline: string | null;
-  email: string | null;
-  source_url: string | null;
 }
 
 export interface HelpCenterOrganizationApiItem {
@@ -26,9 +20,11 @@ export interface HelpCenterOrganizationApiItem {
   email: string | null;
   pinned: boolean;
   verified: boolean;
-  phone_number: string | null;
+  phone_numbers: string[];
+  whatsapp: string | null;
   type: string | null;
   locations: string[];
+  map_url: string | null;
   organization_type: string | null;
   provider_type?: string | null;
   sector?: string | null;
@@ -68,11 +64,15 @@ export interface HelpCenterOrganizationViewModel {
   title: string;
   category: string;
   description: string;
-  locations: string[];
-  actionLabel: string;
-  actionDisabled: boolean;
-  actionType: 'phone' | 'email';
-  actionValue: string;
+  locations: string;
+  primaryActionLabel: string;
+  primaryActionType: 'phone' | 'whatsapp' | 'email' | 'unavailable';
+  primaryActionValue: string;
+  primaryActionDisabled: boolean;
+  mapUrl: string | null;
+  timeLabel: string;
+  verified: boolean;
+  isPinned: boolean;
 }
 
 export type HelpCenterOrganizationType =
