@@ -7,11 +7,12 @@ import type {
   OrganizationsApiResponse,
 } from '../need-help/needHelp.types';
 
-const FILTER_TO_SECTOR: Record<string, string> = {
-  food: 'food',
-  medical: 'medical',
-  shelter: 'shelter',
-  clothes: 'clothes',
+// Maps Need Help chip id → CRN category ids (sent as ?category=)
+const FILTER_TO_CATEGORY: Record<string, string[]> = {
+  food: ['food_nutrition', 'wash_hygiene'],
+  medical: ['health_medical'],
+  shelter: ['shelter_nfi'],
+  clothes: ['shelter_nfi'], // clothes/blankets = NFI
 };
 
 // Maps governorate id → district-level region_ids used by the API
@@ -38,8 +39,9 @@ interface MapApiResponse {
 
 function buildMapUrl(activeFilter: string | null): string {
   const params = new URLSearchParams();
-  if (activeFilter && FILTER_TO_SECTOR[activeFilter]) {
-    params.set('sector', FILTER_TO_SECTOR[activeFilter]);
+  if (activeFilter) {
+    const categoryIds = FILTER_TO_CATEGORY[activeFilter] ?? [];
+    if (categoryIds.length > 0) params.set('category', categoryIds.join(','));
   }
   const qs = params.toString();
   return `/api/organizations/map${qs ? `?${qs}` : ''}`;
@@ -245,9 +247,11 @@ export function useMapScreenState() {
         page: '1',
         page_size: String(PAGE_SIZE),
       });
-      params.set('region', regionIds.join(','));
-      if (activeFilter && FILTER_TO_SECTOR[activeFilter]) {
-        params.set('sector', FILTER_TO_SECTOR[activeFilter]);
+      params.set('location', regionIds.join(','));
+      if (activeFilter) {
+        const categoryIds = FILTER_TO_CATEGORY[activeFilter] ?? [];
+        if (categoryIds.length > 0)
+          params.set('category', categoryIds.join(','));
       }
 
       try {
@@ -290,9 +294,10 @@ export function useMapScreenState() {
       page: String(nextPage),
       page_size: String(PAGE_SIZE),
     });
-    params.set('region', regionIds.join(','));
-    if (activeFilter && FILTER_TO_SECTOR[activeFilter]) {
-      params.set('sector', FILTER_TO_SECTOR[activeFilter]);
+    params.set('location', regionIds.join(','));
+    if (activeFilter) {
+      const categoryIds = FILTER_TO_CATEGORY[activeFilter] ?? [];
+      if (categoryIds.length > 0) params.set('category', categoryIds.join(','));
     }
 
     try {

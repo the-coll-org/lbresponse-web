@@ -35,11 +35,12 @@ function formatRelativeTime(
   }
 }
 
-const FILTER_TO_SECTOR: Record<string, string> = {
-  food: 'food',
-  medical: 'medical',
-  shelter: 'shelter',
-  clothes: 'clothes',
+// Maps Need Help chip id → CRN category ids (sent as ?category=)
+const FILTER_TO_CATEGORY: Record<string, string[]> = {
+  food: ['food_nutrition', 'wash_hygiene'],
+  medical: ['health_medical'],
+  shelter: ['shelter_nfi'],
+  clothes: ['shelter_nfi'], // clothes/blankets = NFI
 };
 
 function deriveIcon(sectors: string[] | null | undefined): NeedHelpServiceIcon {
@@ -146,12 +147,12 @@ function buildOrganizationsUrl(
     params.set('search', trimmedQuery);
   }
 
-  const sectorSlugs = activeFilterIds
-    .map((id) => FILTER_TO_SECTOR[id])
-    .filter((slug): slug is string => Boolean(slug));
+  const categoryIds = activeFilterIds.flatMap(
+    (id) => FILTER_TO_CATEGORY[id] ?? []
+  );
 
-  if (sectorSlugs.length > 0) {
-    params.set('sector', sectorSlugs.join(','));
+  if (categoryIds.length > 0) {
+    params.set('category', categoryIds.join(','));
   }
 
   return `/api/organizations?${params.toString()}`;
