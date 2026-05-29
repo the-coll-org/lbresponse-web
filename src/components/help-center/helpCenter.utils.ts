@@ -82,7 +82,6 @@ export function buildOrganizationsUrl(
   const params = new URLSearchParams({
     page: page.toString(),
     page_size: pageSize.toString(),
-    sort: query.trim() ? 'relevance' : 'az',
   });
 
   const trimmedQuery = query.trim();
@@ -96,15 +95,17 @@ export function buildOrganizationsUrl(
     }
 
     const parameterName =
-      groupId === 'provider_type'
-        ? 'organization_type'
-        : groupId === 'district'
-          ? 'city'
-          : groupId === 'sector'
-            ? 'category'
-            : groupId;
+      groupId === 'district'
+        ? 'city'
+        : groupId === 'sector'
+          ? 'category'
+          : null;
 
-    params.set(parameterName, values.join(','));
+    if (!parameterName) {
+      continue;
+    }
+
+    params.set(parameterName, values[0]);
   }
 
   return `/api/hotlines?${params.toString()}`;
