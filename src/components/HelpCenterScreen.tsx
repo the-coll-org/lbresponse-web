@@ -1,12 +1,9 @@
 import { useToast } from '../hooks/useToast';
 import { EmergencyHotlinesSection } from './help-center/EmergencyHotlinesSection';
-import { HelpCenterFilterChips } from './help-center/HelpCenterFilterChips';
-import { SectorIcon } from './help-center/sectorIcons';
 import { HelpCenterSearchBar } from './help-center/HelpCenterSearchBar';
 import { OrganizationsListSection } from './help-center/OrganizationsListSection';
 import { useHelpCenterScreenState } from './help-center/useHelpCenterScreenState';
 import { HelpCenterFiltersSheet } from './ui/HelpCenterFiltersSheet';
-import { PinnedOrganizationsSheet } from './ui/PinnedOrganizationsSheet';
 import { RequestOrganizationSheet } from './ui/RequestOrganizationSheet';
 
 export default function HelpCenterScreen() {
@@ -16,14 +13,11 @@ export default function HelpCenterScreen() {
     query,
     visibleOrganizations,
     filterSections,
-    appliedFilters,
     hotlines,
-    pinnedOrganizations,
     appliedFiltersCount,
     appliedFilterChips,
     draftFilters,
     isFilterOpen,
-    isPinnedOrganizationsSheetOpen,
     isRequestOrganizationSheetOpen,
     isOrganizationsLoading,
     isLoadingMore,
@@ -38,7 +32,6 @@ export default function HelpCenterScreen() {
     totalOrganizations,
     draftOrganizationsCount,
     canLoadMore,
-    maxPinnedOrganizations,
     handleQueryChange,
     handleRemoveFilter,
     handleOpenFilters,
@@ -46,10 +39,6 @@ export default function HelpCenterScreen() {
     handleClearFilters,
     handleApplyFilters,
     handleToggleFilterOption,
-    handleToggleSectorChip,
-    handleTogglePinnedOrganization,
-    handleReplacePinnedOrganization,
-    handleClosePinnedOrganizationsSheet,
     handleOpenRequestOrganizationSheet,
     handleCloseRequestOrganizationSheet,
     handleRequestOrganizationFieldChange,
@@ -58,9 +47,7 @@ export default function HelpCenterScreen() {
     handleLoadMore,
     handleRetryOrganizations,
     handleActivateOrganizationAction,
-    handleOpenMap,
     setIsFilterOpen,
-    setIsPinnedOrganizationsSheetOpen,
   } = useHelpCenterScreenState();
 
   const resultsLabel =
@@ -107,33 +94,13 @@ export default function HelpCenterScreen() {
             onRemoveFilter={handleRemoveFilter}
           />
 
-          {(() => {
-            const sectorSection = filterSections.find((s) => s.id === 'sector');
-            if (!sectorSection || sectorSection.options.length === 0)
-              return null;
-            const activeSector = appliedFilters.sector?.[0] ?? null;
-            return (
-              <HelpCenterFilterChips
-                ariaLabel={t('helpCenter.filtersTitle')}
-                chips={sectorSection.options.map((option) => ({
-                  id: option.value,
-                  label: option.label,
-                  icon: <SectorIcon sector={option.value} />,
-                  isActive: option.value === activeSector,
-                  onClick: () => handleToggleSectorChip(option.value),
-                }))}
-              />
-            );
-          })()}
-
           <OrganizationsListSection
             organizations={visibleOrganizations}
             isLoading={isOrganizationsLoading}
             isLoadingMore={isLoadingMore}
             hasError={organizationsError}
             loadingLabel={t('common.loading')}
-            errorTitle={t('helpCenter.errorStateTitle')}
-            errorDescription={t('helpCenter.errorStateDescription')}
+            errorLabel={t('helpCenter.errorStateTitle')}
             retryLabel={t('showcase.alert.retry')}
             hasActiveQuery={hasActiveQuery}
             hasSearchResults={hasSearchResults}
@@ -161,18 +128,11 @@ export default function HelpCenterScreen() {
               ),
             })}
             backToTopAriaLabel={t('helpCenter.backToTop')}
-            pinActionAriaLabel={t('helpCenter.pinAction')}
-            unpinActionAriaLabel={t('helpCenter.unpinAction')}
-            verifyActionAriaLabel={t('helpCenter.verifyAction')}
-            mapActionLabel={t('helpCenter.mapAction')}
-            mapActionAriaLabel={t('helpCenter.mapActionAriaLabel')}
             showLoadMore={canLoadMore}
             onEmptyStateAction={handleOpenRequestOrganizationSheet}
             onRetry={handleRetryOrganizations}
             onLoadMore={handleLoadMore}
             onActivateOrganizationAction={handleActivateOrganizationAction}
-            onOpenMap={handleOpenMap}
-            onTogglePinnedOrganization={handleTogglePinnedOrganization}
           />
         </div>
       </section>
@@ -200,33 +160,6 @@ export default function HelpCenterScreen() {
         onToggleOption={handleToggleFilterOption}
         onSecondaryAction={handleClearFilters}
         onPrimaryAction={handleApplyFilters}
-      />
-
-      <PinnedOrganizationsSheet
-        open={isPinnedOrganizationsSheetOpen}
-        title={t('helpCenter.pinnedOrganizationsTitle')}
-        description={t('helpCenter.pinnedOrganizationsDescription', {
-          count: maxPinnedOrganizations,
-        })}
-        closeAriaLabel={t('helpCenter.pinnedOrganizationsClose')}
-        cancelLabel={t('helpCenter.pinnedOrganizationsCancel')}
-        replaceLabel={t('helpCenter.pinnedOrganizationsReplace')}
-        replaceAriaLabel={(organizationTitle) =>
-          t('helpCenter.pinnedOrganizationsReplaceAriaLabel', {
-            organization: organizationTitle,
-          })
-        }
-        pinnedOrganizations={pinnedOrganizations}
-        onOpenChange={(open) => {
-          if (!open) {
-            handleClosePinnedOrganizationsSheet();
-            return;
-          }
-
-          setIsPinnedOrganizationsSheetOpen(true);
-        }}
-        onCancel={handleClosePinnedOrganizationsSheet}
-        onReplace={handleReplacePinnedOrganization}
       />
 
       <RequestOrganizationSheet

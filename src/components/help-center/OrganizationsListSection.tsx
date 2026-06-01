@@ -2,8 +2,8 @@ import { useTranslation } from 'react-i18next';
 import { Button } from '../ui/Button';
 import { SearchEmptyState } from '../ui/SearchEmptyState';
 import { ServiceCard } from '../ui/ServiceCard';
+import { ServiceCardSkeleton } from '../ui/ServiceCardSkeleton';
 import { helpCenterIcons } from './helpCenter.icons';
-import { SectorIcon } from './sectorIcons';
 import type { HelpCenterOrganizationViewModel } from './helpCenter.types';
 
 interface OrganizationsListSectionProps {
@@ -12,8 +12,7 @@ interface OrganizationsListSectionProps {
   isLoadingMore: boolean;
   hasError: boolean;
   loadingLabel: string;
-  errorTitle: string;
-  errorDescription: string;
+  errorLabel: string;
   retryLabel: string;
   hasActiveQuery: boolean;
   hasSearchResults: boolean;
@@ -23,18 +22,11 @@ interface OrganizationsListSectionProps {
   emptyStateActionAriaLabel: string;
   loadMoreLabel: string;
   backToTopAriaLabel: string;
-  pinActionAriaLabel: string;
-  unpinActionAriaLabel: string;
-  verifyActionAriaLabel: string;
-  mapActionLabel: string;
-  mapActionAriaLabel: string;
   showLoadMore: boolean;
   onEmptyStateAction: () => void;
   onRetry: () => void;
   onLoadMore: () => void;
   onActivateOrganizationAction: (organizationId: string) => void;
-  onOpenMap: (mapUrl: string) => void;
-  onTogglePinnedOrganization: (organizationId: string) => void;
 }
 
 export function OrganizationsListSection({
@@ -43,8 +35,7 @@ export function OrganizationsListSection({
   isLoadingMore,
   hasError,
   loadingLabel,
-  errorTitle,
-  errorDescription,
+  errorLabel,
   retryLabel,
   hasActiveQuery,
   hasSearchResults,
@@ -54,39 +45,29 @@ export function OrganizationsListSection({
   emptyStateActionAriaLabel,
   loadMoreLabel,
   backToTopAriaLabel,
-  pinActionAriaLabel,
-  unpinActionAriaLabel,
-  verifyActionAriaLabel,
-  mapActionLabel,
-  mapActionAriaLabel,
   showLoadMore,
   onEmptyStateAction,
   onRetry,
   onLoadMore,
   onActivateOrganizationAction,
-  onOpenMap,
-  onTogglePinnedOrganization,
 }: OrganizationsListSectionProps) {
   const { i18n } = useTranslation();
   const isArabic = (i18n.resolvedLanguage ?? i18n.language ?? 'ar').startsWith(
     'ar'
   );
+  const Shield18Icon = helpCenterIcons.shield18;
   const PhoneIcon = helpCenterIcons.phone;
-  const WhatsappIcon = helpCenterIcons.whatsapp;
   const MailIcon = helpCenterIcons.mail;
-  const MapButtonIcon = helpCenterIcons.map;
   const ChevronDownIcon = helpCenterIcons.chevronDown;
   const ArrowUpIcon = helpCenterIcons.arrowUp;
-  void unpinActionAriaLabel;
-  void pinActionAriaLabel;
-  void verifyActionAriaLabel;
-  void onTogglePinnedOrganization;
 
   if (isLoading) {
     return (
       <section className="relative flex flex-col gap-12">
-        <div className="flex min-h-160 items-center justify-center rounded-lg border border-textfield-default-stroke bg-surface-primary p-16 text-sm font-weight-medium text-text-black">
-          {loadingLabel}
+        <div className="grid grid-cols-1 gap-16 md:grid-cols-2 xl:grid-cols-3">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <ServiceCardSkeleton key={i} />
+          ))}
         </div>
       </section>
     );
@@ -96,14 +77,9 @@ export function OrganizationsListSection({
     return (
       <section className="relative flex flex-col gap-12">
         <div className="flex w-full flex-col items-center gap-12 py-32 text-center">
-          <div className="flex w-full max-w-full flex-col items-center gap-4">
-            <h3 className="text-sm font-weight-medium text-text-black">
-              {errorTitle}
-            </h3>
-            <p className="text-xs font-weight-regular text-solid-black-400">
-              {errorDescription}
-            </p>
-          </div>
+          <p className="text-sm font-weight-medium text-text-black">
+            {errorLabel}
+          </p>
           <Button className="h-44 justify-center" onClick={onRetry}>
             {retryLabel}
           </Button>
@@ -141,48 +117,28 @@ export function OrganizationsListSection({
     <section className="relative flex flex-col gap-12">
       <div className="grid grid-cols-1 gap-16 md:grid-cols-2 xl:grid-cols-3">
         {organizations.map((item) => {
-          const ActionIcon =
-            item.primaryActionType === 'whatsapp'
-              ? WhatsappIcon
-              : item.primaryActionType === 'email'
-                ? MailIcon
-                : PhoneIcon;
+          const ActionIcon = item.actionType === 'email' ? MailIcon : PhoneIcon;
           return (
             <ServiceCard
               key={item.id}
               title={item.title}
               category={item.category}
               description={item.description}
-              locationsArray={item.locations}
+              locationsArray={item.locations ? [item.locations] : []}
               moreLocationsLabel={(count: number) =>
                 isArabic ? `+${count} أخرى` : `+${count} more`
               }
               locationsDialogTitle={item.title}
               locationsDialogCloseLabel={isArabic ? 'إغلاق' : 'Close'}
-              actionLabel={item.primaryActionLabel}
-              actionIcon={
-                item.primaryActionDisabled ? undefined : <ActionIcon />
-              }
-              actionVariant={
-                item.primaryActionType === 'whatsapp' ? 'success' : 'filled'
-              }
-              actionDisabled={item.primaryActionDisabled}
+              categoryIcon={<Shield18Icon />}
+              actionLabel={item.actionLabel}
+              actionIcon={item.actionDisabled ? undefined : <ActionIcon />}
+              actionVariant="filled"
+              actionDisabled={item.actionDisabled}
               onActionClick={
-                item.primaryActionDisabled
+                item.actionDisabled
                   ? undefined
                   : () => onActivateOrganizationAction(item.id)
-              }
-              timeLabel={item.timeLabel || undefined}
-              categoryIcon={<SectorIcon sector={item.category} />}
-              secondaryButton={
-                item.mapUrl
-                  ? {
-                      label: mapActionLabel,
-                      ariaLabel: mapActionAriaLabel,
-                      icon: <MapButtonIcon />,
-                      onClick: () => onOpenMap(item.mapUrl!),
-                    }
-                  : undefined
               }
             />
           );

@@ -7,11 +7,20 @@ import type {
   OrganizationsApiResponse,
 } from '../need-help/needHelp.types';
 
-const FILTER_TO_SECTOR: Record<string, string> = {
-  food: 'food',
-  medical: 'medical',
-  shelter: 'shelter',
-  clothes: 'clothes',
+// Maps Need Help chip id → CRN category ids (sent as ?category=)
+const FILTER_TO_CATEGORY: Record<string, string[]> = {
+  food: ['food_nutrition', 'wash_hygiene'],
+  medical: ['health_medical'],
+  shelter: ['shelter_nfi'],
+  clothes: ['shelter_nfi'], // clothes/blankets = NFI
+};
+
+// Reverse: CRN category id → the chip label shown in the UI
+const CATEGORY_TO_CHIP_LABEL: Record<string, { en: string; ar: string }> = {
+  food_nutrition: { en: 'Food and water', ar: 'طعام ومياه' },
+  wash_hygiene: { en: 'Food and water', ar: 'طعام ومياه' },
+  health_medical: { en: 'Medical care', ar: 'طبي وصحي' },
+  shelter_nfi: { en: 'Shelter and housing', ar: 'مأوى وسكن' },
 };
 
 // Maps governorate id → district-level region_ids used by the API
@@ -38,8 +47,9 @@ interface MapApiResponse {
 
 function buildMapUrl(activeFilter: string | null): string {
   const params = new URLSearchParams();
-  if (activeFilter && FILTER_TO_SECTOR[activeFilter]) {
-    params.set('sector', FILTER_TO_SECTOR[activeFilter]);
+  if (activeFilter) {
+    const categoryIds = FILTER_TO_CATEGORY[activeFilter] ?? [];
+    if (categoryIds.length > 0) params.set('category', categoryIds.join(','));
   }
   const qs = params.toString();
   return `/api/organizations/map${qs ? `?${qs}` : ''}`;
@@ -96,7 +106,13 @@ function mapOrganizationToViewModel(
   const description =
     (isArabic ? org.description_ar : org.description) ?? org.description ?? '';
   const sectors = org.sectors ?? [];
-  const category = org.organization_type ?? sectors[0] ?? '';
+  const crnId = org.categories?.[0]?.id ?? '';
+  const chipLabel = CATEGORY_TO_CHIP_LABEL[crnId];
+  const category = chipLabel
+    ? isArabic
+      ? chipLabel.ar
+      : chipLabel.en
+    : (org.categories?.[0]?.label ?? org.organization_type ?? '');
   const locations = org.locations ?? [];
   const icon = deriveIcon(sectors);
   const callPrefix = isArabic ? 'اتصل' : 'Call';
@@ -245,9 +261,11 @@ export function useMapScreenState() {
         page: '1',
         page_size: String(PAGE_SIZE),
       });
-      params.set('region', regionIds.join(','));
-      if (activeFilter && FILTER_TO_SECTOR[activeFilter]) {
-        params.set('sector', FILTER_TO_SECTOR[activeFilter]);
+      params.set('location', regionIds.join(','));
+      if (activeFilter) {
+        const categoryIds = FILTER_TO_CATEGORY[activeFilter] ?? [];
+        if (categoryIds.length > 0)
+          params.set('category', categoryIds.join(','));
       }
 
       try {
@@ -290,9 +308,10 @@ export function useMapScreenState() {
       page: String(nextPage),
       page_size: String(PAGE_SIZE),
     });
-    params.set('region', regionIds.join(','));
-    if (activeFilter && FILTER_TO_SECTOR[activeFilter]) {
-      params.set('sector', FILTER_TO_SECTOR[activeFilter]);
+    params.set('location', regionIds.join(','));
+    if (activeFilter) {
+      const categoryIds = FILTER_TO_CATEGORY[activeFilter] ?? [];
+      if (categoryIds.length > 0) params.set('category', categoryIds.join(','));
     }
 
     try {

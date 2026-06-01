@@ -35,11 +35,20 @@ function formatRelativeTime(
   }
 }
 
-const FILTER_TO_SECTOR: Record<string, string> = {
-  food: 'food',
-  medical: 'medical',
-  shelter: 'shelter',
-  clothes: 'clothes',
+// Maps Need Help chip id → CRN category ids (sent as ?category=)
+const FILTER_TO_CATEGORY: Record<string, string[]> = {
+  food: ['food_nutrition', 'wash_hygiene'],
+  medical: ['health_medical'],
+  shelter: ['shelter_nfi'],
+  clothes: ['shelter_nfi'], // clothes/blankets = NFI
+};
+
+// Reverse: CRN category id → the chip label shown in the UI
+const CATEGORY_TO_CHIP_LABEL: Record<string, { en: string; ar: string }> = {
+  food_nutrition: { en: 'Food and water', ar: 'طعام ومياه' },
+  wash_hygiene: { en: 'Food and water', ar: 'طعام ومياه' },
+  health_medical: { en: 'Medical care', ar: 'طبي وصحي' },
+  shelter_nfi: { en: 'Shelter and housing', ar: 'مأوى وسكن' },
 };
 
 function deriveIcon(sectors: string[] | null | undefined): NeedHelpServiceIcon {
@@ -68,7 +77,13 @@ function mapOrganizationToViewModel(
   const description =
     (isArabic ? org.description_ar : org.description) ?? org.description ?? '';
   const sectors = org.sectors ?? [];
-  const category = org.organization_type ?? sectors[0] ?? '';
+  const crnId = org.categories?.[0]?.id ?? '';
+  const chipLabel = CATEGORY_TO_CHIP_LABEL[crnId];
+  const category = chipLabel
+    ? isArabic
+      ? chipLabel.ar
+      : chipLabel.en
+    : (org.categories?.[0]?.label ?? org.organization_type ?? '');
   const locations = org.locations ?? [];
   const icon = deriveIcon(sectors);
   const callPrefix = isArabic ? 'اتصل' : 'Call';
@@ -146,12 +161,12 @@ function buildOrganizationsUrl(
     params.set('search', trimmedQuery);
   }
 
-  const sectorSlugs = activeFilterIds
-    .map((id) => FILTER_TO_SECTOR[id])
-    .filter((slug): slug is string => Boolean(slug));
+  const categoryIds = activeFilterIds.flatMap(
+    (id) => FILTER_TO_CATEGORY[id] ?? []
+  );
 
-  if (sectorSlugs.length > 0) {
-    params.set('sector', sectorSlugs.join(','));
+  if (categoryIds.length > 0) {
+    params.set('category', categoryIds.join(','));
   }
 
   return `/api/organizations?${params.toString()}`;

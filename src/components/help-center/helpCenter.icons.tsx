@@ -23,6 +23,10 @@ function ShieldIcon() {
   return <SvgIcon svg={shieldSvg} className="size-24" />;
 }
 
+function ShieldIcon18() {
+  return <SvgIcon svg={shieldSvg} className="w-[18px] h-[18px]" />;
+}
+
 function SirenIcon() {
   return <SvgIcon svg={sirenSvg} className="size-24" />;
 }
@@ -208,6 +212,7 @@ function MoonIcon() {
 export const helpCenterIcons = {
   water: WaterIcon,
   shield: ShieldIcon,
+  shield18: ShieldIcon18,
   siren: SirenIcon,
   cross: CrossIcon,
   filter: FilterIcon,

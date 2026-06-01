@@ -71,6 +71,7 @@ export interface OrganizationApiItem {
   secondary_contact: string | null;
   map_url: string | null;
   organization_type: string | null;
+  categories: { id: string; label: string }[];
   updated_at: string | null;
 }
 

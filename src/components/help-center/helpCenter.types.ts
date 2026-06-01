@@ -5,6 +5,18 @@ export interface HelpCenterHotline {
   icon: 'cross' | 'siren' | 'shield' | 'water';
 }
 
+export interface HotlineApiItem {
+  id: string;
+  name_en: string;
+  name_ar: string | null;
+  category: string;
+  city: string;
+  phone: string;
+  hotline: string | null;
+  email: string | null;
+  source_url: string | null;
+}
+
 export interface HelpCenterOrganizationApiItem {
   id: string;
   title: string;
@@ -25,13 +37,6 @@ export interface HelpCenterOrganizationApiItem {
   service_subtype?: string | null;
   shelter_type?: string | null;
   updated_at: string | null;
-}
-
-export interface HelpCenterOrganizationsResponse {
-  data: HelpCenterOrganizationApiItem[];
-  total: number;
-  page: number;
-  page_size: number;
 }
 
 export interface HelpCenterFilterOptionApiItem {
@@ -58,15 +63,11 @@ export interface HelpCenterOrganizationViewModel {
   title: string;
   category: string;
   description: string;
-  locations: string[];
-  primaryActionLabel: string;
-  primaryActionType: 'phone' | 'whatsapp' | 'email' | 'unavailable';
-  primaryActionValue: string;
-  primaryActionDisabled: boolean;
-  mapUrl: string | null;
-  timeLabel: string;
-  verified: boolean;
-  isPinned: boolean;
+  locations: string;
+  actionLabel: string;
+  actionDisabled: boolean;
+  actionType: 'phone' | 'email';
+  actionValue: string;
 }
 
 export type HelpCenterOrganizationType =

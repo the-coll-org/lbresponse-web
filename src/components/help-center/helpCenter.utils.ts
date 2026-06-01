@@ -6,11 +6,12 @@ import type {
   HelpCenterOrganizationRequestFormValues,
   HelpCenterOrganizationRequestPayload,
   HelpCenterOrganizationViewModel,
+  HotlineApiItem,
 } from './helpCenter.types';
-import { FILTER_SECTIONS } from './helpCenter.data';
+import { FILTER_SECTIONS, HOTLINE_SERVICE_OPTIONS } from './helpCenter.data';
 
 export function createEmptyFilterSelection(
-  sectionIds: string[] = FILTER_SECTIONS.map((section) => section.id)
+  sectionIds: string[] = [...FILTER_SECTIONS.map((s) => s.id), 'service_type']
 ): HelpCenterFilterSelection {
   return sectionIds.reduce<HelpCenterFilterSelection>(
     (accumulator, sectionId) => {
@@ -81,7 +82,6 @@ export function buildOrganizationsUrl(
   const params = new URLSearchParams({
     page: page.toString(),
     page_size: pageSize.toString(),
-    sort: query.trim() ? 'relevance' : 'az',
   });
 
   const trimmedQuery = query.trim();
@@ -89,18 +89,21 @@ export function buildOrganizationsUrl(
     params.set('search', trimmedQuery);
   }
 
-  for (const [groupId, values] of Object.entries(filters)) {
-    if (values.length === 0) {
-      continue;
-    }
-
-    const parameterName =
-      groupId === 'provider_type' ? 'organization_type' : groupId;
-
-    params.set(parameterName, values.join(','));
+  const selectedDistricts = filters['district'] ?? [];
+  if (selectedDistricts.length > 0) {
+    params.set('city', selectedDistricts[0]);
   }
 
-  return `/api/organizations?${params.toString()}`;
+  const selectedServiceIds = filters['service_type'] ?? [];
+  const hotlineCategories = selectedServiceIds.flatMap((id) => {
+    const option = HOTLINE_SERVICE_OPTIONS.find((o) => o.id === id);
+    return option?.hotlineCategories ?? [];
+  });
+  if (hotlineCategories.length > 0) {
+    params.set('category', hotlineCategories.join(','));
+  }
+
+  return `/api/hotlines?${params.toString()}`;
 }
 
 function matchesSearchValue(
@@ -219,169 +222,87 @@ export function formatRelativeTime(iso: string | null): string {
   return `${Math.floor(diffDay / 365)} y`;
 }
 
-export function mapOrganizationToViewModel(
-  organization: HelpCenterOrganizationApiItem,
+export function mapHotlineToViewModel(
+  item: HotlineApiItem,
   language: string,
-  isPinned: boolean,
   labels: {
     call: string;
-    whatsapp: string;
     email: string;
     unavailable: string;
     uncategorized: string;
   }
 ): HelpCenterOrganizationViewModel {
-  const isArabic = language.startsWith('ar');
-  const title =
-    (isArabic ? organization.title_ar : organization.title) ??
-    organization.title ??
-    '';
-  const description =
-    (isArabic ? organization.description_ar : organization.description) ??
-    organization.description ??
-    '';
-  const category =
-    organization.provider_type ??
-    organization.organization_type ??
-    labels.uncategorized;
-  const locations = organization.locations
-    .map((location) => location.trim())
-    .filter((location) => location.length > 0);
-  const phoneNumber =
-    organization.phone_numbers
-      .map((number) => number.trim())
-      .find((number) => number.length > 0) ?? '';
-  const whatsapp = organization.whatsapp?.trim() ?? '';
-  const email = organization.email?.trim() ?? '';
-  const timeLabel = formatRelativeTime(organization.updated_at);
-
-  let primaryActionLabel = labels.unavailable;
-  let primaryActionType: HelpCenterOrganizationViewModel['primaryActionType'] =
-    'unavailable';
-  let primaryActionValue = '';
-  let primaryActionDisabled = true;
-
-  if (whatsapp) {
-    primaryActionLabel = `${labels.whatsapp} ${whatsapp}`;
-    primaryActionType = 'whatsapp';
-    primaryActionValue = whatsapp;
-    primaryActionDisabled = false;
-  } else if (phoneNumber) {
-    primaryActionLabel = `${labels.call} ${phoneNumber}`;
-    primaryActionType = 'phone';
-    primaryActionValue = phoneNumber;
-    primaryActionDisabled = false;
-  } else if (email) {
-    primaryActionLabel = `${labels.email} ${email}`;
-    primaryActionType = 'email';
-    primaryActionValue = email;
-    primaryActionDisabled = false;
-  }
-
-  return {
-    id: organization.id,
-    title,
-    category,
-    description,
-    locations,
-    primaryActionLabel,
-    primaryActionType,
-    primaryActionValue,
-    primaryActionDisabled,
-    mapUrl: organization.map_url,
-    timeLabel,
-    verified: organization.verified,
-    isPinned,
+  const HOTLINE_CATEGORY_LABEL: Record<string, { en: string; ar: string }> = {
+    GBV: { en: 'Safety & Protection', ar: 'الحماية والسلامة' },
+    'Child Protection': { en: 'Safety & Protection', ar: 'الحماية والسلامة' },
+    Hospital: { en: 'Medical care', ar: 'طبي وصحي' },
+    Medical: { en: 'Medical care', ar: 'طبي وصحي' },
+    'Medical / Fire': { en: 'Medical care', ar: 'طبي وصحي' },
+    'Mental Health': { en: 'Medical care', ar: 'طبي وصحي' },
+    'Financial Assistance': { en: 'Cash and Livelihood', ar: 'نقد ومعيشة' },
   };
-}
+  const isArabic = language.startsWith('ar');
+  const title = (isArabic ? item.name_ar : item.name_en) ?? item.name_en;
+  const rawLabel = HOTLINE_CATEGORY_LABEL[item.category];
+  const category = rawLabel
+    ? isArabic
+      ? rawLabel.ar
+      : rawLabel.en
+    : item.category || labels.uncategorized;
+  const locations = item.city.trim();
+  const phoneNumber = (item.hotline ?? item.phone).trim();
+  const email = item.email?.trim() ?? '';
 
-export function mergeSameContactCards(
-  organizations: HelpCenterOrganizationViewModel[]
-): HelpCenterOrganizationViewModel[] {
-  const merged: HelpCenterOrganizationViewModel[] = [];
-  const indexByKey = new Map<string, number>();
-
-  for (const organization of organizations) {
-    const phone =
-      organization.primaryActionType === 'phone' ||
-      organization.primaryActionType === 'whatsapp'
-        ? organization.primaryActionValue.trim()
-        : '';
-    if (!phone) {
-      merged.push(organization);
-      continue;
-    }
-    const key = `${organization.title.toLowerCase().trim()}|${phone}`;
-    const existingIndex = indexByKey.get(key);
-    if (existingIndex === undefined) {
-      indexByKey.set(key, merged.length);
-      merged.push(organization);
-      continue;
-    }
-    const existing = merged[existingIndex];
-    const districts = new Set(existing.locations);
-    for (const district of organization.locations) {
-      districts.add(district);
-    }
-    merged[existingIndex] = {
-      ...existing,
-      locations: [...districts],
-      isPinned: existing.isPinned || organization.isPinned,
+  if (phoneNumber) {
+    return {
+      id: item.id,
+      title,
+      category,
+      description: '',
+      locations,
+      actionLabel: `${labels.call} ${phoneNumber}`,
+      actionType: 'phone',
+      actionValue: phoneNumber,
+      actionDisabled: false,
     };
   }
 
-  return merged;
-}
-
-export function buildPinnedOrganizationOptions(
-  pinnedOrganizationIds: string[],
-  organizations: HelpCenterOrganizationViewModel[]
-) {
-  const organizationsById = new Map(
-    organizations.map((organization) => [organization.id, organization])
-  );
-
-  return pinnedOrganizationIds
-    .map((organizationId) => organizationsById.get(organizationId))
-    .filter((organization): organization is HelpCenterOrganizationViewModel =>
-      Boolean(organization)
-    )
-    .map((organization) => ({
-      id: organization.id,
-      title: organization.title,
-      category: organization.category,
-    }));
-}
-
-export function mergeOrganizations(
-  currentOrganizations: HelpCenterOrganizationApiItem[],
-  nextOrganizations: HelpCenterOrganizationApiItem[]
-) {
-  const organizationsById = new Map(
-    currentOrganizations.map((organization) => [organization.id, organization])
-  );
-
-  for (const organization of nextOrganizations) {
-    organizationsById.set(organization.id, organization);
+  if (email) {
+    return {
+      id: item.id,
+      title,
+      category,
+      description: '',
+      locations,
+      actionLabel: `${labels.email} ${email}`,
+      actionType: 'email',
+      actionValue: email,
+      actionDisabled: false,
+    };
   }
 
-  return [...organizationsById.values()];
+  return {
+    id: item.id,
+    title,
+    category,
+    description: '',
+    locations,
+    actionLabel: labels.unavailable,
+    actionType: 'phone',
+    actionValue: '',
+    actionDisabled: true,
+  };
 }
 
-export function sortPinnedOrganizations(
-  organizations: HelpCenterOrganizationViewModel[],
-  pinnedOrganizationIds: string[]
-) {
-  if (pinnedOrganizationIds.length === 0) {
-    return organizations;
+export function mergeOrganizations<T extends { id: string }>(
+  currentItems: T[],
+  nextItems: T[]
+): T[] {
+  const byId = new Map(currentItems.map((item) => [item.id, item]));
+  for (const item of nextItems) {
+    byId.set(item.id, item);
   }
-
-  const pinnedSet = new Set(pinnedOrganizationIds);
-  return [...organizations].sort((left, right) => {
-    const leftRank = pinnedSet.has(left.id) ? 0 : 1;
-    const rightRank = pinnedSet.has(right.id) ? 0 : 1;
-    return leftRank - rightRank;
-  });
+  return [...byId.values()];
 }
 
 export function findOrganizationById(
