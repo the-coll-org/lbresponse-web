@@ -43,6 +43,14 @@ const FILTER_TO_CATEGORY: Record<string, string[]> = {
   clothes: ['shelter_nfi'], // clothes/blankets = NFI
 };
 
+// Reverse: CRN category id → the chip label shown in the UI
+const CATEGORY_TO_CHIP_LABEL: Record<string, { en: string; ar: string }> = {
+  food_nutrition: { en: 'Food and water', ar: 'طعام ومياه' },
+  wash_hygiene: { en: 'Food and water', ar: 'طعام ومياه' },
+  health_medical: { en: 'Medical care', ar: 'طبي وصحي' },
+  shelter_nfi: { en: 'Shelter and housing', ar: 'مأوى وسكن' },
+};
+
 function deriveIcon(sectors: string[] | null | undefined): NeedHelpServiceIcon {
   const normalized = (sectors ?? []).map((s) => s?.toLowerCase() ?? '');
   if (
@@ -69,7 +77,13 @@ function mapOrganizationToViewModel(
   const description =
     (isArabic ? org.description_ar : org.description) ?? org.description ?? '';
   const sectors = org.sectors ?? [];
-  const category = org.categories?.[0]?.label ?? org.organization_type ?? '';
+  const crnId = org.categories?.[0]?.id ?? '';
+  const chipLabel = CATEGORY_TO_CHIP_LABEL[crnId];
+  const category = chipLabel
+    ? isArabic
+      ? chipLabel.ar
+      : chipLabel.en
+    : (org.categories?.[0]?.label ?? org.organization_type ?? '');
   const locations = org.locations ?? [];
   const icon = deriveIcon(sectors);
   const callPrefix = isArabic ? 'اتصل' : 'Call';

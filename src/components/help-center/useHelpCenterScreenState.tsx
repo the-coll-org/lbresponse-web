@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { type HelpCenterFilterSection } from '../ui/HelpCenterFiltersSheet';
 import {
   FILTER_SECTIONS,
+  HOTLINE_SERVICE_OPTIONS,
   HOTLINES,
   ORGANIZATIONS_PAGE_SIZE,
 } from './helpCenter.data';
@@ -93,19 +94,16 @@ export function useHelpCenterScreenState() {
     [activeLanguage, filtersResponse]
   );
 
-  const filterSections = useMemo<HelpCenterFilterSection[]>(
-    () =>
-      filtersResponse?.data.map((group) => {
-        const section = FILTER_SECTIONS.find(
-          ({ id }) => id === group.group_id
-        ) ?? {
-          id: group.group_id,
-          titleKey: '',
-          icon: 'shield' as const,
-        };
-        const Icon = mapSectionIcon(section.icon);
-        const isArabic = activeLanguage.startsWith('ar');
+  const filterSections = useMemo<HelpCenterFilterSection[]>(() => {
+    const isArabic = activeLanguage.startsWith('ar');
+    const ShieldIcon = mapSectionIcon('shield');
 
+    // Only whitelisted API groups (district) — drops sector/category/etc.
+    const apiSections: HelpCenterFilterSection[] =
+      filtersResponse?.data.flatMap((group) => {
+        const section = FILTER_SECTIONS.find(({ id }) => id === group.group_id);
+        if (!section) return [];
+        const Icon = mapSectionIcon(section.icon);
         return {
           id: group.group_id,
           title:
@@ -115,9 +113,22 @@ export function useHelpCenterScreenState() {
           icon: <Icon />,
           options: filterOptions[group.group_id] ?? [],
         };
-      }) ?? [],
-    [activeLanguage, filterOptions, filtersResponse]
-  );
+      }) ?? [];
+
+    // Static service-type section — friendly labels, correct hotline mapping
+    const serviceSection: HelpCenterFilterSection = {
+      id: 'service_type',
+      title: isArabic ? 'نوع الخدمة' : 'Service Type',
+      icon: <ShieldIcon />,
+      options: HOTLINE_SERVICE_OPTIONS.map((o) => ({
+        id: o.id,
+        label: isArabic ? o.label_ar : o.label,
+        value: o.id,
+      })),
+    };
+
+    return [...apiSections, serviceSection];
+  }, [activeLanguage, filterOptions, filtersResponse]);
 
   const hotlines = useMemo(
     () =>

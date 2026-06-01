@@ -8,10 +8,10 @@ import type {
   HelpCenterOrganizationViewModel,
   HotlineApiItem,
 } from './helpCenter.types';
-import { FILTER_SECTIONS } from './helpCenter.data';
+import { FILTER_SECTIONS, HOTLINE_SERVICE_OPTIONS } from './helpCenter.data';
 
 export function createEmptyFilterSelection(
-  sectionIds: string[] = FILTER_SECTIONS.map((section) => section.id)
+  sectionIds: string[] = [...FILTER_SECTIONS.map((s) => s.id), 'service_type']
 ): HelpCenterFilterSelection {
   return sectionIds.reduce<HelpCenterFilterSelection>(
     (accumulator, sectionId) => {
@@ -89,23 +89,18 @@ export function buildOrganizationsUrl(
     params.set('search', trimmedQuery);
   }
 
-  for (const [groupId, values] of Object.entries(filters)) {
-    if (values.length === 0) {
-      continue;
-    }
+  const selectedDistricts = filters['district'] ?? [];
+  if (selectedDistricts.length > 0) {
+    params.set('city', selectedDistricts[0]);
+  }
 
-    const parameterName =
-      groupId === 'district'
-        ? 'city'
-        : groupId === 'sector'
-          ? 'category'
-          : null;
-
-    if (!parameterName) {
-      continue;
-    }
-
-    params.set(parameterName, values[0]);
+  const selectedServiceIds = filters['service_type'] ?? [];
+  const hotlineCategories = selectedServiceIds.flatMap((id) => {
+    const option = HOTLINE_SERVICE_OPTIONS.find((o) => o.id === id);
+    return option?.hotlineCategories ?? [];
+  });
+  if (hotlineCategories.length > 0) {
+    params.set('category', hotlineCategories.join(','));
   }
 
   return `/api/hotlines?${params.toString()}`;
@@ -237,9 +232,23 @@ export function mapHotlineToViewModel(
     uncategorized: string;
   }
 ): HelpCenterOrganizationViewModel {
+  const HOTLINE_CATEGORY_LABEL: Record<string, { en: string; ar: string }> = {
+    GBV: { en: 'Safety & Protection', ar: 'الحماية والسلامة' },
+    'Child Protection': { en: 'Safety & Protection', ar: 'الحماية والسلامة' },
+    Hospital: { en: 'Medical care', ar: 'طبي وصحي' },
+    Medical: { en: 'Medical care', ar: 'طبي وصحي' },
+    'Medical / Fire': { en: 'Medical care', ar: 'طبي وصحي' },
+    'Mental Health': { en: 'Medical care', ar: 'طبي وصحي' },
+    'Financial Assistance': { en: 'Cash and Livelihood', ar: 'نقد ومعيشة' },
+  };
   const isArabic = language.startsWith('ar');
   const title = (isArabic ? item.name_ar : item.name_en) ?? item.name_en;
-  const category = item.category || labels.uncategorized;
+  const rawLabel = HOTLINE_CATEGORY_LABEL[item.category];
+  const category = rawLabel
+    ? isArabic
+      ? rawLabel.ar
+      : rawLabel.en
+    : item.category || labels.uncategorized;
   const locations = item.city.trim();
   const phoneNumber = (item.hotline ?? item.phone).trim();
   const email = item.email?.trim() ?? '';
