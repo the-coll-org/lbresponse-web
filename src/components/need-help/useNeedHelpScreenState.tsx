@@ -1,5 +1,9 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import {
+  CRN_CATEGORY_LABEL,
+  FILTER_CHIP_TO_CATEGORY,
+} from '../../lib/crnCategories';
 import { needHelpResponse } from './needHelp.data';
 import type {
   NeedHelpOrganizationViewModel,
@@ -35,22 +39,6 @@ function formatRelativeTime(
   }
 }
 
-// Maps Need Help chip id → CRN category ids (sent as ?category=)
-const FILTER_TO_CATEGORY: Record<string, string[]> = {
-  food: ['food_nutrition', 'wash_hygiene'],
-  medical: ['health_medical'],
-  shelter: ['shelter_nfi'],
-  clothes: ['shelter_nfi'], // clothes/blankets = NFI
-};
-
-// Reverse: CRN category id → the chip label shown in the UI
-const CATEGORY_TO_CHIP_LABEL: Record<string, { en: string; ar: string }> = {
-  food_nutrition: { en: 'Food and water', ar: 'طعام ومياه' },
-  wash_hygiene: { en: 'Food and water', ar: 'طعام ومياه' },
-  health_medical: { en: 'Medical care', ar: 'طبي وصحي' },
-  shelter_nfi: { en: 'Shelter and housing', ar: 'مأوى وسكن' },
-};
-
 function deriveIcon(sectors: string[] | null | undefined): NeedHelpServiceIcon {
   const normalized = (sectors ?? []).map((s) => s?.toLowerCase() ?? '');
   if (
@@ -78,11 +66,11 @@ function mapOrganizationToViewModel(
     (isArabic ? org.description_ar : org.description) ?? org.description ?? '';
   const sectors = org.sectors ?? [];
   const crnId = org.categories?.[0]?.id ?? '';
-  const chipLabel = CATEGORY_TO_CHIP_LABEL[crnId];
-  const category = chipLabel
+  const crnLabel = CRN_CATEGORY_LABEL[crnId];
+  const category = crnLabel
     ? isArabic
-      ? chipLabel.ar
-      : chipLabel.en
+      ? crnLabel.ar
+      : crnLabel.en
     : (org.categories?.[0]?.label ?? org.organization_type ?? '');
   const locations = org.locations ?? [];
   const icon = deriveIcon(sectors);
@@ -162,7 +150,7 @@ function buildOrganizationsUrl(
   }
 
   const categoryIds = activeFilterIds.flatMap(
-    (id) => FILTER_TO_CATEGORY[id] ?? []
+    (id) => FILTER_CHIP_TO_CATEGORY[id] ?? []
   );
 
   if (categoryIds.length > 0) {

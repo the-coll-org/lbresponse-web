@@ -8,7 +8,11 @@ import type {
   HelpCenterOrganizationViewModel,
   HotlineApiItem,
 } from './helpCenter.types';
-import { FILTER_SECTIONS, HOTLINE_SERVICE_OPTIONS } from './helpCenter.data';
+import {
+  HOTLINE_CATEGORY_LABEL,
+  HOTLINE_SERVICE_OPTIONS,
+} from '../../lib/crnCategories';
+import { FILTER_SECTIONS } from './helpCenter.data';
 
 export function createEmptyFilterSelection(
   sectionIds: string[] = [...FILTER_SECTIONS.map((s) => s.id), 'service_type']
@@ -232,15 +236,6 @@ export function mapHotlineToViewModel(
     uncategorized: string;
   }
 ): HelpCenterOrganizationViewModel {
-  const HOTLINE_CATEGORY_LABEL: Record<string, { en: string; ar: string }> = {
-    GBV: { en: 'Safety & Protection', ar: 'الحماية والسلامة' },
-    'Child Protection': { en: 'Safety & Protection', ar: 'الحماية والسلامة' },
-    Hospital: { en: 'Medical care', ar: 'طبي وصحي' },
-    Medical: { en: 'Medical care', ar: 'طبي وصحي' },
-    'Medical / Fire': { en: 'Medical care', ar: 'طبي وصحي' },
-    'Mental Health': { en: 'Medical care', ar: 'طبي وصحي' },
-    'Financial Assistance': { en: 'Cash and Livelihood', ar: 'نقد ومعيشة' },
-  };
   const isArabic = language.startsWith('ar');
   const title = (isArabic ? item.name_ar : item.name_en) ?? item.name_en;
   const rawLabel = HOTLINE_CATEGORY_LABEL[item.category];

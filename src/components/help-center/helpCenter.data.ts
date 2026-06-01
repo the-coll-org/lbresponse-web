@@ -1,3 +1,5 @@
+export type { HotlineServiceOption } from '../../lib/crnCategories';
+export { HOTLINE_SERVICE_OPTIONS } from '../../lib/crnCategories';
 import type {
   HelpCenterFilterSectionConfig,
   HelpCenterHotline,
@@ -30,54 +32,13 @@ export const HOTLINES: HelpCenterHotline[] = [
   },
 ];
 
-// Only district comes from /api/filters — it maps directly to ?city= on /api/hotlines.
-// Service type uses static options below so we control the labels and hotline mapping.
+// Only district comes from /api/filters — maps directly to ?city= on /api/hotlines.
+// Service type uses HOTLINE_SERVICE_OPTIONS from crnCategories (re-exported above).
 export const FILTER_SECTIONS: HelpCenterFilterSectionConfig[] = [
   {
     id: 'district',
     titleKey: 'filtersSections.location',
     icon: 'pin',
-  },
-];
-
-// Static service-type filter for Help Center. Each option's `hotlineCategories`
-// are the raw values the /api/hotlines ?category= param accepts (lowercase).
-export interface HotlineServiceOption {
-  id: string;
-  label: string;
-  label_ar: string;
-  hotlineCategories: string[];
-}
-
-export const HOTLINE_SERVICE_OPTIONS: HotlineServiceOption[] = [
-  {
-    id: 'medical',
-    label: 'Medical care',
-    label_ar: 'طبي وصحي',
-    hotlineCategories: [
-      'hospital',
-      'medical',
-      'medical / fire',
-      'mental health',
-    ],
-  },
-  {
-    id: 'safety',
-    label: 'Safety & Protection',
-    label_ar: 'الحماية والسلامة',
-    hotlineCategories: ['gbv', 'child protection', 'security'],
-  },
-  {
-    id: 'cash',
-    label: 'Cash and Livelihood',
-    label_ar: 'نقد ومعيشة',
-    hotlineCategories: ['financial assistance'],
-  },
-  {
-    id: 'emergency',
-    label: 'Emergency',
-    label_ar: 'طوارئ',
-    hotlineCategories: ['fire'],
   },
 ];
 

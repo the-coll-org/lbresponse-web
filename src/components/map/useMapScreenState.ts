@@ -1,27 +1,15 @@
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import {
+  CRN_CATEGORY_LABEL,
+  FILTER_CHIP_TO_CATEGORY,
+} from '../../lib/crnCategories';
 import type {
   NeedHelpOrganizationViewModel,
   NeedHelpServiceIcon,
   OrganizationApiItem,
   OrganizationsApiResponse,
 } from '../need-help/needHelp.types';
-
-// Maps Need Help chip id → CRN category ids (sent as ?category=)
-const FILTER_TO_CATEGORY: Record<string, string[]> = {
-  food: ['food_nutrition', 'wash_hygiene'],
-  medical: ['health_medical'],
-  shelter: ['shelter_nfi'],
-  clothes: ['shelter_nfi'], // clothes/blankets = NFI
-};
-
-// Reverse: CRN category id → the chip label shown in the UI
-const CATEGORY_TO_CHIP_LABEL: Record<string, { en: string; ar: string }> = {
-  food_nutrition: { en: 'Food and water', ar: 'طعام ومياه' },
-  wash_hygiene: { en: 'Food and water', ar: 'طعام ومياه' },
-  health_medical: { en: 'Medical care', ar: 'طبي وصحي' },
-  shelter_nfi: { en: 'Shelter and housing', ar: 'مأوى وسكن' },
-};
 
 // Maps governorate id → district-level region_ids used by the API
 export const CITY_MARKER_REGIONS: Record<string, string[]> = {
@@ -48,7 +36,7 @@ interface MapApiResponse {
 function buildMapUrl(activeFilter: string | null): string {
   const params = new URLSearchParams();
   if (activeFilter) {
-    const categoryIds = FILTER_TO_CATEGORY[activeFilter] ?? [];
+    const categoryIds = FILTER_CHIP_TO_CATEGORY[activeFilter] ?? [];
     if (categoryIds.length > 0) params.set('category', categoryIds.join(','));
   }
   const qs = params.toString();
@@ -107,11 +95,11 @@ function mapOrganizationToViewModel(
     (isArabic ? org.description_ar : org.description) ?? org.description ?? '';
   const sectors = org.sectors ?? [];
   const crnId = org.categories?.[0]?.id ?? '';
-  const chipLabel = CATEGORY_TO_CHIP_LABEL[crnId];
-  const category = chipLabel
+  const crnLabel = CRN_CATEGORY_LABEL[crnId];
+  const category = crnLabel
     ? isArabic
-      ? chipLabel.ar
-      : chipLabel.en
+      ? crnLabel.ar
+      : crnLabel.en
     : (org.categories?.[0]?.label ?? org.organization_type ?? '');
   const locations = org.locations ?? [];
   const icon = deriveIcon(sectors);
@@ -263,7 +251,7 @@ export function useMapScreenState() {
       });
       params.set('location', regionIds.join(','));
       if (activeFilter) {
-        const categoryIds = FILTER_TO_CATEGORY[activeFilter] ?? [];
+        const categoryIds = FILTER_CHIP_TO_CATEGORY[activeFilter] ?? [];
         if (categoryIds.length > 0)
           params.set('category', categoryIds.join(','));
       }
@@ -310,7 +298,7 @@ export function useMapScreenState() {
     });
     params.set('location', regionIds.join(','));
     if (activeFilter) {
-      const categoryIds = FILTER_TO_CATEGORY[activeFilter] ?? [];
+      const categoryIds = FILTER_CHIP_TO_CATEGORY[activeFilter] ?? [];
       if (categoryIds.length > 0) params.set('category', categoryIds.join(','));
     }
 

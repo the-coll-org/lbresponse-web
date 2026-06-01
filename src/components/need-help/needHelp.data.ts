@@ -39,8 +39,16 @@ export const needHelpResponse: NeedHelpResponse = {
       id: 'food',
       icon: 'food',
       label: {
-        ar: 'طعام ومياه',
-        en: 'Food and water',
+        ar: 'الغذاء والتغذية',
+        en: 'Food and Nutrition',
+      },
+    },
+    {
+      id: 'wash',
+      icon: 'food',
+      label: {
+        ar: 'مياه ونظافة شخصية',
+        en: 'WASH and Hygiene',
       },
     },
     {
@@ -65,6 +73,22 @@ export const needHelpResponse: NeedHelpResponse = {
       label: {
         ar: 'ملابس وبطانيات',
         en: 'Clothes and blankets',
+      },
+    },
+    {
+      id: 'cash',
+      icon: 'shelter',
+      label: {
+        ar: 'نقد ومعيشة',
+        en: 'Cash and livelihood',
+      },
+    },
+    {
+      id: 'safety',
+      icon: 'shelter',
+      label: {
+        ar: 'حماية وسلامة',
+        en: 'Safety & protection',
       },
     },
   ],

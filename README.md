@@ -143,6 +143,56 @@ lbresponse-web/
 
 ---
 
+## Category Taxonomy & Filter Mapping
+
+**Single source of truth:** [`src/lib/crnCategories.ts`](src/lib/crnCategories.ts)
+
+Edit that file to change any label, add a new filter chip, or update a hotline mapping. Both the Need Help screen and the Map screen import from it — you never need to touch two files.
+
+### CRN Categories (9 total)
+
+These are the official Collective Relief Network category IDs and labels. The API produces them by mapping raw PowerBI/UN sector names (see `lbresponse-api/src/lib/serviceCategoryMap.ts`).
+
+| CRN ID                     | English label              | Arabic label             |
+| -------------------------- | -------------------------- | ------------------------ |
+| `food_nutrition`           | Food and Nutrition         | الغذاء والتغذية          |
+| `wash_hygiene`             | WASH and Hygiene           | مياه ونظافة شخصية        |
+| `health_medical`           | Health / Medical           | الصحة والرعاية الطبية    |
+| `shelter_nfi`              | Shelter / NFI              | مأوى / مواد غير غذائية   |
+| `cash_livelihood`          | Cash and Livelihood        | دعم نقدي / معيشي         |
+| `safety_protection`        | Safety & Protection        | الحماية والسلامة         |
+| `education`                | Education                  | التعليم                  |
+| `transportation_logistics` | Transportation & Logistics | النقل والخدمات اللوجستية |
+| `emergency_hotlines`       | Emergency Hotlines         | خطوط الطوارئ             |
+
+### Need Help / Map Filter Chips → API params
+
+Filter chips send `?category=<id>` to `/api/organizations`.
+
+| Chip label           | Chip ID   | CRN category IDs sent |
+| -------------------- | --------- | --------------------- |
+| Food and Nutrition   | `food`    | `food_nutrition`      |
+| WASH and Hygiene     | `wash`    | `wash_hygiene`        |
+| Medical care         | `medical` | `health_medical`      |
+| Shelter and housing  | `shelter` | `shelter_nfi`         |
+| Clothes and blankets | `clothes` | `shelter_nfi`         |
+| Cash and livelihood  | `cash`    | `cash_livelihood`     |
+| Safety & protection  | `safety`  | `safety_protection`   |
+
+### Help Center Service Type Filter → Hotline API params
+
+The Help Center calls `/api/hotlines?category=<raw_values>`. The raw hotline DB categories are mapped to friendly labels in `HOTLINE_CATEGORY_LABEL` and grouped into filter options in `HOTLINE_SERVICE_OPTIONS`.
+
+| Filter label               | Raw hotline DB categories matched                           |
+| -------------------------- | ----------------------------------------------------------- |
+| Health / Medical           | Hospital, Medical, Medical / Fire, Mental Health            |
+| Safety & Protection        | GBV, Child Protection, Security                             |
+| Cash and Livelihood        | Financial Assistance                                        |
+| Emergency                  | Fire                                                        |
+| Transportation & Logistics | Heavy Equipment, Airport, Territorial Border, Travel Agency |
+
+---
+
 ## Theming (Light / Dark Mode)
 
 The app supports light and dark themes. The theme is stored in `localStorage` so it persists across sessions.
