@@ -69,7 +69,7 @@ function mapOrganizationToViewModel(
   const description =
     (isArabic ? org.description_ar : org.description) ?? org.description ?? '';
   const sectors = org.sectors ?? [];
-  const category = org.organization_type ?? sectors[0] ?? '';
+  const category = org.categories?.[0]?.label ?? org.organization_type ?? '';
   const locations = org.locations ?? [];
   const icon = deriveIcon(sectors);
   const callPrefix = isArabic ? 'اتصل' : 'Call';
