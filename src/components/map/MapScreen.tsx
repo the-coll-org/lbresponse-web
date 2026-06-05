@@ -125,15 +125,15 @@ const CITY_MARKERS: {
   },
 ];
 
-const FILTER_IDS = ['clothes', 'shelter', 'medical', 'food', 'nearby'] as const;
+// Aligned with the Need Help screen: same categories, same order.
+const FILTER_IDS = ['food', 'medical', 'shelter', 'clothes'] as const;
 type FilterId = (typeof FILTER_IDS)[number];
 
 const FILTER_ICONS: Record<FilterId, keyof typeof needHelpIcons> = {
-  clothes: 'clothes',
-  shelter: 'shelter',
-  medical: 'medical',
   food: 'food',
-  nearby: 'locationPin',
+  medical: 'medical',
+  shelter: 'shelter',
+  clothes: 'clothes',
 };
 
 // SVG path data for sector icons (24×24 viewBox)

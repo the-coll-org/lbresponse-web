@@ -1,40 +1,25 @@
-import type { SVGProps } from 'react';
+import type { HTMLAttributes } from 'react';
+import markUrl from '../../assets/crn-mark.png';
 
-export interface LogoMarkProps extends SVGProps<SVGSVGElement> {
-  /** Render mode: inverse shows a white tile with navy letters (for dark headers). */
-  tone?: 'brand' | 'inverse';
-}
+export type LogoMarkProps = HTMLAttributes<HTMLSpanElement>;
 
-export function LogoMark({
-  tone = 'brand',
-  className = '',
-  ...props
-}: LogoMarkProps) {
-  const bg = tone === 'inverse' ? '#fcfbfa' : '#2e4369';
-  const fg = tone === 'inverse' ? '#2e4369' : '#fcfbfa';
-
+export function LogoMark({ className = '', ...props }: LogoMarkProps) {
+  // White tile gives the dark, multi-color CRN mark the contrast it needs on
+  // the navy header.
   return (
-    <svg
-      viewBox="0 0 64 64"
-      role="img"
-      aria-label="LB Response"
-      className={className}
+    <span
+      className={[
+        'inline-flex items-center justify-center bg-solid-white-400 overflow-hidden',
+        className,
+      ].join(' ')}
       {...props}
     >
-      <rect width="64" height="64" rx="14" fill={bg} />
-      <text
-        x="50%"
-        y="50%"
-        dy="0.36em"
-        textAnchor="middle"
-        fontFamily="Roboto, system-ui, -apple-system, sans-serif"
-        fontSize="30"
-        fontWeight="700"
-        fill={fg}
-        letterSpacing="-1"
-      >
-        LB
-      </text>
-    </svg>
+      <img
+        src={markUrl}
+        alt="CRN — The Collective Relief Network"
+        className="size-[80%] object-contain"
+        draggable={false}
+      />
+    </span>
   );
 }

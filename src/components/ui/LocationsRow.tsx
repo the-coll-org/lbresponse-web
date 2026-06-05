@@ -68,7 +68,7 @@ export function LocationsRow({
             onClick={handleBadgeClick}
             aria-expanded={overflow <= 2 ? tooltipOpen : undefined}
             className={[
-              'inline-flex items-center rounded-md border border-black/10 px-8 py-4',
+              'inline-flex items-center rounded-md border border-textfield-default-stroke px-8 py-4',
               'text-2xs font-weight-medium text-text-black cursor-pointer',
               'transition-colors hover:bg-black/5',
               'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid-primary-500',

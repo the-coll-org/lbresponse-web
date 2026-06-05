@@ -24,11 +24,10 @@
     "subtitle": "Live view of active organizations on the ground",
     "searchPlaceholder": "Search for an organization or area...",
     "filters": {
-      "clothes": "Clothes & Blankets",
-      "shelter": "Shelter",
-      "medical": "Medical",
-      "food": "Food & Water",
-      "nearby": "Near me"
+      "food": "Food and water",
+      "medical": "Medical care",
+      "shelter": "Shelter and housing",
+      "clothes": "Clothes and blankets"
     },
     "cities": {
       "akkar": "Akkar",

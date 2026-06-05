@@ -269,7 +269,6 @@ export function useNeedHelpScreenState() {
   }
 
   function handleToggleFilter(filterId: string) {
-    if (filterId === 'nearest') return; // geolocation not implemented
     setActiveFilterIds((current) =>
       current.includes(filterId)
         ? current.filter((id) => id !== filterId)

@@ -333,7 +333,6 @@ export function useMapScreenState() {
   }
 
   function handleToggleFilter(filterId: string) {
-    if (filterId === 'nearby') return;
     setActiveFilter((prev) => (prev === filterId ? null : filterId));
   }
 

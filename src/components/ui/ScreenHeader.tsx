@@ -29,10 +29,7 @@ export function ScreenHeader({
       <div className="mx-auto flex h-full w-full items-start justify-between gap-12">
         <div className="flex min-w-0 flex-1 items-start gap-12">
           <Link to="/need-help" aria-label="Go to home">
-            <LogoMark
-              tone="inverse"
-              className="size-40 shrink-0 rounded-lg shadow-sm"
-            />
+            <LogoMark className="size-40 shrink-0 rounded-lg shadow-sm" />
           </Link>
           <div className="flex min-w-0 flex-1 flex-col items-start gap-4 text-start">
             <h1 className="w-full text-2xl font-weight-bold leading-32 text-solid-white-400">

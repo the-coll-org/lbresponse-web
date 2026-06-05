@@ -83,7 +83,7 @@ function MapRouteIcon() {
 // Matches Figma category pill: px-8 py-4; border-radius: 8px; outline: 1px rgba(0,0,0,0.10); font-size: 12px
 function CategoryPill({ children }: { children: ReactNode }) {
   return (
-    <span className="inline-flex shrink-0 items-center justify-center rounded-md border border-black/10 px-8 py-4 text-2xs font-weight-regular text-text-black">
+    <span className="inline-flex shrink-0 items-center justify-center rounded-md border border-textfield-default-stroke px-8 py-4 text-2xs font-weight-regular text-text-black">
       {children}
     </span>
   );

@@ -27,15 +27,6 @@ export const needHelpResponse: NeedHelpResponse = {
   },
   filters: [
     {
-      id: 'nearest',
-      icon: 'location',
-      active: true,
-      label: {
-        ar: 'الأقرب لموقعي',
-        en: 'Closest to me',
-      },
-    },
-    {
       id: 'food',
       icon: 'food',
       label: {
